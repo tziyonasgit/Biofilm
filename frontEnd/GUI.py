@@ -33,9 +33,9 @@ def uploadFile():
     # print(filename)
 
 
-def startSim(canvas, ax):
+def startSim(home, filename, canvas, ax):
     ax.clear()
-    startAnimation(canvas, ax)
+    startAnimation(home, filename, canvas, ax)
 
 
 def main():
@@ -64,7 +64,7 @@ def main():
     canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
 
     startBtn = Button(home, text='Start simulation',
-                      command=lambda: startSim(canvas, ax))
+                      command=lambda: startSim(home, filename, canvas, ax))
     startBtn.pack(side='top')
 
     home.mainloop()  # runs the application
