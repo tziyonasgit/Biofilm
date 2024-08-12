@@ -50,6 +50,9 @@ class BiofilmAnimation:
 
         self.canvas.draw_idle()
 
+        if frame == 1:
+            self.ani.event_source.stop()
+
     def run(self):
         self.ani = FuncAnimation(self.fig, self.updateFrame,
                                  frames=2, interval=500, blit=False)
