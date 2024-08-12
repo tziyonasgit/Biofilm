@@ -1,7 +1,10 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
-from Simulation import simulation
+from animation import *
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+
 
 # global variables
 filename = ""
@@ -30,8 +33,9 @@ def uploadFile():
     # print(filename)
 
 
-def startSim():
-    simulation(filename)
+def startSim(canvas, ax):
+    ax.clear()
+    startAnimation(canvas, ax)
 
 
 def main():
@@ -46,7 +50,21 @@ def main():
     uploadBtn = Button(home, text='Upload data file', command=uploadFile)
     uploadBtn.pack(side='top')
 
-    startBtn = Button(home, text='Start simulation', command=startSim)
+    # Creating a Matplotlib figure
+    fig = Figure(figsize=(5, 4), dpi=100)
+    ax = fig.add_subplot(111)  # Create a single subplot
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+
+    # Creating a canvas to embed the Matplotlib figure
+    canvas = FigureCanvasTkAgg(fig, master=home)
+    canvas.draw()
+    canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
+
+    startBtn = Button(home, text='Start simulation',
+                      command=lambda: startSim(canvas, ax))
     startBtn.pack(side='top')
 
     home.mainloop()  # runs the application
