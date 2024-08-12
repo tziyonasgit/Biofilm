@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
-
-from simulation import simulation
+from Simulation import simulation
 
 # global variables
 filename = ""
