@@ -61,9 +61,24 @@ class Bacterium:
 
     def removePatches(self):
         """Remove existing patches from the axis."""
-        if self.rectangleBody in self.ax.patches:
-            self.ax.patches.remove(self.rectangleBody)
-        if self.leftEnd in self.ax.patches:
-            self.ax.patches.remove(self.leftEnd)
-        if self.rightEnd in self.ax.patches:
-            self.ax.patches.remove(self.rightEnd)
+        if self.rectangleBody is not None:
+            self.rectangleBody.set_visible(False)  # Hide the patch
+            self.rectangleBody = None
+        if self.leftEnd is not None:
+            self.leftEnd.set_visible(False)  # Hide the patch
+            self.leftEnd = None
+        if self.rightEnd is not None:
+            self.rightEnd.set_visible(False)  # Hide the patch
+            self.rightEnd = None
+
+    def move(self, direction):
+        if direction == "up":
+            self.position[1] += 1
+        elif direction == "down":
+            self.position[1] -= 1
+        elif direction == "left":
+            self.position[0] -= 1
+        elif direction == "right":
+            self.position[0] += 1
+
+        self.draw()  # Redraw the bacterium at the new position
