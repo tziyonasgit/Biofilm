@@ -1,12 +1,13 @@
 from matplotlib import patches
 import numpy as np
 import matplotlib.pyplot as plt
+from typing import Optional  # Import Optional from the typing module
 
 
 class Bacterium:
 
     def __init__(self, ax, id: int, age: int, strain: str = None, position:  np.ndarray = None, length: float = 1.0,
-                 width: float = 0.5, colour: str = 'green'):
+                 width: float = 0.5, colour: str = "green", father: Optional['Bacterium'] = None):
         self.ax = ax
         self.id = id
         self.age = 0
@@ -19,6 +20,7 @@ class Bacterium:
         self.length = length
         self.width = width
         self.colour = colour
+        self.father = father  # Reference to the "father" bacterium
 
         # Initialize the shape attributes (patches)
         self.rectangleBody = None
@@ -26,6 +28,9 @@ class Bacterium:
         self.rightEnd = None
 
         self.createBody()
+
+    def updateFather(self, Bacterium):
+        self.father = Bacterium
 
     def createBody(self):
         # Calculate the positions
