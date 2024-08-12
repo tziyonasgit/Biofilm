@@ -136,14 +136,21 @@ class BiofilmAnimation:
 
             self.processLine()  # Start processing the first line
 
-    def save_animation(self, filename='biofilm_animation.mp4'):
-        print("hi")
+    def save_animation(self, output_filename='biofilm_animation.mp4'):
+        # Define the animation
+        self.ani = FuncAnimation(self.fig, self.updateFrame,
+                                 frames=len(self.lines), interval=500, blit=False)
+
+        # Save the animation as an MP4 file
+        self.ani.save(output_filename, writer='ffmpeg', fps=2)
+
+        print(f"Animation saved as {output_filename}")
 
 
 def startAnimation(root, filename, canvas, ax):
     animation = BiofilmAnimation(root, canvas, ax, filename)
     animation.run()
-    # animation.save_animation()  # This will save the animation as an MP4
+    animation.save_animation()  # This will save the animation as an MP4
 
     #         fileLength = sum(1 for _ in file)
     #         file.seek(0)  # Reset file pointer to the beginning

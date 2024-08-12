@@ -36,6 +36,7 @@ def uploadFile():
 def startSim(home, filename, canvas, ax):
     ax.clear()
     startAnimation(home, filename, canvas, ax)
+    # saveAnimation.startAnimation(filename, canvas, ax)
 
 
 def main():
