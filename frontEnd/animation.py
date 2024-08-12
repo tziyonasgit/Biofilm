@@ -41,6 +41,15 @@ class BiofilmAnimation:
         bacterium.draw()
         self.canvas.draw_idle()
 
+    def split(self, cellID):
+        initial_position = np.array([0.0, 0.0])  # Starting at the center
+        bacterium = Bacterium(self.ax, id=cellID, age=0, strain="E.coli",
+                              position=initial_position, length=2.0, width=1.0, colour='blue')
+        self.bacteria.append(bacterium)  # adds bacterium to list bacteria
+
+        bacterium.draw()
+        self.canvas.draw_idle()
+
     def updateFrame(self, frame):
         global fileLength
         # Remove previous patches
@@ -87,6 +96,10 @@ class BiofilmAnimation:
                             break
             elif action == "split":
                 print(f"Cell {cellID} splits.")
+                for bacterium in self.bacteria:
+                    if bacterium.id == cellID:
+                        self.split(cellID)
+                        break
             elif action == "die":
                 print(f"Cell {cellID} dies.")
             else:
