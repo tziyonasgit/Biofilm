@@ -1,28 +1,23 @@
-import matplotlib.pyplot as plt  # simple plots
+import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FuncAnimation, FFMpegWriter
 import numpy as np
 from Bacterium import *
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
-bacterium = None
-fileLength = 0
-father = None
 
 
 class BiofilmAnimation:
-    def __init__(self, root, canvas, ax, filename):
-        self.root = root  # Store the root or a Tkinter widget
-        self.ax = ax
-        self.bacterium = None
-        self.bacteria = []  # Ensure this is initialized correctly
-        self.fig = ax.figure
-        self.canvas = canvas
+    def __init__(self, filename):
+        self.fig, self.ax = plt.subplots()
         self.filename = filename
-        self.lines = []  # Initialize the lines list
+        self.bacteria = []
+        self.lines = []
         self.currentLine = 0
-        self.direction = np.array([1.0, 0.0])  # Start moving to the right
+        self.direction = np.array([1.0, 0.0])
         self.setup()
+
+        # For saving the animation
+        self.writer = FFMpegWriter(
+            fps=3, metadata=dict(artist='Me'), bitrate=1800)
 
     def setup(self):
         self.ax.set_aspect('equal')
@@ -34,162 +29,80 @@ class BiofilmAnimation:
         self.ax.set_yticklabels([])
 
     def spawn(self, cellID, bacterium):
-        initial_position = np.array([0.0, 0.0])  # Starting at the center
+        initial_position = np.array([0.0, 0.0])
         bacterium = Bacterium(self.ax, id=cellID, age=0, strain="E.coli",
                               position=initial_position, length=2.0, width=1.0, colour='green')
-        self.bacteria.append(bacterium)  # adds bacterium to list bacteria
-
+        self.bacteria.append(bacterium)
         bacterium.draw()
-        self.canvas.draw_idle()
 
     def split(self, cellID):
         global father
         for bacterium in self.bacteria:
             if bacterium.id == cellID:
+                father = bacterium
                 break
-        father = bacterium
 
     def die(self, cellID):
-
         for bacterium in self.bacteria:
             if bacterium.id == cellID:
+                bacterium.removePatches()
+                self.bacteria.remove(bacterium)
                 break
-        bacterium.removePatches()
-        self.bacteria.remove(bacterium)
 
     def updateFrame(self, frame):
-        global fileLength
-        # Remove previous patches
-        for patch in self.ax.patches[:]:
-            patch.remove()
+        if self.currentLine >= len(self.lines):
+            return
 
+        # Process current line
+        line = self.lines[self.currentLine]
+        self.currentLine += 1
+
+        line = line.strip()
+        parts = line.split('#')
+
+        if len(parts) >= 2:
+            cellID = int(parts[1])
+            action = parts[2]
+
+        if action == "spawn":
+            if cellID == 1:
+                self.spawn(cellID, None)
+            else:
+                self.spawn(cellID, father)
+        elif action == "move":
+            if len(parts) > 3:
+                direction = parts[3]
+                for bacterium in self.bacteria:
+                    if bacterium.id == cellID:
+                        bacterium.move(direction)
+                        break
+        elif action == "split":
+            for bacterium in self.bacteria:
+                if bacterium.id == cellID:
+                    self.split(cellID)
+                    break
+        elif action == "die":
+            self.die(cellID)
+
+        # Clear and redraw
+        self.ax.clear()
+        self.setup()  # Reapply axis settings
         for bacterium in self.bacteria:
             bacterium.draw()
 
-        self.canvas.draw_idle()
-
-        if frame == (fileLength - 1):
-            self.ani.event_source.stop()
-
-    # def run(self):
-        # self.ani = FuncAnimation(self.fig, self.updateFrame,
-        # frames = fileLength, interval = 500, blit = False)
-        # self.updateFrame()
-        # self.canvas.draw()  # This draws the first frame on the Tkinter canvas
-
-    def processLine(self):
-        global father
-        if self.currentLine < len(self.lines):
-            line = self.lines[self.currentLine]
-            self.currentLine += 1
-
-            # Process the line
-            line = line.strip()
-            parts = line.split('#')
-
-            if len(parts) >= 2:
-                cellID = int(parts[1])  # e.g., "1", "2"
-                action = parts[2]  # e.g., "spawn", "move", "split", "die"
-
-            if action == "spawn":
-                print(f"Cell {cellID} spawns.")
-                if cellID == 1:
-                    self.spawn(cellID, None)
-                else:
-                    self.spawn(cellID, father)
-            elif action == "move":
-                if len(parts) > 3:
-                    direction = parts[3]
-                    print(f"Cell {cellID} moves {direction}.")
-                    for bacterium in self.bacteria:
-                        if bacterium.id == cellID:
-                            bacterium.move(direction)
-                            break
-            elif action == "split":
-                print(f"Cell {cellID} splits.")
-                for bacterium in self.bacteria:
-                    if bacterium.id == cellID:
-                        self.split(cellID)
-                        break
-            elif action == "die":
-                print(f"Cell {cellID} dies.")
-                self.die(cellID)
-            else:
-                print(f"Unknown action for Cell {cellID}: {action}")
-
-            self.updateFrame(self.currentLine)
-            # # Create the FuncAnimation object
-            # self.ani = FuncAnimation(self.fig, self.updateFrame(self.currentLine),
-            #                          frames=len(self.lines),
-            #                          interval=500,
-            #                          blit=False)
-
-            # # Save the animation as an MP4 file
-            # self.ani.save('biofilm_animation.mp4', writer='ffmpeg', fps=2)
-
-            # Schedule the next line to be processed
-            self.root.after(500, self.processLine)  # Adjust delay as need
+        self.fig.canvas.draw()
 
     def run(self):
         with open(self.filename, 'r') as file:
             self.lines = file.readlines()
 
-            self.processLine()  # Start processing the first line
+        ani = FuncAnimation(self.fig, self.updateFrame,
+                            frames=len(self.lines), interval=7000, repeat=False)
 
-    def save_animation(self, output_filename='biofilm_animation.mp4'):
-        # Define the animation
-        self.ani = FuncAnimation(self.fig, self.updateFrame,
-                                 frames=len(self.lines), interval=500, blit=False)
-
-        # Save the animation as an MP4 file
-        self.ani.save(output_filename, writer='ffmpeg', fps=2)
-
-        print(f"Animation saved as {output_filename}")
+        # Save the animation
+        ani.save("biofilm_animation.mp4", writer=self.writer)
 
 
-def startAnimation(root, filename, canvas, ax):
-    animation = BiofilmAnimation(root, canvas, ax, filename)
+def startAnimation(filename):
+    animation = BiofilmAnimation(filename)
     animation.run()
-    animation.save_animation()  # This will save the animation as an MP4
-
-    #         fileLength = sum(1 for _ in file)
-    #         file.seek(0)  # Reset file pointer to the beginning
-
-    # def startAnimation(filename, canvas, ax):
-    #     global fileLength
-
-    #     animation = BiofilmAnimation(canvas, ax)
-
-    #     with open(filename, 'r') as file:
-    #         fileLength = sum(1 for _ in file)
-    #         file.seek(0)  # Reset file pointer to the beginning
-
-    #         for line in file:
-    #             # Strip any leading/trailing whitespace (including newlines)
-    #             line = line.strip()
-    #             # Split the line into parts
-    #             parts = line.split('#')
-
-    #             if len(parts) >= 2:
-    #                 cellID = int(parts[1])  # e.g., "1", "2"
-    #                 action = parts[2]  # e.g., "spawn", "move", "split", "die"
-
-    #                 if action == "spawn":
-    #                     print(f"Cell {cellID} spawns.")
-    #                     animation.spawn(cellID)
-    #                 elif action == "move":
-    #                     if len(parts) > 3:
-    #                         # e.g., "up", "down", "left", "right"
-    #                         direction = parts[3]
-    #                         print(f"Cell {cellID} moves {direction}.")
-    #                         for bacterium in animation.bacteria:
-    #                             if bacterium.id == cellID:
-    #                                 bacterium.move(direction)
-    #                                 break
-    #                 elif action == "split":
-    #                     print(f"Cell {cellID} splits.")
-    #                 elif action == "die":
-    #                     print(f"Cell {cellID} dies.")
-    #                 else:
-    #                     print(f"Unknown action for Cell {cellID}: {action}")
-    #     animation.run()

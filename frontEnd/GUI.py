@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
-from animation import *
+import animation
+import saveAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
@@ -35,8 +36,8 @@ def uploadFile():
 
 def startSim(home, filename, canvas, ax):
     ax.clear()
-    startAnimation(home, filename, canvas, ax)
-    # saveAnimation.startAnimation(filename, canvas, ax)
+    animation.startAnimation(home, filename, canvas, ax)
+    saveAnimation.startAnimation(filename)
 
 
 def main():

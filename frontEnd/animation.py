@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt  # simple plots
 import matplotlib.patches as patches
-from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FuncAnimation,  FFMpegWriter
 import numpy as np
 from Bacterium import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import io
 
 bacterium = None
 fileLength = 0
@@ -20,6 +21,7 @@ class BiofilmAnimation:
         self.canvas = canvas
         self.filename = filename
         self.lines = []  # Initialize the lines list
+        self.frames = []  # Initialize the frames list
         self.currentLine = 0
         self.direction = np.array([1.0, 0.0])  # Start moving to the right
         self.setup()
@@ -71,12 +73,6 @@ class BiofilmAnimation:
         if frame == (fileLength - 1):
             self.ani.event_source.stop()
 
-    # def run(self):
-        # self.ani = FuncAnimation(self.fig, self.updateFrame,
-        # frames = fileLength, interval = 500, blit = False)
-        # self.updateFrame()
-        # self.canvas.draw()  # This draws the first frame on the Tkinter canvas
-
     def processLine(self):
         global father
         if self.currentLine < len(self.lines):
@@ -118,16 +114,7 @@ class BiofilmAnimation:
                 print(f"Unknown action for Cell {cellID}: {action}")
 
             self.updateFrame(self.currentLine)
-            # # Create the FuncAnimation object
-            # self.ani = FuncAnimation(self.fig, self.updateFrame(self.currentLine),
-            #                          frames=len(self.lines),
-            #                          interval=500,
-            #                          blit=False)
 
-            # # Save the animation as an MP4 file
-            # self.ani.save('biofilm_animation.mp4', writer='ffmpeg', fps=2)
-
-            # Schedule the next line to be processed
             self.root.after(500, self.processLine)  # Adjust delay as need
 
     def run(self):
@@ -136,53 +123,7 @@ class BiofilmAnimation:
 
             self.processLine()  # Start processing the first line
 
-    def save_animation(self, filename='biofilm_animation.mp4'):
-        print("hi")
-
 
 def startAnimation(root, filename, canvas, ax):
     animation = BiofilmAnimation(root, canvas, ax, filename)
     animation.run()
-    # animation.save_animation()  # This will save the animation as an MP4
-
-    #         fileLength = sum(1 for _ in file)
-    #         file.seek(0)  # Reset file pointer to the beginning
-
-    # def startAnimation(filename, canvas, ax):
-    #     global fileLength
-
-    #     animation = BiofilmAnimation(canvas, ax)
-
-    #     with open(filename, 'r') as file:
-    #         fileLength = sum(1 for _ in file)
-    #         file.seek(0)  # Reset file pointer to the beginning
-
-    #         for line in file:
-    #             # Strip any leading/trailing whitespace (including newlines)
-    #             line = line.strip()
-    #             # Split the line into parts
-    #             parts = line.split('#')
-
-    #             if len(parts) >= 2:
-    #                 cellID = int(parts[1])  # e.g., "1", "2"
-    #                 action = parts[2]  # e.g., "spawn", "move", "split", "die"
-
-    #                 if action == "spawn":
-    #                     print(f"Cell {cellID} spawns.")
-    #                     animation.spawn(cellID)
-    #                 elif action == "move":
-    #                     if len(parts) > 3:
-    #                         # e.g., "up", "down", "left", "right"
-    #                         direction = parts[3]
-    #                         print(f"Cell {cellID} moves {direction}.")
-    #                         for bacterium in animation.bacteria:
-    #                             if bacterium.id == cellID:
-    #                                 bacterium.move(direction)
-    #                                 break
-    #                 elif action == "split":
-    #                     print(f"Cell {cellID} splits.")
-    #                 elif action == "die":
-    #                     print(f"Cell {cellID} dies.")
-    #                 else:
-    #                     print(f"Unknown action for Cell {cellID}: {action}")
-    #     animation.run()
