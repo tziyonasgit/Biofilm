@@ -1,3 +1,5 @@
+package extraOld;
+
 public class block {
     float positionX, positionY;
     int levelEPS = 0;
@@ -11,26 +13,27 @@ public class block {
 
     }
 
-    private void setEPS(int level){
+    private void setEPS(int level) {
         this.levelEPS = level;
     }
 
-    private void setPositon (float x, float y){
+    private void setPositon(float x, float y) {
         this.positionX = x;
         this.positionY = y;
-    } 
+    }
 
-    private void setOccupied (boolean value){
+    private void setOccupied(boolean value) {
         this.occupied = value;
     }
 
-    // need a getter for position, can't decide if we should do one for x and one for y or if together what type
+    // need a getter for position, can't decide if we should do one for x and one
+    // for y or if together what type
 
-    private int getLevelEPS (){
+    private int getLevelEPS() {
         return levelEPS;
     }
 
-    private boolean occupied (){
+    private boolean occupied() {
         return occupied;
     }
 }
