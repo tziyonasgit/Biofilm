@@ -5,7 +5,7 @@ import numpy as np
 from Bacterium import *
 
 
-class BiofilmAnimation:
+class SaveAnimation:
     def __init__(self, filename):
         self.fig, self.ax = plt.subplots()
         self.filename = filename
@@ -92,17 +92,14 @@ class BiofilmAnimation:
 
         self.fig.canvas.draw()
 
-    def run(self):
-        with open(self.filename, 'r') as file:
-            self.lines = file.readlines()
-
-        ani = FuncAnimation(self.fig, self.updateFrame,
-                            frames=len(self.lines), interval=7000, repeat=False)
-
-        # Save the animation
-        ani.save("biofilm_animation.mp4", writer=self.writer)
-
 
 def startAnimation(filename):
-    animation = BiofilmAnimation(filename)
-    animation.run()
+    saveAnimation = SaveAnimation(filename)
+    with open(filename, 'r') as file:
+        saveAnimation.lines = file.readlines()
+
+        ani = FuncAnimation(saveAnimation.fig, saveAnimation.updateFrame,
+                            frames=len(saveAnimation.lines), interval=7000, repeat=False)
+
+        # Save the animation
+        ani.save("biofilm_animation.mp4", writer=saveAnimation.writer)

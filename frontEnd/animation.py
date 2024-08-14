@@ -11,7 +11,7 @@ fileLength = 0
 father = None
 
 
-class BiofilmAnimation:
+class Animation:
     def __init__(self, root, canvas, ax, filename):
         self.root = root  # Store the root or a Tkinter widget
         self.ax = ax
@@ -117,13 +117,10 @@ class BiofilmAnimation:
 
             self.root.after(500, self.processLine)  # Adjust delay as need
 
-    def run(self):
-        with open(self.filename, 'r') as file:
-            self.lines = file.readlines()
-
-            self.processLine()  # Start processing the first line
-
 
 def startAnimation(root, filename, canvas, ax):
-    animation = BiofilmAnimation(root, canvas, ax, filename)
-    animation.run()
+    animation = Animation(root, canvas, ax, filename)
+    with open(animation.filename, 'r') as file:
+        animation.lines = file.readlines()
+
+        animation.processLine()  # Start processing the first line
