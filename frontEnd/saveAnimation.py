@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
+import matplotlib.pyplot as plt  # simple plots
+import matplotlib.patches as patches  # custom shapes
 from matplotlib.animation import FuncAnimation, FFMpegWriter
 import numpy as np
 from Bacterium import *
@@ -9,17 +9,17 @@ class SaveAnimation:
     def __init__(self, filename):
         self.fig, self.ax = plt.subplots()
         self.filename = filename
-        self.bacteria = []
-        self.lines = []
+        self.bacteria = []  # intialise empty list of Bacterium
+        self.lines = []  # initialize list of file lines
         self.currentLine = 0
         self.direction = np.array([1.0, 0.0])
         self.setup()
 
-        # For saving the animation
         self.writer = FFMpegWriter(
             fps=3, metadata=dict(artist='Me'), bitrate=1800)
 
     def setup(self):
+        # ensures axis has equal aspect ratio and no lines and ticks
         self.ax.set_aspect('equal')
         self.ax.set_xlim(-20, 20)
         self.ax.set_ylim(-20, 20)
@@ -29,13 +29,17 @@ class SaveAnimation:
         self.ax.set_yticklabels([])
 
     def spawn(self, cellID, bacterium):
-        initial_position = np.array([0.0, 0.0])
+        # creates a new bacterium at the centre of plot
+        initial_position = np.array([0.0, 0.0])  # starts at the center
         bacterium = Bacterium(self.ax, id=cellID, age=0, strain="E.coli",
                               position=initial_position, length=2.0, width=1.0, colour='green')
-        self.bacteria.append(bacterium)
-        bacterium.draw()
+        self.bacteria.append(bacterium)  # adds bacterium to list bacteria
+
+        bacterium.draw()  # draws bacterium on the plot
 
     def split(self, cellID):
+        # prepares the bacterium for splitting
+        # stores the parent bacterium as the father in the daughter (new) bacterium
         global father
         for bacterium in self.bacteria:
             if bacterium.id == cellID:
@@ -43,6 +47,7 @@ class SaveAnimation:
                 break
 
     def die(self, cellID):
+        # removes bacterium from the plot and list of bacteria
         for bacterium in self.bacteria:
             if bacterium.id == cellID:
                 bacterium.removePatches()
@@ -50,10 +55,11 @@ class SaveAnimation:
                 break
 
     def updateFrame(self, frame):
+        # updates the canvas with new graphical elements
         if self.currentLine >= len(self.lines):
             return
 
-        # Process current line
+        # processes lines in file
         line = self.lines[self.currentLine]
         self.currentLine += 1
 
@@ -64,6 +70,7 @@ class SaveAnimation:
             cellID = int(parts[1])
             action = parts[2]
 
+        # determines the method to be called based on action stated in line
         if action == "spawn":
             if cellID == 1:
                 self.spawn(cellID, None)
@@ -84,9 +91,9 @@ class SaveAnimation:
         elif action == "die":
             self.die(cellID)
 
-        # Clear and redraw
+        # clears axis and redraws bacteria
         self.ax.clear()
-        self.setup()  # Reapply axis settings
+        self.setup()
         for bacterium in self.bacteria:
             bacterium.draw()
 
@@ -94,12 +101,12 @@ class SaveAnimation:
 
 
 def startAnimation(filename):
+    # creates an instance of the animation
     saveAnimation = SaveAnimation(filename)
     with open(filename, 'r') as file:
         saveAnimation.lines = file.readlines()
 
         ani = FuncAnimation(saveAnimation.fig, saveAnimation.updateFrame,
                             frames=len(saveAnimation.lines), interval=7000, repeat=False)
-
-        # Save the animation
+        # save the animation as an MP4
         ani.save("biofilm_animation.mp4", writer=saveAnimation.writer)
