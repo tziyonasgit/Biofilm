@@ -1,4 +1,4 @@
-package backEnd;
+package backEnd.src;
 
 // class for managing bacterium with methods to manipulate them (activities)
 public class Bacterium {

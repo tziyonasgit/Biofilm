@@ -1,4 +1,4 @@
-package backEnd;
+package backEnd.src;
 
 // class for managing monomers
 public class Monomer {

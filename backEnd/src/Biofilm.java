@@ -1,4 +1,4 @@
-package backEnd;
+package backEnd.src;
 
 // class for managing biofilms
 public class Biofilm {
