@@ -3,13 +3,14 @@ JAVAC = javac
 
 # Directories
 SRC_DIR = backEnd/src
+DEL_DIR = backEnd/bin/BiofilmSimulation
 BIN_DIR = backEnd/bin
 
 # Source files
 SOURCES = $(shell find $(SRC_DIR) -name "*.java")
 
 # Main class with package name
-MAIN = backEnd.src.Simulation
+MAIN = BiofilmSimulation/Simulation
 
 # Compile all .java files to .class files in the bin directory
 all: $(SOURCES)
@@ -22,7 +23,7 @@ run: all
 
 # Clean compiled classes
 clean:
-	rm -rf $(BIN_DIR)
+	rm -rf $(DEL_DIR)
 
 # Phony targets
 .PHONY: all run clean

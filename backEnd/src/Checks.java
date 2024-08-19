@@ -1,24 +1,24 @@
-package backEnd.src;
+package BiofilmSimulation;
 
 import java.util.Scanner;
 
 // class for seperating out checks for simulation parameters and conditions
-public class Checks {
-    public Checks() {
+public class Checks
+{
+    public Checks()
+    {
 
     }
 
-    // need to write a check that is an integer for initial conditions and boundary
-    // conditions //
-
-    // do we want below to give an option of changing grid or changing bacteria //
+    // do we want below to give an option of changing grid or changing bacteria // 
     // do we want to give options for the other checks as well //
 
-    // method checks that initial bacteria is not greater than the number of blocks
-    // in the environment
-    public int checkIBacteria(int iBacteria, int yBlocks, int xBlocks) {
+    // method checks that initial bacteria is not greater than the number of blocks in the environment
+    public int checkIBacteria(int iBacteria, int yBlocks, int xBlocks)
+    {
         Scanner input = new Scanner(System.in);
-        while (iBacteria > yBlocks * xBlocks) {
+        while (iBacteria > yBlocks*xBlocks)
+        {
             System.out.println("Your environment (in number of blocks) is not large enough for that many bacteria.");
             System.out.println("Please reenter starting bacteria:");
             iBacteria = input.nextInt();
@@ -27,9 +27,11 @@ public class Checks {
     }
 
     // method checks that maximum bacteria is greater than the initial bacteria
-    public int checkMBacteria(int mBacteria, int iBacteria) {
+    public int checkMBacteria(int mBacteria, int iBacteria)
+    {
         Scanner input = new Scanner(System.in);
-        while (iBacteria > mBacteria) {
+        while (iBacteria > mBacteria)
+        {
             System.out.println("You cannot start with more bacteria that the maximum.");
             System.out.println("Please reenter maximum bacteria:");
             mBacteria = input.nextInt();
@@ -37,11 +39,12 @@ public class Checks {
         return mBacteria;
     }
 
-    // method checks that maximum bacterial monomers is greater than the initial
-    // bacterial monomers
-    public int checkMBMonomers(int mBMonomers, int iBMonomers) {
+    // method checks that maximum bacterial monomers is greater than the initial bacterial monomers
+    public int checkMBMonomers(int mBMonomers, int iBMonomers)
+    {
         Scanner input = new Scanner(System.in);
-        while (iBMonomers > mBMonomers) {
+        while (iBMonomers > mBMonomers)
+        {
             System.out.println("You cannot start with more bacterial monomers than the maximum.");
             System.out.println("Please reenter maximum bacterial monomers:");
             mBMonomers = input.nextInt();
@@ -49,11 +52,12 @@ public class Checks {
         return mBMonomers;
     }
 
-    // method checks that maximum EPS monomers is greater than the initial EPS
-    // monomers
-    public int checkMEPSMonomers(int mEPSMonomers, int iEPSMonomers) {
+    // method checks that maximum EPS monomers is greater than the initial EPS monomers
+    public int checkMEPSMonomers(int mEPSMonomers, int iEPSMonomers)
+    {
         Scanner input = new Scanner(System.in);
-        while (iEPSMonomers > mEPSMonomers) {
+        while (iEPSMonomers > mEPSMonomers)
+        {
             System.out.println("You cannot start with more EPS monomers than the maximum.");
             System.out.println("Please reenter maximum EPS monomers:");
             mEPSMonomers = input.nextInt();
@@ -62,9 +66,11 @@ public class Checks {
     }
 
     // method checks that maximum nutrients is greater than the initial nutrients
-    public int checkMNutrients(int mNutrients, int iNutrients) {
+    public int checkMNutrients(int mNutrients, int iNutrients)
+    {
         Scanner input = new Scanner(System.in);
-        while (iNutrients > mNutrients) {
+        while (iNutrients > mNutrients)
+        {
             System.out.println("You cannot start with more nutrients than the maximum.");
             System.out.println("Please reenter maximum nutrients:");
             mNutrients = input.nextInt();
@@ -72,4 +78,40 @@ public class Checks {
         return mNutrients;
     }
 
+    public int checkInt(String value)
+    {
+        Scanner input = new Scanner(System.in);
+        boolean checking = true;
+        while (checking)
+            try
+            {
+                Integer.parseInt(value);
+                checking = false;
+            }
+            catch (Exception e)
+            {
+                System.out.println("Value must be an integer.");
+                System.out.println("Please enter your new value:");
+                value = input.nextLine();
+
+            }
+        return Integer.parseInt(value);
+    }
+    
+    public float checkFloat(String value)
+    {
+        Scanner input = new Scanner(System.in);
+        try
+        {
+            Float.parseFloat(value);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Value must be a float.");
+            System.out.println("Please enter your new value:");
+            value = input.nextLine();
+            checkInt(value);
+        }
+        return Float.parseFloat(value);
+    }
 }
