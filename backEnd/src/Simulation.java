@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+// Does this work
+
 // class for taking in conditions and parameters, creating and writing to an activity file 
 // and running the simulation
 public class Simulation
