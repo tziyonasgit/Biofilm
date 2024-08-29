@@ -1,7 +1,7 @@
-package BiofilmSimulation;
+package backEnd;
 
 // class for managing bacterium with methods to manipulate them (activities)
-public class Bacterium
+public class Bacterium implements Runnable
 {
     Block position;
     int bacteriumID;
@@ -55,7 +55,7 @@ public class Bacterium
     
     public void reproduce(Bacterium child)
     {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:" + child.getBID());
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + child.getBID());
     }
 
     // bacterium dies, do all bacterial monomers die as well //
@@ -92,6 +92,11 @@ public class Bacterium
     public void consume(BacterialMonomer bMonomer)
     {
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Consume:BacterialMonomer:" + bMonomer.getBMID());
+    }
+
+    public void run()
+    {
+        System.out.println(Thread.currentThread().getName() + ", executing run() method!");
     }
 
 }

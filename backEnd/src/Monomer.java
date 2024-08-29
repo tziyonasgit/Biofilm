@@ -1,4 +1,4 @@
-package BiofilmSimulation;
+package backEnd;
 
 // class for managing monomers
 public class Monomer 

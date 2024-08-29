@@ -1,4 +1,4 @@
-package BiofilmSimulation;
+package backEnd;
 
 // class for managing bacterial monomers, inherits from monomer class
 public class BacterialMonomer extends Monomer

@@ -1,4 +1,4 @@
-package BiofilmSimulation;
+package backEnd;
 
 // class for managing EPS monomers, inherits from monomer class
 public class EPS extends Monomer

@@ -1,4 +1,4 @@
-package BiofilmSimulation;
+package backEnd;
 
 import java.util.ArrayList;
 
@@ -147,6 +147,9 @@ public class Environment
                 bac.monomers[j] = bMonomer;
                 this.BMonomers.add(bMonomer);
             }
+
+            Thread b = new Thread(bac);
+            b.start();
 
             this.Bacteria.add(bac);
 

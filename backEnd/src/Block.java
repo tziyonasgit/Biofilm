@@ -1,4 +1,4 @@
-package BiofilmSimulation;
+package backEnd;
 
 // class for managing blocks
 public class Block {

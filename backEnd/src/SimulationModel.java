@@ -1,4 +1,4 @@
-package BiofilmSimulation;
+package backEnd;
 
 // class for managing simulation and creating the simulation environment and setting up its parts
 public class SimulationModel 
