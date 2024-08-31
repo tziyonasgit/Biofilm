@@ -13,13 +13,13 @@ public class Checks
     // do we want to give options for the other checks as well (to change max or initial) //
 
     // method checks that the number of blocks in the environment is between its bounds
-    public int[] checkBlocks(int yBlocks, int xBlocks)
+    public int[] checkBlocks(int xBlocks, int yBlocks)
     {
         int blocks[] = new int[2];
         Scanner input = new Scanner(System.in);
         while ((yBlocks*xBlocks <= 100) || (yBlocks*xBlocks > 2500))
         {
-            System.out.println("Your environment needs to have more than 10 blocks and no more than 2500.");
+            System.out.println("Your environment needs to have more than 100 blocks and no more than 2500.");
             System.out.println("Please reenter simulation width:");
             xBlocks = this.checkInt(input.nextLine());
             System.out.println("Please reenter simulation height:");
@@ -32,7 +32,7 @@ public class Checks
     }
 
     // method checks that initial bacteria is not greater than the number of blocks in the environment
-    public int checkIBacteria(int iBacteria, int yBlocks, int xBlocks)
+    public int checkIBacteria(int iBacteria, int xBlocks, int yBlocks)
     {
         Scanner input = new Scanner(System.in);
         while (iBacteria >= yBlocks*xBlocks)

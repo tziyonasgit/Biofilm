@@ -43,10 +43,12 @@ public class Simulation
         System.out.println("Enter simulation height (number of blocks):");
         conds[5] = checks.checkInt(input.nextLine());
 
-        int[] blocks = checks.checkBlocks(conds[5], conds[4]);
+        System.out.println(conds[4]*conds[5]);
+        
+        int[] blocks = checks.checkBlocks(conds[4], conds[5]);
         conds[4] = blocks[0];
         conds[5] = blocks[1];
-        conds[3] = checks.checkIBacteria(conds[3], conds[5], conds[4]);
+        conds[3] = checks.checkIBacteria(conds[3], conds[4], conds[5]);
         // calculates total bacterial monomers from free bacterial monomers and bacteria 
         // (7 bacterial monomers = 1 bacterium)
         totBacterialMonomers = conds[0] + conds[3]*7;

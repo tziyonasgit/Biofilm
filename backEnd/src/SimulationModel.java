@@ -28,49 +28,34 @@ public class SimulationModel
         this.yBlocks = yBlocks;
         this.xBlocks = xBlocks;
         this.simEnviron = createEnvironment(iNutrients, iFBMonomers, totBMonomers, iEPSMonomers, iBacteria, 
-                                                            yBlocks, xBlocks);
+                                                            xBlocks, yBlocks);
         // Simulation paramaters still to be added here //
     }
 
     // method for creating environment and its parts (blocks, monomers, nutrients, bacteria)
     // for now also used for hardcoded demoing of methods and functionality //
     public Environment createEnvironment(int nutrients, int FBMonomers, int totBMonomers, int EPSMonomers, int bacteria, 
-                                         int yBlocks, int xBlocks)
+                                         int xBlocks, int yBlocks)
     {
-        Environment environ = new Environment(nutrients, totBMonomers, FBMonomers, EPSMonomers, bacteria, yBlocks, xBlocks);
+        Environment environ = new Environment(nutrients, totBMonomers, FBMonomers, EPSMonomers, bacteria, xBlocks, yBlocks);
         
-        environ.createBlocks(yBlocks, xBlocks);
+        environ.createBlocks(xBlocks, yBlocks);
         
         System.out.println("");
         System.out.print("Bacteria: ");
-        environ.createBacteria(bacteria, yBlocks, xBlocks);
+        environ.createBacteria(bacteria, xBlocks, yBlocks);
 
         System.out.print("Free Bacterial Monomers: ");
-        environ.createMonomers(FBMonomers, "bacterial");
+        environ.createMonomers(FBMonomers, "bacterial", xBlocks, yBlocks);
 
         System.out.print("EPS Monomers: ");
-        environ.createMonomers(EPSMonomers, "EPS");
+        environ.createMonomers(EPSMonomers, "EPS", xBlocks, yBlocks);
 
         System.out.print("Nutrients: ");
-        environ.createNutrients(nutrients);
+        environ.createNutrients(nutrients, xBlocks, yBlocks);
 
         System.out.println("");
         System.out.println("Simulation fully set up. Simulation running...");
-
-        // below for hardcoded demo //
-        environ.BMonomers.get(0).bond(environ.BMonomers.get(1));
-        Bacterium tester = environ.Bacteria.get(0);
-        tester.tumble(tester.getBlock(), environ.environBlocks[1][1]);
-        tester.otherMove(tester.getBlock(), environ.environBlocks[1][1]);
-        tester.reproduce(environ.createBacterium());
-        tester.die();;
-        tester.collide(environ.Bacteria.get(1));;
-        tester.secrete(environ.createEPSMonomer(environ.environBlocks[1][1], "EPS", 'r', "covid"));;
-        tester.attach(tester.getBlock());
-        tester.eat(environ.nutrients.get(0));
-        tester.consume(environ.BMonomers.get(0));
-        // hardcoded demo ends //
-
         System.out.println("Simulation completed.");
 
         return environ;

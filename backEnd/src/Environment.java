@@ -1,6 +1,7 @@
 package backEnd;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 // class for managing the environment with methods for adding new parts to the environment
 public class Environment
@@ -18,7 +19,7 @@ public class Environment
     int nutrientID;
 
     // paramaterised constructor for environment
-    public Environment(int nutrients, int totBMonomers, int FBMonomers, int EPSMonomers, int bacteria, int yBlocks, int xBlocks)
+    public Environment(int nutrients, int totBMonomers, int FBMonomers, int EPSMonomers, int bacteria, int xBlocks, int yBlocks)
     {
         this.totNutrients = nutrients;
         this.totBMonomers = totBMonomers;
@@ -37,7 +38,7 @@ public class Environment
     }
 
     // method for creating individual blocks to create environment
-    public void createBlocks(int yBlocks, int xBlocks)
+    public void createBlocks(int xBlocks, int yBlocks)
     {
         // block array that is physical environment
         this.environBlocks = new Block[xBlocks][yBlocks];
@@ -59,10 +60,10 @@ public class Environment
     }
 
     // method for creating initial bacterial and EPS monomers
-    public void createMonomers(int monomers, String type)
+    public void createMonomers(int monomers, String type, int xBlocks, int yBlocks)
     {
-        int y = 0;
-        int x = 0;
+        Random rX = new Random();
+        Random rY = new Random();
 
         for (int i = 0; i < monomers; i++)
         {
@@ -70,26 +71,18 @@ public class Environment
             if (type.equals("bacterial"))
             {
                 // creates bacterial monomer and adds to linked list of bacterial monomers
-                BacterialMonomer BMonomer = new BacterialMonomer(environBlocks[x][y], this.bMonomerID, "bacteria", 'r', "covid");
+                BacterialMonomer BMonomer = new BacterialMonomer(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.bMonomerID, "bacteria", 'r', "covid");
                 this.BMonomers.add(BMonomer);
                 this.bMonomerID++;
             }
             else
             {
                 // creates EPS monomer and adds to linked list of EPS monomers
-                EPS eps = new EPS(environBlocks[x][y], this.EPSMonomerID, "bacteria", 'r', "covid");
+                EPS eps = new EPS(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.EPSMonomerID, "bacteria", 'r', "covid");
                 this.EPSMonomers.add(eps);
                 this.EPSMonomerID++;
             }
-
-            // enables looping through 2D array of blocks
-            y = y+1;
-            if (y == 5)
-            {
-                x = x+1;
-                y = 0;
-            }
-
+            
             // below will not be in final, just for demo //
             System.out.print(i);
             System.out.print(" ");
@@ -99,24 +92,18 @@ public class Environment
     }
 
     // method for creating initial nutrients
-    public void createNutrients(int nutrients)
+    public void createNutrients(int nutrients, int xBlocks, int yBlocks)
     {
-        int y = 0;
-        int x = 0;
+        Random rX = new Random();
+        Random rY = new Random();
 
         for (int i = 0; i < nutrients; i++)
         {
             // creates nutrient and adds to linked list of EPS monomers
             // hardcoded type for now //
-            Nutrient nutrient = new Nutrient(environBlocks[x][y], nutrientID, "food");
+            Nutrient nutrient = new Nutrient(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], nutrientID, "food");
             this.nutrients.add(nutrient);
 
-            y = y+1;
-            if (y == 5)
-            {
-                x = x+1;
-                y = 0;
-            }
             // below will not be in final, just for demo //
             System.out.print(i);
             System.out.print(" ");
@@ -126,24 +113,24 @@ public class Environment
     }
 
     // method for creating initial bacteria
-    public void createBacteria(int bacteria, int yBlocks, int xBlocks)
+    public void createBacteria(int bacteria, int xBlocks, int yBlocks)
     {
         BacterialMonomer[] monomers = new BacterialMonomer[20];
         BacterialMonomer bMonomer;
-        int y = 0;
-        int x = 0;        
+        Random rX = new Random();
+        Random rY = new Random();
         
         for (int i = 0; i < bacteria; i++)
         {
             // will be random block, random bacteria type and colour will be based on type //
             // hardcoded for demo //
-            Bacterium bac = new Bacterium(environBlocks[x][y], BacteriumID, 0, -1, 7,
+            Bacterium bac = new Bacterium(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], BacteriumID, 0, -1, 7,
                                           monomers, "covid");
 
             // creates bacterial monomers making up bacteria
             for (int j=0; j < 7; j++)
             {
-                bMonomer = createBMonomer(environBlocks[x][y], "bacterial", 'g', "covid");
+                bMonomer = createBMonomer(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], "bacterial", 'g', "covid");
                 bac.monomers[j] = bMonomer;
                 this.BMonomers.add(bMonomer);
             }
@@ -153,12 +140,6 @@ public class Environment
 
             this.Bacteria.add(bac);
 
-            y = y+1;
-            if (y == 5)
-            {
-                x = x+1;
-                y = 0;
-            }
             // below print statements won't be in final, just easier for demo
             System.out.print(i);
             System.out.print(" ");

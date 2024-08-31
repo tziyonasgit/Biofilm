@@ -9,19 +9,12 @@ public class Monomer
     char colour;
     // linked list of monomers it is bonded to //
 
-    // paramaterised constructor for nutrient
+    // paramaterised constructor for monomer
     public Monomer(Block position, int MonomerID, String type, char colour) {
         this.position = position;
         this.MonomerID = MonomerID;
         this.type = type;
         this.colour = colour;
-    }
-
-    // method for bonding 2 monomers together
-    public void bond(Monomer other){
-        // add other to linked list of bonds //
-        // below will change later, just testing //
-        Simulation.recActivities("BMonomer:" + this.MonomerID + ":Bond:BMonomer:" + other.MonomerID);
     }
 
     // method for setting position in the environment of the monomer
