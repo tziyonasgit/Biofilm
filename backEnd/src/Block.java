@@ -1,10 +1,14 @@
 package backEnd;
 
+import java.util.LinkedList;
+
 // class for managing blocks
 public class Block {
     int positionX, positionY;
     int EPSLevel = 0;
     boolean occupied = false;
+    LinkedList<Monomer> elements;
+    
 
     // paramaterised constructor for block
     public Block(int positionX, int positionY, int levelEPS, boolean occupied) {
@@ -12,6 +16,7 @@ public class Block {
         this.positionY = positionY;
         this.EPSLevel = levelEPS;
         this.occupied = occupied;
+        this.elements = new LinkedList<Monomer>();
 
     }
 
@@ -43,5 +48,20 @@ public class Block {
     // method for returning whether or not a block is occupied
     private boolean occupied(){
         return occupied;
+    }
+
+    public LinkedList<Monomer> getElements()
+    {
+        return this.elements;
+    }
+
+    public void addElement(Monomer m)
+    {
+        this.elements.add(m);
+    }
+
+    public void removeElement(Monomer m)
+    {
+        this.elements.remove(m);
     }
 }

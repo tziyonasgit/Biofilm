@@ -54,6 +54,13 @@ public class SimulationModel
         System.out.print("Nutrients: ");
         environ.createNutrients(nutrients, xBlocks, yBlocks);
 
+        System.out.println(environ.nutrients.get(0).position.elements);
+        System.out.println(environ.BMonomers.get(environ.BMonomers.size()-1).position.elements);
+        environ.Bacteria.get(0).eat(environ.nutrients.get(0));
+        environ.Bacteria.get(0).consume(environ.BMonomers.get(environ.BMonomers.size()-1));
+        System.out.println(environ.nutrients.get(0).position.elements);
+        System.out.println(environ.BMonomers.get(environ.BMonomers.size()-1).position.elements);
+
         System.out.println("");
         System.out.println("Simulation fully set up. Simulation running...");
         System.out.println("Simulation completed.");

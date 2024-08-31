@@ -86,12 +86,14 @@ public class Bacterium implements Runnable
     // decrease nutrient count, what does it do to bacterium //
     public void eat(Nutrient nutrient)
     {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Eat:Nutrient:" + nutrient.getNID());
+        nutrient.position.removeElement(nutrient);
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Eat:Nutrient:" + nutrient.getID());
     }
 
     public void consume(BacterialMonomer bMonomer)
     {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Consume:BacterialMonomer:" + bMonomer.getBMID());
+        bMonomer.position.removeElement(bMonomer);
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Consume:BacterialMonomer:" + bMonomer.getID());
     }
 
     public void run()

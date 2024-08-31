@@ -14,7 +14,6 @@ public class BacterialMonomer extends Monomer
 
     public void bond(Monomer other){
         // add other to linked list of bonds //
-        
         Simulation.recActivities("BMonomer:" + this.MonomerID + ":Bond:BMonomer:" + other.MonomerID);
     }
 }

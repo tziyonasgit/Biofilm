@@ -73,6 +73,7 @@ public class Environment
                 // creates bacterial monomer and adds to linked list of bacterial monomers
                 BacterialMonomer BMonomer = new BacterialMonomer(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.bMonomerID, "bacteria", 'r', "covid");
                 this.BMonomers.add(BMonomer);
+                BMonomer.position.addElement(BMonomer);
                 this.bMonomerID++;
             }
             else
@@ -101,8 +102,10 @@ public class Environment
         {
             // creates nutrient and adds to linked list of EPS monomers
             // hardcoded type for now //
-            Nutrient nutrient = new Nutrient(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], nutrientID, "food");
+            Nutrient nutrient = new Nutrient(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], nutrientID, "food", 'b' );
             this.nutrients.add(nutrient);
+            nutrient.position.addElement(nutrient);
+           
 
             // below will not be in final, just for demo //
             System.out.print(i);
@@ -130,7 +133,7 @@ public class Environment
             // creates bacterial monomers making up bacteria
             for (int j=0; j < 7; j++)
             {
-                bMonomer = createBMonomer(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], "bacterial", 'g', "covid");
+                bMonomer = createBMonomer(bac.position, "bacterial", 'g', "covid");
                 bac.monomers[j] = bMonomer;
                 this.BMonomers.add(bMonomer);
             }

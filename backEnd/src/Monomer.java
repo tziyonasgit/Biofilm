@@ -46,4 +46,9 @@ public class Monomer
     private char getColour (){
         return this.colour;
     }
+
+    public int getID()
+    {
+        return this.MonomerID;
+    }
 }
