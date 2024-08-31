@@ -1,8 +1,7 @@
-package backEnd;
+package backEnd.src;
 
 // class for managing monomers
-public class Monomer 
-{
+public class Monomer {
     Block position;
     int MonomerID;
     String type;
@@ -18,37 +17,36 @@ public class Monomer
     }
 
     // method for setting position in the environment of the monomer
-    private void setPositon (Block pos){
+    private void setPositon(Block pos) {
         this.position = pos;
     }
 
     // method for setting the type (bacterial, EPS) of monomer
-    private void setType (String type){
+    private void setType(String type) {
         this.type = type;
     }
 
     // method for setting colour of the monomer
-    private void setColour (char colour){
+    private void setColour(char colour) {
         this.colour = colour;
     }
 
-     // method for returning the position of the monomer in the environment
-    private Block getPosition (){
+    // method for returning the position of the monomer in the environment
+    private Block getPosition() {
         return this.position;
     }
 
     // method for returning the type of monomer
-    private String getType (){
+    private String getType() {
         return this.type;
     }
 
     // method for returning the colour of the monomer
-    private char getColour (){
+    private char getColour() {
         return this.colour;
     }
 
-    public int getID()
-    {
+    public int getID() {
         return this.MonomerID;
     }
 }

@@ -4,6 +4,7 @@ import matplotlib.patches as patches  # custom shapes
 from matplotlib.animation import FuncAnimation,  FFMpegWriter
 import numpy as np
 from Bacterium import *
+import time
 # embedding matplotlib in tkinter
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -60,12 +61,11 @@ class Motile(Animation):
         if frame == (fileLength - 1):
             self.ani.event_source.stop()
 
-    def processLine(self):
+    def processTimeStep(self):
        # reads each line of the text file and determines the next action in simulation
         global father
-        if self.currentLine < len(self.lines):
-            line = self.lines[self.currentLine]
-            self.currentLine += 1
+        print("starting")
+        for line in self.TimeStepLines:
 
             # extracts commands and objects from the line
             line = line.strip()
@@ -107,18 +107,30 @@ class Motile(Animation):
                     print(f"Unknown action for Cell {cellID}: {action}")
             else:
                 print(f"Malformed line: {line}")
+        # updates the animation frame in the plot
+        self.updateFrame(self.currentLine)
+        # self.root.after(500, self.nextStep)  # Delay the next step by 500 ms
 
-            # updates the animation frame in the plot
-            self.updateFrame(self.currentLine)
+    def nextStep(self):
+        if self.currentLine < len(self.TotalLines):
+            line = self.TotalLines[self.currentLine]
+            self.currentLine += 1
+            if line.strip() == "*":
+                self.processTimeStep()
+                self.TimeStepLines = []
+            else:
+                self.TimeStepLines.append(line)
 
-            # adds a delay of 500 ms before the next line is processed
-            self.root.after(500, self.processLine)
+        # Continue to the next step after a delay of 500 ms
+            self.root.after(50, self.nextStep)
 
 
 def startAnimation(root, filename, canvas, ax):
     # starts the animation by creating an object
     motileAni = Motile(root, canvas, ax, filename)
     with open(motileAni.filename, 'r') as file:
-        motileAni.lines = file.readlines()  # reads all the lines in the uploaded file
+        # reads all the lines in the uploaded file
+        motileAni.TotalLines = file.readlines()
 
-        motileAni.processLine()
+    motileAni.currentLine = 0
+    motileAni.nextStep()

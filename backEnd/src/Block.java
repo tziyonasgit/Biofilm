@@ -1,4 +1,4 @@
-package backEnd;
+package backEnd.src;
 
 import java.util.LinkedList;
 
@@ -8,7 +8,6 @@ public class Block {
     int EPSLevel = 0;
     boolean occupied = false;
     LinkedList<Monomer> elements;
-    
 
     // paramaterised constructor for block
     public Block(int positionX, int positionY, int levelEPS, boolean occupied) {
@@ -21,47 +20,44 @@ public class Block {
     }
 
     // method for setting EPS level of block
-    private void setEPS(int level){
+    private void setEPS(int level) {
         this.EPSLevel = level;
     }
 
     // method for setting whether or a not a block is occupied
-    private void setOccupied(boolean value){
+    private void setOccupied(boolean value) {
         this.occupied = value;
     }
 
     // method for returning EPS level of block
-    private int getEPSLevel(){
+    private int getEPSLevel() {
         return EPSLevel;
     }
 
     // method for returning x coordinate of block
-    public int getXPos(){
+    public int getXPos() {
         return positionX;
     }
 
     // method for returning y coordinate of block
-    public int getYPos(){
+    public int getYPos() {
         return positionY;
     }
 
     // method for returning whether or not a block is occupied
-    private boolean occupied(){
+    private boolean occupied() {
         return occupied;
     }
 
-    public LinkedList<Monomer> getElements()
-    {
+    public LinkedList<Monomer> getElements() {
         return this.elements;
     }
 
-    public void addElement(Monomer m)
-    {
+    public void addElement(Monomer m) {
         this.elements.add(m);
     }
 
-    public void removeElement(Monomer m)
-    {
+    public void removeElement(Monomer m) {
         this.elements.remove(m);
     }
 }
