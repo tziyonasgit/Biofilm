@@ -22,7 +22,8 @@ class Animation:
         self.fig = ax.figure  # figure on the axis
         self.canvas = canvas  # tkinter canvas that holds the plot
         self.filename = filename
-        self.lines = []  # initialize list of file lines
+        self.TotalLines = []  # initialize list of file lines
+        self.TimeStepLines = []
         self.frames = []  # initialize list of frames
         self.currentLine = 0
         self.direction = None

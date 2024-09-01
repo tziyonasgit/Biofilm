@@ -1,8 +1,7 @@
-package backEnd;
+package backEnd.src;
 
 // class for managing bacterium with methods to manipulate them (activities)
-public class Bacterium implements Runnable
-{
+public class Bacterium implements Runnable {
     Block position;
     int bacteriumID;
     String strain;
@@ -13,7 +12,7 @@ public class Bacterium implements Runnable
 
     // paramaterised constructor for bacterium
     public Bacterium(Block position, int ID, int age, int father, 
-                     int numMonomers, BacterialMonomer[] monomers, String strain)
+                     int numMonomers, BacterialMonomer[] monomers, String kind)
     {
         this.position = position;
         this.bacteriumID = ID; // count of IDs
@@ -25,80 +24,69 @@ public class Bacterium implements Runnable
     }
 
     // method for returning ID of bacterium
-    public int getBID()
-    {
+    public int getBID() {
         return this.bacteriumID;
     }
 
-    // method for returning block position of bacterium (where it is in the environment)
-    public Block getBlock()
-    {
+    // method for returning block position of bacterium (where it is in the
+    // environment)
+    public Block getBlock() {
         return this.position;
     }
 
     // need to figure out what the below methods do exactly //
-    // for demo just adds activity to ArrayList of activities so can be written to activity file //
-    public void tumble(Block iBlock, Block fBlock)
-    {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Tumble:(" 
-                                 + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
-                                 + "("+ fBlock.getXPos() + "," + fBlock.getYPos() + ")");
+    // for demo just adds activity to ArrayList of activities so can be written to
+    // activity file //
+    public void tumble(Block iBlock, Block fBlock) {
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Tumble:("
+                + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
+                + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
     }
 
-    public void otherMove(Block iBlock, Block fBlock)
-    {
+    public void otherMove(Block iBlock, Block fBlock) {
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":otherMove:("
-                                 + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
-                                 + "("+ fBlock.getXPos() + "," + fBlock.getYPos() + ")");
+                + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
+                + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
     }
 
-    
-    public void reproduce(Bacterium child)
-    {
+    public void reproduce(Bacterium child) {
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + child.getBID());
     }
 
     // bacterium dies, do all bacterial monomers die as well //
-    public void die()
-    {
+    public void die() {
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Die");
     }
 
     // hits another bacterium but doesn't stick together //
-    public void collide(Bacterium bac)
-    {
+    public void collide(Bacterium bac) {
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Collide:Bacterium:" + bac.getBID());
     }
 
     // increase EPS count, increase Block EPS //
     public void secrete(EPS eps)
     {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS:" + eps.getID());
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS:" + eps.getEPSID());
     }
 
     // fixed onto block by EPS //
-    public void attach(Block block)
-    {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Attach:(" 
-                                 + block.getXPos() + "," + block.getYPos() + ")");
+    public void attach(Block block) {
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Attach:("
+                + block.getXPos() + "," + block.getYPos() + ")");
     }
 
     // decrease nutrient count, what does it do to bacterium //
-    public void eat(Nutrient nutrient)
-    {
+    public void eat(Nutrient nutrient) {
         nutrient.position.removeElement(nutrient);
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Eat:Nutrient:" + nutrient.getID());
     }
 
     public void consume(BacterialMonomer bMonomer)
     {
-        // removes monomer from block's LinkedList of bacterial monomers and nutrients
         bMonomer.position.removeElement(bMonomer);
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Consume:BacterialMonomer:" + bMonomer.getID());
     }
 
-    // method for running threads, doesn't do anything yet except print out name of thread to show working
-    // will change still
     public void run()
     {
         System.out.println(Thread.currentThread().getName() + ", executing run() method!");
