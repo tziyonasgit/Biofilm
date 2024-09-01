@@ -9,12 +9,13 @@ from matplotlib.transforms import Affine2D
 
 
 class Bacterium:
-    def __init__(self, ax, id: int, age: int, strain: str = None, position:  np.ndarray = None, length: float = 2.0,
+    def __init__(self, ax, mode, id: int, age: int, strain: str = None, position:  np.ndarray = None, length: float = 2.0,
                  width: float = 0.5, colour: str = "green", father: Optional['Bacterium'] = None):
         self.ax = ax
         self.id = id  # unique identifier for bacterium
         self.age = 0  # initialise age to zero
         self.strain = "E.coli"
+        self.mode = mode
         # initial position
         if position is None:  # default initial position to the origin of the plot
             self.position = np.array([0.0, 0.0])
@@ -127,7 +128,8 @@ class Bacterium:
         #     self.position[0] += 1
 
         # Drop a dot at the current position before moving
-        self.drop_dot()
+        if self.mode == "PSL":
+            self.drop_dot()
 
         # Calculate the angle to the new position
         delta_x = coordinateFinal[0] - self.position[0]

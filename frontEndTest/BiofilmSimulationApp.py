@@ -24,6 +24,7 @@ class BiofilmSimulationApp(tk.Tk):
         self.filename = ""  # initialises selected filename
 
         self.createWidgets()  # creates the buttons the window
+        self.mode = ""
 
     # https://www.geeksforgeeks.org/how-to-center-a-window-on-the-screen-in-tkinter/
     def centerWindow(self):
@@ -42,24 +43,33 @@ class BiofilmSimulationApp(tk.Tk):
 
     def startSimulation(self):
         self.ax.clear()  # clears any existing plot
-        Animation.startAnimation(self, self.filename, self.canvas, self.ax)
+        Animation.startAnimation(
+            self, self.filename, self.canvas, self.ax, self.mode)
         SaveAnimation.startAnimation(self.filename)
 
     def startMotile(self):
+        self.mode = "Motile"
         self.ax.clear()  # clears any existing plot
-        Motile.startAnimation(self, self.filename, self.canvas, self.ax)
+        Motile.startAnimation(self, self.filename,
+                              self.canvas, self.ax, self.mode)
 
     def startNonMotile(self):
+        self.mode = "NonMotile"
         self.ax.clear()  # clears any existing plot
-        NonMotile.startAnimation(self, self.filename, self.canvas, self.ax)
+        NonMotile.startAnimation(
+            self, self.filename, self.canvas, self.ax, self.mode)
 
     def startPSLTrail(self):
+        self.mode = "PSL"
         self.ax.clear()  # clears any existing plot
-        PSLTrail.startAnimation(self, self.filename, self.canvas, self.ax)
+        PSLTrail.startAnimation(self, self.filename,
+                                self.canvas, self.ax, self.mode)
 
     def startEPSMatrix(self):
+        self.mode = "EPS"
         self.ax.clear()  # clears any existing plot
-        EPSMatrix.startAnimation(self, self.filename, self.canvas, self.ax)
+        EPSMatrix.startAnimation(
+            self, self.filename, self.canvas, self.ax, self.mode)
 
     def createWidgets(self):
         # creates and arranges buttons on the window GUI
