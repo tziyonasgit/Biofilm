@@ -50,16 +50,19 @@ public class Block {
         return occupied;
     }
 
+    // method for returning block's LinkedList of bacterial monomers and nutrients
     public LinkedList<Monomer> getElements()
     {
         return this.elements;
     }
 
+    // method for adding monomer to LinkedList of bacterial monomers and nutrients
     public void addElement(Monomer m)
     {
         this.elements.add(m);
     }
 
+    // method for removing monomer to LinkedList of bacterial monomers and nutrients
     public void removeElement(Monomer m)
     {
         this.elements.remove(m);

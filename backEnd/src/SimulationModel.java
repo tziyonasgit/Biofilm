@@ -54,6 +54,8 @@ public class SimulationModel
         System.out.print("Nutrients: ");
         environ.createNutrients(nutrients, xBlocks, yBlocks);
 
+        // testing adding and removing bacterial monomers and nutrients from block's LinkedList of 
+        // bacterial monomers and nutrients
         System.out.println(environ.nutrients.get(0).position.elements);
         System.out.println(environ.BMonomers.get(environ.BMonomers.size()-1).position.elements);
         environ.Bacteria.get(0).eat(environ.nutrients.get(0));

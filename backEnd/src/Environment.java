@@ -49,12 +49,12 @@ public class Environment
             for (int j = 0; j < yBlocks; j++)
             {
                 environBlocks[i][j] = new Block(i, j, 0, false);
-                // below will not be in final, just for demo //
+                // below will not be in final //
                 System.out.print(i);
                 System.out.print(j);
                 System.out.print(" ");
             }
-            // below will not be in final, just for demo //
+            // below will not be in final //
             System.out.println("");
         }
     }
@@ -62,6 +62,7 @@ public class Environment
     // method for creating initial bacterial and EPS monomers
     public void createMonomers(int monomers, String type, int xBlocks, int yBlocks)
     {
+        // random sequences for randomly assigning monomers a block in the environment
         Random rX = new Random();
         Random rY = new Random();
 
@@ -70,25 +71,28 @@ public class Environment
             // checks what type of monomer are creating
             if (type.equals("bacterial"))
             {
-                // creates bacterial monomer and adds to linked list of bacterial monomers
+                // creates bacterial monomer
                 BacterialMonomer BMonomer = new BacterialMonomer(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.bMonomerID, "bacteria", 'r', "covid");
+                // adds monomer to environment's ArrayList of monomers
                 this.BMonomers.add(BMonomer);
+                // adds monomer to its block's LinkedList of monomers and nutrients
                 BMonomer.position.addElement(BMonomer);
                 this.bMonomerID++;
             }
             else
             {
-                // creates EPS monomer and adds to linked list of EPS monomers
+                // creates EPS monomer
                 EPS eps = new EPS(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.EPSMonomerID, "bacteria", 'r', "covid");
+                // adds eps to environment's ArrayList of eps
                 this.EPSMonomers.add(eps);
                 this.EPSMonomerID++;
             }
             
-            // below will not be in final, just for demo //
+            // below will not be in final //
             System.out.print(i);
             System.out.print(" ");
         }
-        // below will not be in final, just for demo //
+        // below will not be in final //
         System.out.println("");        
     }
 
@@ -107,11 +111,11 @@ public class Environment
             nutrient.position.addElement(nutrient);
            
 
-            // below will not be in final, just for demo //
+            // below will not be in final //
             System.out.print(i);
             System.out.print(" ");
         }
-        // below will not be in final, just for demo //
+        // below will not be in final //
         System.out.println("");       
     }
 
@@ -125,7 +129,7 @@ public class Environment
         
         for (int i = 0; i < bacteria; i++)
         {
-            // will be random block, random bacteria type and colour will be based on type //
+            // will be random bacteria type and colour will be based on type //
             // hardcoded for demo //
             Bacterium bac = new Bacterium(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], BacteriumID, 0, -1, 7,
                                           monomers, "covid");

@@ -5,15 +5,15 @@ public class Bacterium implements Runnable
 {
     Block position;
     int bacteriumID;
+    String strain;
     int age;
     int father;
     int numMonomers;
     BacterialMonomer[] monomers;
-    String kind;
 
     // paramaterised constructor for bacterium
     public Bacterium(Block position, int ID, int age, int father, 
-                     int numMonomers, BacterialMonomer[] monomers, String kind)
+                     int numMonomers, BacterialMonomer[] monomers, String strain)
     {
         this.position = position;
         this.bacteriumID = ID; // count of IDs
@@ -21,7 +21,7 @@ public class Bacterium implements Runnable
         this.father = father;
         this.numMonomers = numMonomers;
         this.monomers = new BacterialMonomer[20];
-        this.kind = kind;
+        this.strain = strain;
     }
 
     // method for returning ID of bacterium
@@ -73,7 +73,7 @@ public class Bacterium implements Runnable
     // increase EPS count, increase Block EPS //
     public void secrete(EPS eps)
     {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS:" + eps.getEPSID());
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS:" + eps.getID());
     }
 
     // fixed onto block by EPS //
@@ -92,10 +92,13 @@ public class Bacterium implements Runnable
 
     public void consume(BacterialMonomer bMonomer)
     {
+        // removes monomer from block's LinkedList of bacterial monomers and nutrients
         bMonomer.position.removeElement(bMonomer);
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Consume:BacterialMonomer:" + bMonomer.getID());
     }
 
+    // method for running threads, doesn't do anything yet except print out name of thread to show working
+    // will change still
     public void run()
     {
         System.out.println(Thread.currentThread().getName() + ", executing run() method!");

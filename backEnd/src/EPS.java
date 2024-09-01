@@ -3,19 +3,9 @@ package backEnd;
 // class for managing EPS monomers, inherits from monomer class
 public class EPS extends Monomer
 {
-    String EPSType;
-
     // paramaterised constructor for EPS monomer
-    public EPS(Block position, int MonomerID, String type, char colour, String EPSType)
+    public EPS(Block position, int MonomerID)
     {
-        super(position, MonomerID, type, colour);
-        this.EPSType = EPSType;
+        super(position, MonomerID, "eps");
     }
-
-    // method for returning ID of EPS monomer
-    public int getEPSID()
-    {
-        return this.MonomerID;
-    }
-
 }

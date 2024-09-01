@@ -4,8 +4,8 @@ package backEnd;
 public class Nutrient extends Monomer
 {
     // paramaterised constructor for nutrient
-    public Nutrient(Block position, int nutrientID, String type, char colour)
+    public Nutrient(Block position, int nutrientID)
     {
-        super(position, nutrientID, type, colour);
+        super(position, nutrientID, "nutrient");
     }  
 }
