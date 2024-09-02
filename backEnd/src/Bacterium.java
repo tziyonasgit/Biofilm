@@ -1,5 +1,7 @@
 package backEnd.src;
 
+import extraOld.block;
+
 // class for managing bacterium with methods to manipulate them (activities)
 public class Bacterium implements Runnable {
     Block position;
@@ -92,4 +94,40 @@ public class Bacterium implements Runnable {
         System.out.println(Thread.currentThread().getName() + ", executing run() method!");
     }
 
-}
+    // method that moves a bacterium from a start to a goal block
+
+    public void move (Block start, Block end, Block [][] environBlocks){
+        while( !start.compareTo(end)){
+            if(start.getXPos()>end.getXPos()){
+                position = environBlocks[position.getXPos()-1][position.getYPos()]; //move one left
+
+                //add write to file
+
+            }
+            else if(start.getXPos()<end.getXPos()){
+                position = environBlocks[position.getXPos()+1][position.getYPos()]; //move one right
+
+                //add write to file
+                
+            }
+            
+            if(start.getYPos()<end.getYPos()){
+                position = environBlocks[position.getXPos()][position.getYPos()+1]; //move one up
+
+                //add write to file
+                
+            }
+
+            else if(start.getYPos()>end.getYPos()){
+                position = environBlocks[position.getXPos()][position.getYPos()-1]; //move one down
+
+                //add write to file
+                
+            }
+
+        }
+            
+        }
+        
+    }
+

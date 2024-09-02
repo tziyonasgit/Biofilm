@@ -20,7 +20,7 @@ class Motile(Animation):
     def spawn(self, cellID, bacterium):
         # creates a new bacterium at the centre of plot
         initial_position = np.array([0.0, 0.0])  # starts at the center
-        bacterium = Bacterium(self.ax, id=cellID, age=0, strain="E.coli",
+        bacterium = Bacterium(self.ax, self.mode, id=cellID, age=0, strain="E.coli",
                               position=initial_position, length=2.0, width=1.0, colour='green')
         self.bacteria.append(bacterium)  # adds bacterium to list bacteria
 
@@ -64,7 +64,6 @@ class Motile(Animation):
     def processTimeStep(self):
        # reads each line of the text file and determines the next action in simulation
         global father
-        print("starting")
         for line in self.TimeStepLines:
 
             # extracts commands and objects from the line
@@ -109,7 +108,6 @@ class Motile(Animation):
                 print(f"Malformed line: {line}")
         # updates the animation frame in the plot
         self.updateFrame(self.currentLine)
-        # self.root.after(500, self.nextStep)  # Delay the next step by 500 ms
 
     def nextStep(self):
         if self.currentLine < len(self.TotalLines):
@@ -125,9 +123,9 @@ class Motile(Animation):
             self.root.after(50, self.nextStep)
 
 
-def startAnimation(root, filename, canvas, ax):
+def startAnimation(root, filename, canvas, ax, mode):
     # starts the animation by creating an object
-    motileAni = Motile(root, canvas, ax, filename)
+    motileAni = Motile(root, canvas, ax, filename, mode)
     with open(motileAni.filename, 'r') as file:
         # reads all the lines in the uploaded file
         motileAni.TotalLines = file.readlines()
