@@ -14,7 +14,7 @@ public class Bacterium implements Runnable {
 
     // paramaterised constructor for bacterium
     public Bacterium(Block position, int ID, int age, int father, 
-                     int numMonomers, BacterialMonomer[] monomers, String kind)
+                     int numMonomers, BacterialMonomer[] monomers, String strain)
     {
         this.position = position;
         this.bacteriumID = ID; // count of IDs
@@ -68,7 +68,7 @@ public class Bacterium implements Runnable {
     // increase EPS count, increase Block EPS //
     public void secrete(EPS eps)
     {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS:" + eps.getEPSID());
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS:" + eps.getID());
     }
 
     // fixed onto block by EPS //
@@ -95,7 +95,6 @@ public class Bacterium implements Runnable {
     }
 
     // method that moves a bacterium from a start to a goal block
-
     public void move (Block start, Block end, Block [][] environBlocks){
         while( !start.compareTo(end)){
             if(start.getXPos()>end.getXPos()){
