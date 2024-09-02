@@ -14,7 +14,7 @@ father = None
 
 
 class Animation:
-    def __init__(self, root, canvas, ax, filename):
+    def __init__(self, root, canvas, ax, filename, mode):
         self.root = root  # Store the root Tkinter widget
         self.ax = ax  # axis on plot
         self.bacterium = None
@@ -22,10 +22,12 @@ class Animation:
         self.fig = ax.figure  # figure on the axis
         self.canvas = canvas  # tkinter canvas that holds the plot
         self.filename = filename
-        self.lines = []  # initialize list of file lines
+        self.TotalLines = []  # initialize list of file lines
+        self.TimeStepLines = []
         self.frames = []  # initialize list of frames
         self.currentLine = 0
         self.direction = None
+        self.mode = mode
         self.setup()
 
     def setup(self):
@@ -55,58 +57,73 @@ class Animation:
         if frame == (fileLength - 1):
             self.ani.event_source.stop()
 
-    def processLine(self):
-        # reads each line of textfile and determines the next action in simulation
+    def processTimeStep(self):
+       # reads each line of the text file and determines the next action in simulation
         global father
-        if self.currentLine < len(self.lines):
-            line = self.lines[self.currentLine]
-            self.currentLine += 1
+        for line in self.TimeStepLines:
 
-            # extracts commands and objects from line
+            # extracts commands and objects from the line
             line = line.strip()
-            parts = line.split('#')
+            parts = line.split(':')
 
-            if len(parts) >= 2:
-                cellID = int(parts[1])  # e.g. "1", "2"
-                action = parts[2]  # e.g. "spawn", "move", "split", "die"
+            # Ensure that parts contain enough elements
+            if len(parts) >= 3:
 
-            if action == "spawn":
-                print(f"Cell {cellID} spawns.")
-                if cellID == 1:
-                    self.spawn(cellID, None)
+                cellID = int(parts[1])  # e.g., "1", "2"
+                action = parts[2]  # e.g., "spawn", "move", "split", "die"
+
+                if action == "spawn":
+                    print(f"Cell {cellID} spawns.")
+                    if cellID == 1:
+                        self.spawn(cellID, None)
+                    else:
+                        self.spawn(cellID, father)
+                elif action == "move":
+                    if len(parts) > 4:
+                        initialPoint = parts[3]  # extracts the initial point
+                        finalPoint = parts[4]  # extracts the final point
+                        coordinateInitial = tuple(
+                            map(float, initialPoint.strip("()").split(",")))
+                        coordinateFinal = tuple(
+                            map(float, finalPoint.strip("()").split(",")))
+                        print(f"Cell {cellID} moves from {
+                            initialPoint} to {finalPoint}.")
+                        for bacterium in self.bacteria:
+                            if bacterium.id == cellID:
+                                bacterium.move(coordinateFinal)
+                                break
+                elif action == "split":
+                    print(f"Cell {cellID} splits.")
+                    self.split(cellID)
+                elif action == "die":
+                    print(f"Cell {cellID} dies.")
+                    self.die(cellID)
                 else:
-                    self.spawn(cellID, father)
-            elif action == "move":
-                if len(parts) > 3:
-                    direction = parts[3]  # extracts dircetion of movement
-                    print(f"Cell {cellID} moves {direction}.")
-                    for bacterium in self.bacteria:
-                        if bacterium.id == cellID:
-                            bacterium.move(direction)
-                            break
-            elif action == "split":
-                print(f"Cell {cellID} splits.")
-                for bacterium in self.bacteria:
-                    if bacterium.id == cellID:
-                        self.split(cellID)
-                        break
-            elif action == "die":
-                print(f"Cell {cellID} dies.")
-                self.die(cellID)
+                    print(f"Unknown action for Cell {cellID}: {action}")
             else:
-                print(f"Unknown action for Cell {cellID}: {action}")
+                print(f"Malformed line: {line}")
+        # updates the animation frame in the plot
+        self.updateFrame(self.currentLine)
 
-            # updates the animation frame in plot
-            self.updateFrame(self.currentLine)
+    def nextStep(self):
+        if self.currentLine < len(self.TotalLines):
+            line = self.TotalLines[self.currentLine]
+            self.currentLine += 1
+            if line.strip() == "*":
+                self.processTimeStep()
+                self.TimeStepLines = []
+            else:
+                self.TimeStepLines.append(line)
 
-            # adds a delay of 500 ms before next line is processed
-            self.root.after(500, self.processLine)
+        # Continue to the next step after a delay of 500 ms
+            self.root.after(50, self.nextStep)
 
 
-def startAnimation(root, filename, canvas, ax):
+def startAnimation(root, filename, canvas, ax, mode):
     # starts the animation by creating an object
-    animation = Animation(root, canvas, ax, filename)
+    animation = Animation(root, canvas, ax, filename, mode)
     with open(animation.filename, 'r') as file:
         animation.lines = file.readlines()  # reads all the lines in the uploaded file
 
-        animation.processLine()
+    animation.currentLine = 0
+    animation.nextStep()

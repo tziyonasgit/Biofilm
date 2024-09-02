@@ -17,5 +17,4 @@ public class EPS extends Monomer
     {
         return this.MonomerID;
     }
-
 }

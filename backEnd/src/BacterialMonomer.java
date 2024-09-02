@@ -6,15 +6,14 @@ public class BacterialMonomer extends Monomer
     public String bacteriaType;
 
     // paramaterised constructor for bacterial monomer
-    public BacterialMonomer(Block position, int MonomerID, String type, char colour, String bacteriaType)
+    public BacterialMonomer(Block position, int bMID, String type, char colour, String bacteriaType)
     {
-        super(position, MonomerID, type, colour);
+        super(position, bMID, type, colour);
         this.bacteriaType = bacteriaType;
     }
 
-    // method for returning ID of bacterial monomer
-    public int getBMID()
-    {
-        return this.MonomerID;
+    public void bond(Monomer other) {
+        // add other to linked list of bonds //
+        Simulation.recActivities("BMonomer:" + this.MonomerID + ":Bond:BMonomer:" + other.MonomerID);
     }
 }
