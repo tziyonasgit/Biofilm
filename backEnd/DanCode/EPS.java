@@ -6,7 +6,6 @@ public class EPS extends Monomer
     // paramaterised constructor for EPS monomer
     public EPS(Block position, int EPSID)
     {
-        super(position, MonomerID, "eps");
-        this.EPSType = EPSType;
+        super(position, EPSID, "eps");
     }
 }

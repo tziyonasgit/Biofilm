@@ -9,11 +9,10 @@ public class Monomer {
     // linked list of monomers it is bonded to //
 
     // paramaterised constructor for monomer
-    public Monomer(Block position, int MonomerID, String type, char colour) {
+    public Monomer(Block position, int MonomerID, String type) {
         this.position = position;
         this.MonomerID = MonomerID;
         this.type = type;
-        this.colour = colour;
     }
 
     // method for setting position in the environment of the monomer
