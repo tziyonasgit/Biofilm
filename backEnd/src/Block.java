@@ -1,4 +1,4 @@
-package backEnd;
+package backEnd.src;
 
 // class for managing blocks
 public class Block {
@@ -44,4 +44,16 @@ public class Block {
     private boolean occupied(){
         return occupied;
     }
+    // compare to method
+    public boolean compareTo (Block other){
+        if (this.getXPos()==other.getXPos() & this.getYPos()==other.getYPos()){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+
 }

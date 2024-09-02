@@ -1,4 +1,4 @@
-package backEnd;
+package backEnd.src;
 
 // class for managing EPS monomers, inherits from monomer class
 public class EPS extends Monomer

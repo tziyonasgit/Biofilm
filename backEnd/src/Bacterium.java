@@ -1,4 +1,4 @@
-package backEnd;
+package backEnd.src;
 
 // class for managing bacterium with methods to manipulate them (activities)
 public class Bacterium implements Runnable
@@ -99,4 +99,33 @@ public class Bacterium implements Runnable
         System.out.println(Thread.currentThread().getName() + ", executing run() method!");
     }
 
-}
+    private void moveRight(){
+        int x = position.getXPos();
+        int y = position.getYPos();
+        //environBlocks [x+1][y].setOccupied(true);
+    }
+
+    public void move (Block start, Block end){
+        while( !start.compareTo(end)){
+            if(start.getXPos()>end.getYPos()){
+                //move one left
+
+            }
+            else if(start.getXPos()<end.getXPos()){
+                //move one right
+            }
+            
+            if(start.getYPos()<end.getXPos()){
+                //move one up
+            }
+
+            else if(start.getYPos()>end.getYPos()){
+                //move one down
+            }
+
+        }
+            
+        }
+        
+    }
+
