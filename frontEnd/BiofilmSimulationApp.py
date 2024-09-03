@@ -1,11 +1,11 @@
 import tkinter as tk  # imports tkinter library for GUI
 from tkinter import *
 from tkinter import filedialog  # for uploading file
-import Animation
-import SaveAnimation
+import SaveAnimation as SaveAnimation
 # embeds matplotlib in tkinter GUI
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+import Animation
 
 
 class BiofilmSimulationApp(tk.Tk):
@@ -18,6 +18,7 @@ class BiofilmSimulationApp(tk.Tk):
         self.filename = ""  # initialises selected filename
 
         self.createWidgets()  # creates the buttons the window
+        self.mode = ""
 
     # https://www.geeksforgeeks.org/how-to-center-a-window-on-the-screen-in-tkinter/
     def centerWindow(self):
@@ -36,8 +37,34 @@ class BiofilmSimulationApp(tk.Tk):
 
     def startSimulation(self):
         self.ax.clear()  # clears any existing plot
-        Animation.startAnimation(self, self.filename, self.canvas, self.ax)
-        SaveAnimation.startAnimation(self.filename)
+        Animation.startAnimation(
+            self, self.filename, self.canvas, self.ax, self.mode)
+        SaveAnimation.startAnimation(self.filename, self.mode)
+
+    def startMotile(self):
+        self.mode = "Motile"
+        self.ax.clear()  # clears any existing plot
+        Animation.startAnimation(self, self.filename,
+                                 self.canvas, self.ax, self.mode)
+        SaveAnimation.startAnimation(self.filename, self.mode)
+
+    def startNonMotile(self):
+        self.mode = "NonMotile"
+        self.ax.clear()  # clears any existing plot
+        Animation.startAnimation(
+            self, self.filename, self.canvas, self.ax, self.mode)
+
+    def startPSLTrail(self):
+        self.mode = "PSL"
+        self.ax.clear()  # clears any existing plot
+        Animation.startAnimation(self, self.filename,
+                                 self.canvas, self.ax, self.mode)
+
+    def startEPSMatrix(self):
+        self.mode = "EPS"
+        self.ax.clear()  # clears any existing plot
+        Animation.startAnimation(
+            self, self.filename, self.canvas, self.ax, self.mode)
 
     def createWidgets(self):
         # creates and arranges buttons on the window GUI
@@ -59,9 +86,25 @@ class BiofilmSimulationApp(tk.Tk):
         self.canvas.draw()
         self.canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
 
-        startBtn = Button(self, text='Start simulation',
-                          command=self.startSimulation)
-        startBtn.pack(side='top')
+        # startBtn = Button(self, text='Start simulation',
+        #                   command=self.startSimulation)
+        # startBtn.pack(side='top')
+
+        nonMotileBtn = Button(self, text='Non-motile cells',
+                              command=self.startNonMotile)
+        nonMotileBtn.pack(side='top')
+
+        MotileBtn = Button(self, text='Motile cells',
+                           command=self.startMotile)
+        MotileBtn.pack(side='top')
+
+        PSLTrailBtn = Button(self, text='PSL trails',
+                             command=self.startPSLTrail)
+        PSLTrailBtn.pack(side='top')
+
+        EPSMatrixBtn = Button(self, text='EPS mstrix',
+                              command=self.startEPSMatrix)
+        EPSMatrixBtn.pack(side='top')
 
 
 def main():

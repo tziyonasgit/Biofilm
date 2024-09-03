@@ -1,112 +1,103 @@
-import matplotlib.pyplot as plt  # simple plots
-import matplotlib.patches as patches  # custom shapes
+import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, FFMpegWriter
 import numpy as np
 from Bacterium import *
 
 
 class SaveAnimation:
-    def __init__(self, filename):
+    def __init__(self, filename, mode):
         self.fig, self.ax = plt.subplots()
         self.filename = filename
-        self.bacteria = []  # intialise empty list of Bacterium
-        self.lines = []  # initialize list of file lines
+        self.bacteria = []  # Initialize empty list of Bacterium
+        self.lines = []  # Initialize list of file lines
         self.currentLine = 0
         self.direction = np.array([1.0, 0.0])
+        self.mode = mode
+        self.TimeStepLines = []  # Initialize TimeStepLines
         self.setup()
 
         self.writer = FFMpegWriter(
-            fps=3, metadata=dict(artist='Me'), bitrate=1800)
+            fps=20, metadata=dict(artist='Me'), bitrate=1800)
 
     def setup(self):
-        # ensures axis has equal aspect ratio and no lines and ticks
+        # Ensures axis has equal aspect ratio and no lines and ticks
         self.ax.set_aspect('equal')
         self.ax.set_xlim(-20, 20)
         self.ax.set_ylim(-20, 20)
         self.ax.set_xticks([])
         self.ax.set_yticks([])
-        self.ax.set_xticklabels([])
-        self.ax.set_yticklabels([])
 
-    def spawn(self, cellID, bacterium):
-        # creates a new bacterium at the centre of plot
-        initial_position = np.array([0.0, 0.0])  # starts at the center
-        bacterium = Bacterium(self.ax, id=cellID, age=0, strain="E.coli",
-                              position=initial_position, length=2.0, width=1.0, colour='green')
-        self.bacteria.append(bacterium)  # adds bacterium to list bacteria
+    def spawn(self, cellID, father=None):
+        initialPosition = np.array([0.0, 0.0]) if father is None else np.array(
+            [father.getPositionX() + 1, father.getPositionY() + 1])
+        bacterium = Bacterium(self.ax, self.mode, id=cellID, age=0, strain="E.coli", position=initialPosition,
+                              length=2.0, width=1.0, colour='green' if father is None else 'blue', father=father)
+        self.bacteria.append(bacterium)
+        bacterium.draw()
 
-        bacterium.draw()  # draws bacterium on the plot
-
-    def split(self, cellID):
-        # prepares the bacterium for splitting
-        # stores the parent bacterium as the father in the daughter (new) bacterium
-        global father
-        for bacterium in self.bacteria:
-            if bacterium.id == cellID:
-                father = bacterium
-                break
+    def split(self, cellID, childID):
+        father = next((b for b in self.bacteria if b.id == cellID), None)
+        if father:
+            self.spawn(childID, father)
 
     def die(self, cellID):
-        # removes bacterium from the plot and list of bacteria
-        for bacterium in self.bacteria:
-            if bacterium.id == cellID:
-                bacterium.removePatches()
-                self.bacteria.remove(bacterium)
-                break
+        bacterium = next((b for b in self.bacteria if b.id == cellID), None)
+        if bacterium:
+            bacterium.removePatches()
+            self.bacteria.remove(bacterium)
+
+    def processCommandsForFrame(self, frame):
+        """Process commands corresponding to the given frame."""
+        if self.currentLine < len(self.lines):
+            line = self.lines[self.currentLine].strip()
+            if line == "*":
+                self.processTimeStep()
+                self.currentLine += 1
+            else:
+                self.TimeStepLines.append(line)
+                self.currentLine += 1
+
+    def processTimeStep(self):
+        """Process all the commands stored in self.TimeStepLines."""
+        for line in self.TimeStepLines:
+            parts = line.split(':')
+            if len(parts) >= 3:
+                cellID = int(parts[1])
+                action = parts[2]
+                if action == "spawn":
+                    self.spawn(cellID)
+                elif action == "move":
+                    if len(parts) > 4:
+                        coordinateFinal = tuple(
+                            map(float, parts[4].strip("()").split(",")))
+                        bacterium = next(
+                            (b for b in self.bacteria if b.id == cellID), None)
+                        if bacterium:
+                            bacterium.move(coordinateFinal)
+                elif action == "split":
+                    childID = int(parts[4])
+                    self.split(cellID, childID)
+                elif action == "die":
+                    self.die(cellID)
+        self.TimeStepLines = []
 
     def updateFrame(self, frame):
-        # updates the canvas with new graphical elements
-        if self.currentLine >= len(self.lines):
-            return
-
-        # processes lines in file
-        line = self.lines[self.currentLine]
-        self.currentLine += 1
-
-        line = line.strip()
-        parts = line.split('#')
-
-        if len(parts) >= 2:
-            cellID = int(parts[1])
-            action = parts[2]
-
-        # determines the method to be called based on action stated in line
-        if action == "spawn":
-            if cellID == 1:
-                self.spawn(cellID, None)
-            else:
-                self.spawn(cellID, father)
-        elif action == "move":
-            if len(parts) > 3:
-                direction = parts[3]
-                for bacterium in self.bacteria:
-                    if bacterium.id == cellID:
-                        bacterium.move(direction)
-                        break
-        elif action == "split":
-            for bacterium in self.bacteria:
-                if bacterium.id == cellID:
-                    self.split(cellID)
-                    break
-        elif action == "die":
-            self.die(cellID)
-
-        # clears axis and redraws bacteria
         self.ax.clear()
         self.setup()
+
+        self.processCommandsForFrame(frame)
+
         for bacterium in self.bacteria:
             bacterium.draw()
 
         self.fig.canvas.draw()
 
 
-def startAnimation(filename):
-    # creates an instance of the animation
-    saveAnimation = SaveAnimation(filename)
+def startAnimation(filename, mode):
+    saveAnimation = SaveAnimation(filename, mode)
     with open(filename, 'r') as file:
         saveAnimation.lines = file.readlines()
 
-        ani = FuncAnimation(saveAnimation.fig, saveAnimation.updateFrame,
-                            frames=len(saveAnimation.lines), interval=7000, repeat=False)
-        # save the animation as an MP4
-        ani.save("biofilm_animation.mp4", writer=saveAnimation.writer)
+    ani = FuncAnimation(saveAnimation.fig, saveAnimation.updateFrame, frames=len(
+        saveAnimation.lines), interval=100, repeat=False)
+    ani.save("bio.mp4", writer=saveAnimation.writer)
