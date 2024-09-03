@@ -1,4 +1,4 @@
-package backEnd.src;
+package backEnd.DanCode;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -96,6 +96,14 @@ public class Simulation {
                 System.out.println("Your file has been created.");
             } else {
                 System.out.println("File already exists.");
+                try {
+                    FileWriter actWFile = new FileWriter(fileName);
+                    actWFile.write("");
+                }
+                catch (IOException e) {
+                    System.out.println("Something went wrong.");
+                    e.printStackTrace();
+                }
             }
         } catch (IOException e) {
             System.out.println("Something went wrong.");
@@ -106,11 +114,12 @@ public class Simulation {
     // method for writing activities ArrayList for simulation to the activity file
     public static void writeToFile() {
         try {
-            FileWriter actWFile = new FileWriter(fileName);
+            FileWriter actWFile = new FileWriter(fileName, true);
             for (int i = 0; i < activities.size(); i++) {
                 actWFile.write(activities.get(i) + "\n");
 
             }
+            actWFile.write("\n");
             actWFile.close();
         } catch (IOException e) {
             System.out.println("Something went wrong.");
@@ -136,9 +145,7 @@ public class Simulation {
         SimulationModel sim = new SimulationModel(conds[0], conds[1], conds[2], conds[3], totBacterialMonomers,
                 conds[4], conds[5], conds[6], conds[7],
                 conds[8], conds[9], conds[10]);
-
         // simulation runs to completion //
-
-        writeToFile();
+       
     }
 }

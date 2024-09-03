@@ -1,4 +1,4 @@
-package backEnd.src;
+package backEnd.DanCode;
 
 // class for managing biofilms
 public class Biofilm {

@@ -1,9 +1,9 @@
-package backEnd.src;
+package backEnd.DanCode;
 
 // class for managing simulation and creating the simulation environment and setting up its parts
 public class SimulationModel {
     int iNutrients, mNutrients, iFBMonomers, totBMonomers, mBMonomers, iEPSMonomers, mEPSMonomers,
-            iBacteria, mBacteria, duration, yBlocks, xBlocks;
+            iBacteria, mBacteria, duration, yBlocks, xBlocks, time;
     Environment simEnviron;
     // Simulation paramaters still to be added here //
 
@@ -42,7 +42,7 @@ public class SimulationModel {
 
         System.out.println("");
         System.out.print("Bacteria: ");
-        environ.createBacteria(bacteria, xBlocks, yBlocks);
+        environ.createBacteria(bacteria, xBlocks, yBlocks, environ);
 
         System.out.print("Free Bacterial Monomers: ");
         environ.createMonomers(FBMonomers, "bacterial", xBlocks, yBlocks);
@@ -52,6 +52,27 @@ public class SimulationModel {
 
         System.out.print("Nutrients: ");
         environ.createNutrients(nutrients, xBlocks, yBlocks);
+
+        // while (time < this.duration)
+        // {
+        //         environ.BMonomers.get(0).bond(environ.BMonomers.get(1));
+        //         Bacterium tester = environ.Bacteria.get(0);
+        //         tester.tumble(tester.getBlock(), environ.environBlocks[1][1]);
+        //         tester.otherMove(tester.getBlock(), environ.environBlocks[1][1]);
+        //         tester.reproduce(environ.createBacterium());
+        //         tester.die();;
+        //         tester.collide(environ.Bacteria.get(1));;
+        //         tester.secrete(environ.createEPSMonomer(environ.environBlocks[1][1]));;
+        //         tester.attach(tester.getBlock());
+        //         tester.eat(environ.nutrients.get(0));
+        //         tester.consume(environ.BMonomers.get(0));
+        //         Simulation.riteToFile();
+        //         Simulation.activities.clear();
+        //         time ++;
+        // }
+
+        Bacterium tester = environ.Bacteria.get(0);
+        tester.move(tester.getBlock(), environ.environBlocks[0][0], environ.environBlocks);
 
         // testing adding and removing bacterial monomers and nutrients from block's LinkedList of 
         // bacterial monomers and nutrients

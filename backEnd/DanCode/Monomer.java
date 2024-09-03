@@ -1,11 +1,10 @@
-package backEnd.src;
+package backEnd.DanCode;
 
 // class for managing monomers
 public class Monomer {
     Block position;
     int MonomerID;
     String type;
-    char colour;
     // linked list of monomers it is bonded to //
 
     // paramaterised constructor for monomer
@@ -25,11 +24,6 @@ public class Monomer {
         this.type = type;
     }
 
-    // method for setting colour of the monomer
-    private void setColour(char colour) {
-        this.colour = colour;
-    }
-
     // method for returning the position of the monomer in the environment
     private Block getPosition() {
         return this.position;
@@ -38,11 +32,6 @@ public class Monomer {
     // method for returning the type of monomer
     private String getType() {
         return this.type;
-    }
-
-    // method for returning the colour of the monomer
-    private char getColour() {
-        return this.colour;
     }
 
     public int getID() {

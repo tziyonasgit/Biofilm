@@ -1,4 +1,8 @@
-package backEnd.src;
+package backEnd.DanCode;
+
+import backEnd.src.Environment;
+import extraOld.block;
+import java.util.concurrent.CyclicBarrier;
 
 // class for managing bacterium with methods to manipulate them (activities)
 public class Bacterium implements Runnable {
@@ -9,10 +13,11 @@ public class Bacterium implements Runnable {
     int father;
     int numMonomers;
     BacterialMonomer[] monomers;
+    Environment environ;
 
     // paramaterised constructor for bacterium
     public Bacterium(Block position, int ID, int age, int father, 
-                     int numMonomers, BacterialMonomer[] monomers, String strain)
+                     int numMonomers, BacterialMonomer[] monomers, String strain, Environment environ)
     {
         this.position = position;
         this.bacteriumID = ID; // count of IDs
@@ -21,6 +26,7 @@ public class Bacterium implements Runnable {
         this.numMonomers = numMonomers;
         this.monomers = new BacterialMonomer[20];
         this.strain = strain;
+        this.environ = environ;
     }
 
     // method for returning ID of bacterium
@@ -38,6 +44,7 @@ public class Bacterium implements Runnable {
     // for demo just adds activity to ArrayList of activities so can be written to
     // activity file //
     public void tumble(Block iBlock, Block fBlock) {
+        System.out.println("g");
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Tumble:("
                 + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
                 + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
@@ -87,11 +94,39 @@ public class Bacterium implements Runnable {
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Consume:BacterialMonomer:" + bMonomer.getID());
     }
 
-    // method for running bacterium thread, doesn't do anything but print message showing running
-    // will change still
     public void run()
-    {
+    {   
+        // WHERE THREADS NEEDS TO WAIT ON BARRIER //
         System.out.println(Thread.currentThread().getName() + ", executing run() method!");
     }
 
-}
+    // method that moves a bacterium from a start to a goal block
+    public void move (Block start, Block end, Block [][] environBlocks){
+        
+        Block position = start;
+
+        while(!position.compareTo(end)){
+            if(start.getXPos() > end.getXPos()){
+                position = environBlocks[position.getXPos()-1][position.getYPos()]; //move one left
+            }
+            else if(start.getXPos() < end.getXPos()){
+                position = environBlocks[position.getXPos()+1][position.getYPos()]; //move one right   
+            }
+            
+            if(start.getYPos() < end.getYPos()){
+                position = environBlocks[position.getXPos()][position.getYPos()+1]; //move one up 
+            }
+
+            else if(start.getYPos() > end.getYPos()){
+                position = environBlocks[position.getXPos()][position.getYPos()-1]; //move one down           
+            }
+
+            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Move:("
+                + start.getXPos() + "," + start.getYPos() + ")"
+                + "(" + position.getXPos() + "," + position.getYPos() + ")");
+        }
+            
+        }
+        
+    }
+

@@ -1,4 +1,4 @@
-package backEnd.src;
+package backEnd.DanCode;
 
 // class for managing nutrients
 public class Nutrient extends Monomer {

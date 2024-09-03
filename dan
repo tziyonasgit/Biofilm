@@ -1,0 +1,11 @@
+BMonomer:0:Bond:BMonomer:0
+Bacterium:0:Tumble:(12,0)(1,1)
+Bacterium:0:otherMove:(12,0)(1,1)
+Bacterium:0:Reproduce:Bacterium:11
+Bacterium:0:Die
+Bacterium:0:Collide:Bacterium:1
+Bacterium:0:Secrete:EPS:11
+Bacterium:0:Attach:(12,0)
+Bacterium:0:Eat:Nutrient:0
+Bacterium:0:Consume:BacterialMonomer:0
+

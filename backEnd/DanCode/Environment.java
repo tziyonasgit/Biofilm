@@ -1,5 +1,6 @@
-package backEnd.src;
+package backEnd.DanCode;
 
+import java.util.concurrent.CyclicBarrier;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -16,6 +17,8 @@ public class Environment {
     int bMonomerID;
     int EPSMonomerID;
     int nutrientID;
+    // BARRIER FOR THREADS TO WAIT ON //
+    public static CyclicBarrier initialise;
 
     // paramaterised constructor for environment
     public Environment(int nutrients, int totBMonomers, int FBMonomers, int EPSMonomers, int bacteria, int xBlocks,
@@ -34,6 +37,8 @@ public class Environment {
         this.bMonomerID = 0;
         this.EPSMonomerID = 0;
         this.nutrientID = 0;
+        // BARRIER FOR THREADS TO WAIT ON //
+        this.initialise = new CyclicBarrier(bacteria);
     }
 
     // method for creating individual blocks to create environment
@@ -75,7 +80,7 @@ public class Environment {
             else
             {
                 // creates EPS monomer and adds to linked list of EPS monomers
-                EPS eps = new EPS(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], EPSMonomerID);
+                EPS eps = new EPS(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.EPSMonomerID);
                 this.EPSMonomers.add(eps);
                 this.EPSMonomerID++;
             }
@@ -109,7 +114,7 @@ public class Environment {
     }
 
     // method for creating initial bacteria
-    public void createBacteria(int bacteria, int xBlocks, int yBlocks) {
+    public void createBacteria(int bacteria, int xBlocks, int yBlocks, Environment environ) {
         BacterialMonomer[] monomers = new BacterialMonomer[20];
         BacterialMonomer bMonomer;
         Random rX = new Random();
@@ -120,23 +125,16 @@ public class Environment {
             // will be random block, random bacteria type and colour will be based on type //
             // hardcoded for demo //
             Bacterium bac = new Bacterium(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], BacteriumID, 0, -1,
-                    7,
-                    monomers, "covid");
-
-            // ensures bacterium is placed in an unoccupied block
-            while (bac.position.occupied = true)
-            {
-                bac.position = environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)];
-            }
-            bac.position.occupied = true;
+                    7, monomers, "covid", environ);
 
             // creates bacterial monomers making up bacteria
             for (int j = 0; j < 7; j++) {
-                bMonomer = createBMonomer(bac.position);
+                bMonomer = createBMonomer(bac.position, "bacterial", 'g', "covid");
                 bac.monomers[j] = bMonomer;
                 this.BMonomers.add(bMonomer);
             }
 
+            // BELOW 2 LINES HERE ARE WHERE THREADS ARE CREATED AND RUN //
             Thread b = new Thread(bac);
             b.start();
 
@@ -149,12 +147,13 @@ public class Environment {
             this.BacteriumID++;
         }
         // below print statement won't be in final, just easier for demo
+        initialise.notifyAll();
         System.out.println("");
 
     }
 
     // method for creating singular bacterial monomer
-    public BacterialMonomer createBMonomer(Block position) {
+    public BacterialMonomer createBMonomer(Block position, String type, char colour, String bType) {
         BacterialMonomer bMonomer = new BacterialMonomer(position, this.bMonomerID);
         this.BMonomers.add(bMonomer);
         this.bMonomerID++;
@@ -170,16 +169,16 @@ public class Environment {
     }
 
     // method for creating singular bacterium
-    public Bacterium createBacterium() {
+    public Bacterium createBacterium(Environment environ) {
         BacterialMonomer[] monomers = new BacterialMonomer[20];
         BacterialMonomer bMonomer;
 
         // below hardcoded for the demo //
         Bacterium bacterium = new Bacterium(environBlocks[0][0], this.BacteriumID, 0, -1, 7,
-                monomers, "covid");
+                monomers, "covid", environ);
         for (int j = 0; j < 7; j++) {
             // below hardcoded for the demo //
-            bMonomer = createBMonomer(environBlocks[0][0]);
+            bMonomer = createBMonomer(environBlocks[0][0], "bacterial", 'g', "covid");
             bacterium.monomers[j] = bMonomer;
             this.BMonomers.add(bMonomer);
         }

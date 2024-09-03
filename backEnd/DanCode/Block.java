@@ -1,4 +1,4 @@
-package backEnd.src;
+package backEnd.DanCode;
 
 import java.util.LinkedList;
 
@@ -20,35 +20,36 @@ public class Block {
     }
 
     // method for setting EPS level of block
-    private void setEPS(int level) {
+    private void setEPS(int level){
         this.EPSLevel = level;
     }
 
     // method for setting whether or a not a block is occupied
-    private void setOccupied(boolean value) {
+    private void setOccupied(boolean value){
         this.occupied = value;
     }
 
     // method for returning EPS level of block
-    private int getEPSLevel() {
+    private int getEPSLevel(){
         return EPSLevel;
     }
 
     // method for returning x coordinate of block
-    public int getXPos() {
+    public int getXPos(){
         return positionX;
     }
 
     // method for returning y coordinate of block
-    public int getYPos() {
+    public int getYPos(){
         return positionY;
     }
 
     // method for returning whether or not a block is occupied
-    private boolean occupied() {
+    private boolean occupied(){
         return occupied;
     }
 
+    // method for retunring LinkedList of bacterial monomers and nutrients for blocl
     public LinkedList<Monomer> getElements()
     {
         return this.elements;
@@ -64,5 +65,15 @@ public class Block {
     public void removeElement(Monomer m)
     {
         this.elements.remove(m);
+    }
+
+    // compare to method
+    public boolean compareTo (Block other){
+        if (this.getXPos()==other.getXPos() & this.getYPos()==other.getYPos()){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }

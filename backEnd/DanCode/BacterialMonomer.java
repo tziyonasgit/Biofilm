@@ -1,4 +1,4 @@
-package backEnd.src;
+package backEnd.DanCode;
 
 // class for managing bacterial monomers, inherits from monomer class
 public class BacterialMonomer extends Monomer

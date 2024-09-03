@@ -1,11 +1,11 @@
-package backEnd.src;
+package backEnd.DanCode;
 
 // class for managing EPS monomers, inherits from monomer class
 public class EPS extends Monomer
 {
     // paramaterised constructor for EPS monomer
-    public EPS(Block position, int EPSID)
+    public EPS(Block position, int MonomerID)
     {
-        super(position, EPSID, "eps");
+        super(position, MonomerID, "eps");
     }
 }
