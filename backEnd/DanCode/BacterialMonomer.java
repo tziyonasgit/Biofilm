@@ -7,7 +7,6 @@ public class BacterialMonomer extends Monomer
     public BacterialMonomer(Block position, int bMID)
     {
         super(position, bMID, "bacterial");
-        this.bacteriaType = bacteriaType;
     }
 
     public void bond(Monomer other) {

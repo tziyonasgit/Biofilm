@@ -2,7 +2,7 @@
 JAVAC = javac
 
 # Directories
-SRC_DIR = backEnd/src
+SRC_DIR = backEnd/DanCode
 BIN_DIR = backEnd/bin
 
 # Source files

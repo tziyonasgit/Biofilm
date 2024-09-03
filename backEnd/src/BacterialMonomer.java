@@ -3,13 +3,10 @@ package backEnd.src;
 // class for managing bacterial monomers, inherits from monomer class
 public class BacterialMonomer extends Monomer
 {
-    public String bacteriaType;
-
     // paramaterised constructor for bacterial monomer
-    public BacterialMonomer(Block position, int bMID, String type, char colour, String bacteriaType)
+    public BacterialMonomer(Block position, int bMID)
     {
-        super(position, bMID, type, colour);
-        this.bacteriaType = bacteriaType;
+        super(position, bMID, "bacterial");
     }
 
     public void bond(Monomer other) {

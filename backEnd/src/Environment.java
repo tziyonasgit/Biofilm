@@ -66,7 +66,7 @@ public class Environment {
             if (type.equals("bacterial"))
             {
                 // creates bacterial monomer and adds to linked list of bacterial monomers
-                BacterialMonomer BMonomer = new BacterialMonomer(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.bMonomerID, "bacteria", 'r', "covid");
+                BacterialMonomer BMonomer = new BacterialMonomer(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.bMonomerID);
                 this.BMonomers.add(BMonomer);
                 // adds monomer to its block's LinkedList of monomers and nutrients
                 BMonomer.position.addElement(BMonomer);
@@ -75,7 +75,7 @@ public class Environment {
             else
             {
                 // creates EPS monomer and adds to linked list of EPS monomers
-                EPS eps = new EPS(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.EPSMonomerID, "bacteria", 'r', "covid");
+                EPS eps = new EPS(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.EPSMonomerID);
                 this.EPSMonomers.add(eps);
                 this.EPSMonomerID++;
             }
@@ -96,8 +96,7 @@ public class Environment {
         for (int i = 0; i < nutrients; i++) {
             // creates nutrient and adds to linked list of EPS monomers
             // hardcoded type for now //
-            Nutrient nutrient = new Nutrient(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], nutrientID,
-                    "food", 'b');
+            Nutrient nutrient = new Nutrient(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], nutrientID);
             this.nutrients.add(nutrient);
             nutrient.position.addElement(nutrient);
 
@@ -149,15 +148,15 @@ public class Environment {
 
     // method for creating singular bacterial monomer
     public BacterialMonomer createBMonomer(Block position, String type, char colour, String bType) {
-        BacterialMonomer bMonomer = new BacterialMonomer(position, this.bMonomerID, type, colour, bType);
+        BacterialMonomer bMonomer = new BacterialMonomer(position, this.bMonomerID);
         this.BMonomers.add(bMonomer);
         this.bMonomerID++;
         return bMonomer;
     }
 
     // method for creating singular EPS monomer
-    public EPS createEPSMonomer(Block position, String type, char colour, String EPSType) {
-        EPS EPSMonomer = new EPS(position, this.EPSMonomerID, type, colour, EPSType);
+    public EPS createEPSMonomer(Block position) {
+        EPS EPSMonomer = new EPS(position, this.EPSMonomerID);
         this.EPSMonomers.add(EPSMonomer);
         this.EPSMonomerID++;
         return EPSMonomer;
