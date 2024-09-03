@@ -97,7 +97,7 @@ class Bacterium:
         self.ax.add_patch(self.leftEnd)
         self.ax.add_patch(self.rightEnd)
 
-    def drop_dot(self):
+    def dropDot(self):
         # drops a dot at the current position of the bacterium
         dot = patches.Circle(self.position.copy(),
                              radius=0.05, color='red', zorder=5)
@@ -129,7 +129,7 @@ class Bacterium:
 
         # Drop a dot at the current position before moving
         if self.mode == "PSL":
-            self.drop_dot()
+            self.dropDot()
 
         # Calculate the angle to the new position
         delta_x = coordinateFinal[0] - self.position[0]

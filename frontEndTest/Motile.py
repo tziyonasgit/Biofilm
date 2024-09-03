@@ -3,6 +3,7 @@ import matplotlib.patches as patches  # custom shapes
 # animations and writing them to file
 from matplotlib.animation import FuncAnimation,  FFMpegWriter
 import numpy as np
+from sqlalchemy import null
 from Bacterium import *
 import time
 # embedding matplotlib in tkinter
@@ -17,11 +18,12 @@ father = None
 
 
 class Motile(Animation):
-    def spawn(self, cellID, bacterium):
+    def spawn(self, cellID, bacterium, initialPosition):
         # creates a new bacterium at the centre of plot
-        initial_position = np.array([0.0, 0.0])  # starts at the center
+        if initialPosition == null:
+            initialPosition = np.array([0.0, 0.0])  # starts at the center
         bacterium = Bacterium(self.ax, self.mode, id=cellID, age=0, strain="E.coli",
-                              position=initial_position, length=2.0, width=1.0, colour='green')
+                              position=initialPosition, length=2.0, width=1.0, colour='green')
         self.bacteria.append(bacterium)  # adds bacterium to list bacteria
 
         bacterium.draw()  # draws bacterium on the plot
