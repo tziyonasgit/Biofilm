@@ -1,3 +1,0 @@
-Bacterium:0:Eat:Nutrient:0
-Bacterium:0:Consume:BacterialMonomer:225
-

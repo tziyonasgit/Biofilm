@@ -1,7 +1,9 @@
 package backEnd.DanCode;
 
-import backEnd.src.Environment;
+import backEnd.DanCode.Environment;
 import extraOld.block;
+
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 // class for managing bacterium with methods to manipulate them (activities)
@@ -14,6 +16,8 @@ public class Bacterium implements Runnable {
     int numMonomers;
     BacterialMonomer[] monomers;
     Environment environ;
+    public volatile String waiting = "hi";
+    public volatile int number = 0;
 
     // paramaterised constructor for bacterium
     public Bacterium(Block position, int ID, int age, int father, 
@@ -96,29 +100,42 @@ public class Bacterium implements Runnable {
 
     public void run()
     {   
+        try
+        {
+            synchronized(waiting)
+            {
+                environ.increase();
+                waiting.wait();
+            }
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
         // WHERE THREADS NEEDS TO WAIT ON BARRIER //
         System.out.println(Thread.currentThread().getName() + ", executing run() method!");
     }
 
     // method that moves a bacterium from a start to a goal block
-    public void move (Block start, Block end, Block [][] environBlocks){
+    public void move (Block start, Block end, Block[][] environBlocks){
         
         Block position = start;
 
         while(!position.compareTo(end)){
+            start = position;
             if(start.getXPos() > end.getXPos()){
-                position = environBlocks[position.getXPos()-1][position.getYPos()]; //move one left
+                position = environBlocks[start.getXPos()-1][start.getYPos()]; //move one left
             }
             else if(start.getXPos() < end.getXPos()){
-                position = environBlocks[position.getXPos()+1][position.getYPos()]; //move one right   
+                position = environBlocks[start.getXPos()+1][start.getYPos()]; //move one right   
             }
             
-            if(start.getYPos() < end.getYPos()){
-                position = environBlocks[position.getXPos()][position.getYPos()+1]; //move one up 
+            else if(start.getYPos() < end.getYPos()){
+                position = environBlocks[start.getXPos()][start.getYPos()+1]; //move one up 
             }
 
             else if(start.getYPos() > end.getYPos()){
-                position = environBlocks[position.getXPos()][position.getYPos()-1]; //move one down           
+                position = environBlocks[start.getXPos()][start.getYPos()-1]; //move one down           
             }
 
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Move:("
