@@ -13,16 +13,21 @@ public class Checks {
 
     // method checks that the number of blocks in the environment is between its
     // bounds
-    public int[] checkBlocks(int xBlocks, int yBlocks) {
+    public int[] checkBlocks(int xBlocks, int yBlocks) { // CHANGED
         int blocks[] = new int[2];
         Scanner input = new Scanner(System.in);
-        while ((yBlocks * xBlocks <= 100) || (yBlocks * xBlocks > 2500)) {
-            System.out.println("Your environment needs to have more than 100 blocks and no more than 2500.");
+        // Validate xBlocks
+        while (xBlocks < 100 || xBlocks > 2500) {
+            System.out.println("Width must be between 100 and 2500 blocks.");
             System.out.println("Please reenter simulation width:");
             xBlocks = this.checkInt(input.nextLine());
+        }
+
+        // Validate yBlocks
+        while (yBlocks < 100 || yBlocks > 2500) {
+            System.out.println("Height must be between 100 and 2500 blocks.");
             System.out.println("Please reenter simulation height:");
             yBlocks = this.checkInt(input.nextLine());
-
         }
         blocks[0] = xBlocks;
         blocks[1] = yBlocks;
