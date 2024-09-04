@@ -1,5 +1,5 @@
 package backEnd.DanCode;
-
+import backEnd.DanCode.Environment;
 // class for managing simulation and creating the simulation environment and setting up its parts
 public class SimulationModel {
     int iNutrients, mNutrients, iFBMonomers, totBMonomers, mBMonomers, iEPSMonomers, mEPSMonomers,
@@ -35,7 +35,7 @@ public class SimulationModel {
     // for now also used for hardcoded demoing of methods and functionality //
     public Environment createEnvironment(int nutrients, int FBMonomers, int totBMonomers, int EPSMonomers, int bacteria,
             int xBlocks, int yBlocks) {
-        Environment environ = new Environment(nutrients, totBMonomers, FBMonomers, EPSMonomers, bacteria, xBlocks,
+        backEnd.DanCode.Environment environ = new Environment(nutrients, totBMonomers, FBMonomers, EPSMonomers, bacteria, xBlocks,
                 yBlocks);
 
         environ.createBlocks(xBlocks, yBlocks);

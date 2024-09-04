@@ -3,13 +3,13 @@ JAVAC = javac
 
 # Directories
 SRC_DIR = backEnd/DanCode
-BIN_DIR = backEnd/bin
+BIN_DIR = backEnd/bin/DanCode
 
 # Source files
 SOURCES = $(shell find $(SRC_DIR) -name "*.java")
 
 # Main class with package name
-MAIN = backEnd/src/Simulation
+MAIN = backEnd/DanCode/Simulation
 
 # Compile all .java files to .class files in the bin directory
 all: $(SOURCES)

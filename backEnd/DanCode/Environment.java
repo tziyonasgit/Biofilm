@@ -1,5 +1,6 @@
 package backEnd.DanCode;
 
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.ArrayList;
 import java.util.Random;
@@ -18,7 +19,8 @@ public class Environment {
     int EPSMonomerID;
     int nutrientID;
     // BARRIER FOR THREADS TO WAIT ON //
-    public static CyclicBarrier initialise;
+    public CyclicBarrier initialise;
+    public int number = 0;
 
     // paramaterised constructor for environment
     public Environment(int nutrients, int totBMonomers, int FBMonomers, int EPSMonomers, int bacteria, int xBlocks,
@@ -146,10 +148,23 @@ public class Environment {
 
             this.BacteriumID++;
         }
+        while (!(number == bacteria))
+        {
+            
+        }
+        synchronized(Bacteria.get(0).waiting)
+            {
+                Bacteria.get(0).waiting.notifyAll();
+            }
+        
         // below print statement won't be in final, just easier for demo
-        initialise.notifyAll();
         System.out.println("");
 
+    }
+
+    public void increase()
+    {
+        this.number ++;
     }
 
     // method for creating singular bacterial monomer
