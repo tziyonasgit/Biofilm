@@ -1,7 +1,8 @@
 package backEnd.DanCode;
 
-//test
 import backEnd.DanCode.Environment;
+import java.util.Timer;
+import java.util.TimerTask;
 
 // class for managing simulation and creating the simulation environment and setting up its parts
 public class SimulationModel {
@@ -31,6 +32,8 @@ public class SimulationModel {
                 this.simEnviron = createEnvironment(iNutrients, iFBMonomers, totBMonomers, iEPSMonomers, iBacteria,
                                 xBlocks, yBlocks);
                 // Simulation paramaters still to be added here //
+
+                biofilmSimulation(simEnviron, duration);
         }
 
         // method for creating environment and its parts (blocks, monomers, nutrients,
@@ -71,10 +74,21 @@ public class SimulationModel {
                 // tester.attach(tester.getBlock());
                 // tester.eat(environ.nutrients.get(0));
                 // tester.consume(environ.BMonomers.get(0));
-                // Simulation.riteToFile();
+                // Simulation.writeToFile();
                 // Simulation.activities.clear();
                 // time ++;
                 // }
+
+                System.out.println("");
+                System.out.println("Simulation fully set up. Simulation running...");
+
+                return environ;
+        }
+
+        public void biofilmSimulation(Environment environ, int duration) {
+                // activities run here
+
+                long startTime = System.currentTimeMillis();
 
                 Bacterium tester = environ.Bacteria.get(0);
                 tester.move(tester.getBlock(), environ.environBlocks[0][0], environ.environBlocks);
@@ -89,11 +103,14 @@ public class SimulationModel {
                 System.out.println(environ.nutrients.get(0).position.elements);
                 System.out.println(environ.BMonomers.get(environ.BMonomers.size() - 1).position.elements);
 
-                System.out.println("");
-                System.out.println("Simulation fully set up. Simulation running...");
-                System.out.println("Simulation completed.");
+                while (System.currentTimeMillis() - startTime < duration * 1000) { // timer for duration
+                        for (int i = 0; i < environ.Bacteria.size(); i++) // loop through all bacteria to decide action
+                                                                          // and then
+                                // write to file
+                                System.out.println(environ.Bacteria.get(i) + " ");
+                }
 
-                return environ;
+                System.out.println("Simulation completed.");
         }
 
 }

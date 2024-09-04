@@ -42,7 +42,7 @@ public class Simulation {
         System.out.println("Enter simulation height (number of blocks):");
         conds[5] = checks.checkInt(input.nextLine());
 
-        System.out.println(conds[4] * conds[5]);
+        // System.out.println(conds[4] * conds[5]);
 
         int[] blocks = checks.checkBlocks(conds[4], conds[5]);
         conds[4] = blocks[0];
@@ -99,8 +99,7 @@ public class Simulation {
                 try {
                     FileWriter actWFile = new FileWriter(fileName);
                     actWFile.write("");
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     System.out.println("Something went wrong.");
                     e.printStackTrace();
                 }
@@ -146,6 +145,6 @@ public class Simulation {
                 conds[4], conds[5], conds[6], conds[7],
                 conds[8], conds[9], conds[10]);
         // simulation runs to completion //
-       
+
     }
 }

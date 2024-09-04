@@ -1,7 +1,6 @@
 package backEnd.DanCode;
 
 import backEnd.DanCode.Environment;
-import extraOld.block;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -20,9 +19,8 @@ public class Bacterium implements Runnable {
     public volatile int number = 0;
 
     // paramaterised constructor for bacterium
-    public Bacterium(Block position, int ID, int age, int father, 
-                     int numMonomers, BacterialMonomer[] monomers, String strain, Environment environ)
-    {
+    public Bacterium(Block position, int ID, int age, int father,
+            int numMonomers, BacterialMonomer[] monomers, String strain, Environment environ) {
         this.position = position;
         this.bacteriumID = ID; // count of IDs
         this.age = age;
@@ -54,11 +52,11 @@ public class Bacterium implements Runnable {
                 + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
     }
 
-    public void otherMove(Block iBlock, Block fBlock) {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":otherMove:("
-                + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
-                + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
-    }
+    // public void otherMove(Block iBlock, Block fBlock) {
+    // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Run:("
+    // + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
+    // + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
+    // }
 
     public void reproduce(Bacterium child) {
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + child.getBID());
@@ -75,16 +73,15 @@ public class Bacterium implements Runnable {
     }
 
     // increase EPS count, increase Block EPS //
-    public void secrete(EPS eps)
-    {
+    public void secrete(EPS eps) {
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS:" + eps.getID());
     }
 
     // fixed onto block by EPS //
-    public void attach(Block block) {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Attach:("
-                + block.getXPos() + "," + block.getYPos() + ")");
-    }
+    // public void attach(Block block) {
+    // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Attach:("
+    // + block.getXPos() + "," + block.getYPos() + ")");
+    // }
 
     // decrease nutrient count, what does it do to bacterium //
     public void eat(Nutrient nutrient) {
@@ -92,24 +89,18 @@ public class Bacterium implements Runnable {
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Eat:Nutrient:" + nutrient.getID());
     }
 
-    public void consume(BacterialMonomer bMonomer)
-    {
+    public void consume(BacterialMonomer bMonomer) {
         bMonomer.position.removeElement(bMonomer);
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Consume:BacterialMonomer:" + bMonomer.getID());
     }
 
-    public void run()
-    {   
-        try
-        {
-            synchronized(waiting)
-            {
+    public void run() {
+        try {
+            synchronized (waiting) {
                 environ.increase();
                 waiting.wait();
             }
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
         // WHERE THREADS NEEDS TO WAIT ON BARRIER //
@@ -117,33 +108,31 @@ public class Bacterium implements Runnable {
     }
 
     // method that moves a bacterium from a start to a goal block
-    public void move (Block start, Block end, Block[][] environBlocks){
-        
+    public void move(Block start, Block end, Block[][] environBlocks) {
+
         Block position = start;
 
-        while(!position.compareTo(end)){
+        while (!position.compareTo(end)) {
             start = position;
-            if(start.getXPos() > end.getXPos()){
-                position = environBlocks[start.getXPos()-1][start.getYPos()]; //move one left
-            }
-            else if(start.getXPos() < end.getXPos()){
-                position = environBlocks[start.getXPos()+1][start.getYPos()]; //move one right   
-            }
-            
-            else if(start.getYPos() < end.getYPos()){
-                position = environBlocks[start.getXPos()][start.getYPos()+1]; //move one up 
+            if (start.getXPos() > end.getXPos()) {
+                position = environBlocks[start.getXPos() - 1][start.getYPos()]; // move one left
+            } else if (start.getXPos() < end.getXPos()) {
+                position = environBlocks[start.getXPos() + 1][start.getYPos()]; // move one right
             }
 
-            else if(start.getYPos() > end.getYPos()){
-                position = environBlocks[start.getXPos()][start.getYPos()-1]; //move one down           
+            else if (start.getYPos() < end.getYPos()) {
+                position = environBlocks[start.getXPos()][start.getYPos() + 1]; // move one up
+            }
+
+            else if (start.getYPos() > end.getYPos()) {
+                position = environBlocks[start.getXPos()][start.getYPos() - 1]; // move one down
             }
 
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Move:("
-                + start.getXPos() + "," + start.getYPos() + ")"
-                + "(" + position.getXPos() + "," + position.getYPos() + ")");
+                    + start.getXPos() + "," + start.getYPos() + ")"
+                    + "(" + position.getXPos() + "," + position.getYPos() + ")");
         }
-            
-        }
-        
+
     }
 
+}
