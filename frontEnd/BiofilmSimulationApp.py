@@ -13,7 +13,7 @@ class BiofilmSimulationApp(tk.Tk):
         super().__init__()
         # setups main window
         self.title("Biofilm Simulation")
-        self.geometry('600x600')
+        self.geometry('1000x1000')
         self.centerWindow()
         self.filename = ""  # initialises selected filename
 

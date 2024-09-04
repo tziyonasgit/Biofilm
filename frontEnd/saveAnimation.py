@@ -22,8 +22,8 @@ class SaveAnimation:
     def setup(self):
         # Ensures axis has equal aspect ratio and no lines and ticks
         self.ax.set_aspect('equal')
-        self.ax.set_xlim(-20, 20)
-        self.ax.set_ylim(-20, 20)
+        self.ax.set_xlim(0, 100)
+        self.ax.set_ylim(0, 100)
         self.ax.set_xticks([])
         self.ax.set_yticks([])
 
