@@ -56,36 +56,33 @@ public class Environment {
     }
 
     // method for creating initial bacterial and EPS monomers
-    public void createMonomers(int monomers, String type, int xBlocks, int yBlocks)
-    {
+    public void createMonomers(int monomers, String type, int xBlocks, int yBlocks) {
         Random rX = new Random();
         Random rY = new Random();
 
         for (int i = 0; i < monomers; i++) {
             // checks what type of monomer are creating
-            if (type.equals("bacterial"))
-            {
+            if (type.equals("bacterial")) {
                 // creates bacterial monomer and adds to linked list of bacterial monomers
-                BacterialMonomer BMonomer = new BacterialMonomer(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.bMonomerID);
+                BacterialMonomer BMonomer = new BacterialMonomer(
+                        environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.bMonomerID);
                 this.BMonomers.add(BMonomer);
                 // adds monomer to its block's LinkedList of monomers and nutrients
                 BMonomer.position.addElement(BMonomer);
                 this.bMonomerID++;
-            }
-            else
-            {
+            } else {
                 // creates EPS monomer and adds to linked list of EPS monomers
                 EPS eps = new EPS(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.EPSMonomerID);
                 this.EPSMonomers.add(eps);
                 this.EPSMonomerID++;
             }
-            
+
             // below will not be in final, just for demo //
             System.out.print(i);
             System.out.print(" ");
         }
         // below will not be in final, just for demo //
-        System.out.println("");        
+        System.out.println("");
     }
 
     // method for creating initial nutrients
@@ -105,7 +102,7 @@ public class Environment {
             System.out.print(" ");
         }
         // below will not be in final, just for demo //
-        System.out.println("");       
+        System.out.println("");
     }
 
     // method for creating initial bacteria
@@ -114,10 +111,10 @@ public class Environment {
         BacterialMonomer bMonomer;
         Random rX = new Random();
         Random rY = new Random();
-        
-        for (int i = 0; i < bacteria; i++)
-        {
-            // will be random block, random bacteria type and colour will be based on type //
+
+        for (int i = 0; i < bacteria; i++) {
+            // will be random block, random bacteria type and colour will be based on type
+            // //
             // hardcoded for demo //
             Bacterium bac = new Bacterium(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], BacteriumID, 0, -1,
                     7,
