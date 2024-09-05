@@ -1,5 +1,7 @@
 package backEnd.src;
 
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -16,6 +18,9 @@ public class Environment {
     int bMonomerID;
     int EPSMonomerID;
     int nutrientID;
+    // BARRIER FOR THREADS TO WAIT ON //
+    public CyclicBarrier initialise;
+    public int number = 0;
 
     // paramaterised constructor for environment
     public Environment(int nutrients, int totBMonomers, int FBMonomers, int EPSMonomers, int bacteria, int xBlocks,
@@ -34,6 +39,8 @@ public class Environment {
         this.bMonomerID = 0;
         this.EPSMonomerID = 0;
         this.nutrientID = 0;
+        // BARRIER FOR THREADS TO WAIT ON //
+        this.initialise = new CyclicBarrier(bacteria);
     }
 
     // method for creating individual blocks to create environment
@@ -106,7 +113,7 @@ public class Environment {
     }
 
     // method for creating initial bacteria
-    public void createBacteria(int bacteria, int xBlocks, int yBlocks) {
+    public void createBacteria(int bacteria, int xBlocks, int yBlocks, Environment environ) {
         BacterialMonomer[] monomers = new BacterialMonomer[20];
         BacterialMonomer bMonomer;
         Random rX = new Random();
@@ -117,8 +124,7 @@ public class Environment {
             // //
             // hardcoded for demo //
             Bacterium bac = new Bacterium(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], BacteriumID, 0, -1,
-                    7,
-                    monomers, "covid");
+                    7, monomers, "covid", environ);
 
             // creates bacterial monomers making up bacteria
             for (int j = 0; j < 7; j++) {
@@ -127,6 +133,7 @@ public class Environment {
                 this.BMonomers.add(bMonomer);
             }
 
+            // BELOW 2 LINES HERE ARE WHERE THREADS ARE CREATED AND RUN //
             Thread b = new Thread(bac);
             b.start();
 
@@ -138,9 +145,20 @@ public class Environment {
 
             this.BacteriumID++;
         }
+        while (!(number == bacteria)) {
+
+        }
+        synchronized (Bacteria.get(0).waiting) {
+            Bacteria.get(0).waiting.notifyAll();
+        }
+
         // below print statement won't be in final, just easier for demo
         System.out.println("");
 
+    }
+
+    public void increase() {
+        this.number++;
     }
 
     // method for creating singular bacterial monomer
@@ -160,13 +178,13 @@ public class Environment {
     }
 
     // method for creating singular bacterium
-    public Bacterium createBacterium() {
+    public Bacterium createBacterium(Environment environ) {
         BacterialMonomer[] monomers = new BacterialMonomer[20];
         BacterialMonomer bMonomer;
 
         // below hardcoded for the demo //
         Bacterium bacterium = new Bacterium(environBlocks[0][0], this.BacteriumID, 0, -1, 7,
-                monomers, "covid");
+                monomers, "covid", environ);
         for (int j = 0; j < 7; j++) {
             // below hardcoded for the demo //
             bMonomer = createBMonomer(environBlocks[0][0], "bacterial", 'g', "covid");

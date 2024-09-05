@@ -1,10 +1,16 @@
 package backEnd.src;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import backEnd.src.Environment;
+
 // class for managing simulation and creating the simulation environment and setting up its parts
 public class SimulationModel {
         int iNutrients, mNutrients, iFBMonomers, totBMonomers, mBMonomers, iEPSMonomers, mEPSMonomers,
                         iBacteria, mBacteria, duration, yBlocks, xBlocks;
         Environment simEnviron;
+        public volatile String run = "sync";
         // Simulation paramaters still to be added here //
 
         // paramaterised constructor for simulation model
@@ -27,7 +33,23 @@ public class SimulationModel {
                 this.xBlocks = xBlocks;
                 this.simEnviron = createEnvironment(iNutrients, iFBMonomers, totBMonomers, iEPSMonomers, iBacteria,
                                 xBlocks, yBlocks);
-                // Simulation paramaters still to be added here //
+        }
+        // Simulation paramaters still to be added here //
+
+        class Helper extends TimerTask {
+                public int i = 0;
+
+                public void run() {
+                        i++;
+                        Simulation.writeToFile();
+                        Simulation.activities.clear();
+                        if (i == duration) {
+                                synchronized (run) {
+                                        run.notifyAll();
+                                }
+                        }
+                }
+
         }
 
         // method for creating environment and its parts (blocks, monomers, nutrients,
@@ -36,24 +58,62 @@ public class SimulationModel {
         public Environment createEnvironment(int nutrients, int FBMonomers, int totBMonomers, int EPSMonomers,
                         int bacteria,
                         int xBlocks, int yBlocks) {
-                Environment environ = new Environment(nutrients, totBMonomers, FBMonomers, EPSMonomers, bacteria,
-                                xBlocks,
+                backEnd.src.Environment environ = new Environment(nutrients, totBMonomers, FBMonomers, EPSMonomers,
+                                bacteria, xBlocks,
                                 yBlocks);
 
                 environ.createBlocks(xBlocks, yBlocks);
 
                 System.out.println("");
                 System.out.print("Bacteria: ");
-                environ.createBacteria(bacteria, xBlocks, yBlocks);
+                environ.createBacteria(bacteria, xBlocks, yBlocks, environ);
 
                 System.out.print("Free Bacterial Monomers: ");
                 environ.createMonomers(FBMonomers, "bacterial", xBlocks, yBlocks);
 
+                System.out.print("Nutrients: ");
+                environ.createNutrients(nutrients, xBlocks, yBlocks);
+
+                Timer timer = new Timer();
+                TimerTask task = new Helper();
+                timer.schedule(task, 0, 5);
+
+                try {
+                        synchronized (run) {
+
+                                run.wait();
+                        }
+
+                        timer.cancel();
+                } catch (InterruptedException e) {
+                        e.printStackTrace();
+                }
                 System.out.print("EPS Monomers: ");
                 environ.createMonomers(EPSMonomers, "EPS", xBlocks, yBlocks);
 
                 System.out.print("Nutrients: ");
                 environ.createNutrients(nutrients, xBlocks, yBlocks);
+
+                // while (time < this.duration)
+                // {
+                // environ.BMonomers.get(0).bond(environ.BMonomers.get(1));
+                // Bacterium tester = environ.Bacteria.get(0);
+                // tester.tumble(tester.getBlock(), environ.environBlocks[1][1]);
+                // tester.otherMove(tester.getBlock(), environ.environBlocks[1][1]);
+                // tester.reproduce(environ.createBacterium());
+                // tester.die();;
+                // tester.collide(environ.Bacteria.get(1));;
+                // tester.secrete(environ.createEPSMonomer(environ.environBlocks[1][1]));;
+                // tester.attach(tester.getBlock());
+                // tester.eat(environ.nutrients.get(0));
+                // tester.consume(environ.BMonomers.get(0));
+                // Simulation.riteToFile();
+                // Simulation.activities.clear();
+                // time ++;
+                // }
+
+                Bacterium tester = environ.Bacteria.get(0);
+                tester.move(tester.getBlock(), environ.environBlocks[0][0], environ.environBlocks);
 
                 // testing adding and removing bacterial monomers and nutrients from block's
                 // LinkedList of

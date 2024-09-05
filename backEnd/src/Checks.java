@@ -13,7 +13,7 @@ public class Checks {
 
     // method checks that the number of blocks in the environment is between its
     // bounds
-    public int[] checkBlocks(int xBlocks, int yBlocks) { // CHANGED
+    public int[] checkBlocks(int xBlocks, int yBlocks) {
         int blocks[] = new int[2];
         Scanner input = new Scanner(System.in);
         // Validate xBlocks
