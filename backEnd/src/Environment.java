@@ -123,7 +123,7 @@ public class Environment {
             // will be random block, random bacteria type and colour will be based on type
             // //
             // hardcoded for demo //
-            Bacterium bac = new Bacterium(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], BacteriumID, 0, -1,
+            Bacterium bac = new Bacterium(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], BacteriumID, 0, null,
                     7, monomers, "covid", environ);
 
             // creates bacterial monomers making up bacteria
@@ -183,7 +183,7 @@ public class Environment {
         BacterialMonomer bMonomer;
 
         // below hardcoded for the demo //
-        Bacterium bacterium = new Bacterium(environBlocks[0][0], this.BacteriumID, 0, -1, 7,
+        Bacterium bacterium = new Bacterium(environBlocks[0][0], this.BacteriumID, 0, null, 7,
                 monomers, "covid", environ);
         for (int j = 0; j < 7; j++) {
             // below hardcoded for the demo //

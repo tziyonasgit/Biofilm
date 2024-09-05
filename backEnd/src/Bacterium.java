@@ -11,7 +11,7 @@ public class Bacterium implements Runnable {
     int bacteriumID;
     String strain;
     int age;
-    int father;
+    Bacterium father;
     int numMonomers;
     BacterialMonomer[] monomers;
     Environment environ;
@@ -19,7 +19,7 @@ public class Bacterium implements Runnable {
     public volatile int number = 0;
 
     // paramaterised constructor for bacterium
-    public Bacterium(Block position, int ID, int age, int father,
+    public Bacterium(Block position, int ID, int age, Bacterium father,
             int numMonomers, BacterialMonomer[] monomers, String strain, Environment environ) {
         this.position = position;
         this.bacteriumID = ID; // count of IDs
@@ -42,24 +42,28 @@ public class Bacterium implements Runnable {
         return this.position;
     }
 
-    // need to figure out what the below methods do exactly //
-    // for demo just adds activity to ArrayList of activities so can be written to
-    // activity file //
-    public void tumble(Block iBlock, Block fBlock) {
-        System.out.println("g");
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Tumble:("
-                + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
-                + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
+    public void setFather(Bacterium bac) {
+        father = bac;
     }
 
-    public void otherMove(Block iBlock, Block fBlock) {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":otherMove:("
-                + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
-                + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
+    public void tumble(Block iBlock, Block fBlock) {
+        // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Tumble:("
+        // + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
+        // + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
+        move(iBlock, fBlock, environ.environBlocks, "Tumble");
+    }
+
+    public void run(Block iBlock, Block fBlock) {
+        // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":otherMove:("
+        // + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
+        // + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
+        move(iBlock, fBlock, environ.environBlocks, "Run");
     }
 
     public void reproduce(Bacterium child) {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + child.getBID());
+        Bacterium childBac = environ.createBacterium(environ); // creates child bacterium
+        childBac.setFather(this); // sets child's father to bacterium that is reproducing
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + childBac.getBID());
     }
 
     // bacterium dies, do all bacterial monomers die as well //
@@ -109,7 +113,7 @@ public class Bacterium implements Runnable {
     }
 
     // method that moves a bacterium from a start to a goal block
-    public void move(Block start, Block end, Block[][] environBlocks) {
+    public void move(Block start, Block end, Block[][] environBlocks, String moveType) {
 
         Block position = start;
 
@@ -129,7 +133,7 @@ public class Bacterium implements Runnable {
                 position = environBlocks[start.getXPos()][start.getYPos() - 1]; // move one down
             }
 
-            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Move:("
+            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType + ":("
                     + start.getXPos() + "," + start.getYPos() + ")"
                     + "(" + position.getXPos() + "," + position.getYPos() + ")");
         }

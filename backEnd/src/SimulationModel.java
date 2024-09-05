@@ -113,7 +113,8 @@ public class SimulationModel {
                 // }
 
                 Bacterium tester = environ.Bacteria.get(0);
-                tester.move(tester.getBlock(), environ.environBlocks[0][0], environ.environBlocks);
+                tester.run(tester.getBlock(), environ.environBlocks[0][0]); // calls ether run or tumble motion which
+                                                                            // calls move method
 
                 // testing adding and removing bacterial monomers and nutrients from block's
                 // LinkedList of
