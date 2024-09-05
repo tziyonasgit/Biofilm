@@ -21,7 +21,7 @@ public class Simulation {
     static Checks checks = new Checks();
 
     // method for taking in initial and boundary conditions
-    public static int[] setConditions() {
+    public static int[] setConditions() { // CHANGED
         // initial and boundary conditions array for passing to main method
         int[] conds = new int[11];
         Scanner input = new Scanner(System.in);
@@ -44,7 +44,7 @@ public class Simulation {
         System.out.println("Enter simulation height (number of blocks):");
         conds[5] = checks.checkInt(input.nextLine());
 
-        System.out.println(conds[4] * conds[5]);
+        // System.out.println(conds[4] * conds[5]);
 
         int[] blocks = checks.checkBlocks(conds[4], conds[5]);
         conds[4] = blocks[0];
