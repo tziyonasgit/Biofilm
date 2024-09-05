@@ -68,7 +68,7 @@ public class Bacterium implements Runnable {
 
     // bacterium dies, do all bacterial monomers die as well //
     public void die() {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Die");
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Die");    
     }
 
     // hits another bacterium but doesn't stick together //

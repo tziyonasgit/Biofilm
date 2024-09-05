@@ -111,12 +111,12 @@ public class Simulation {
     }
 
     // method for writing activities ArrayList for simulation to the activity file
-    public static void writeToFile() {
+    public static void writeToFile(int timestep) {
         try {
             FileWriter actWFile = new FileWriter(fileName, true);
+            actWFile.write("Timestep: " + timestep + "\n");
             for (int i = 0; i < activities.size(); i++) {
                 actWFile.write(activities.get(i) + "\n");
-
             }
             actWFile.write("\n");
             actWFile.close();
@@ -127,8 +127,11 @@ public class Simulation {
     }
 
     // method for adding an simulation acitivity to ArrayList of activities
-    public static void recActivities(String activity) {
-        activities.add(activity);
+    public static synchronized void recActivities(String activity) {
+        synchronized (Simulation.activities)
+        {
+            activities.add(activity);
+        }
     }
 
     // method for running simulation

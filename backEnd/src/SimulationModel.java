@@ -41,8 +41,13 @@ public class SimulationModel {
 
                 public void run() {
                         i++;
-                        Simulation.writeToFile();
-                        Simulation.activities.clear();
+                        Simulation.writeToFile(i);
+                        
+                        synchronized (Simulation.activities)
+                        {
+                                Simulation.activities.clear();
+                        }
+
                         if (i == duration) {
                                 synchronized (run) {
                                         run.notifyAll();
@@ -71,6 +76,9 @@ public class SimulationModel {
                 System.out.print("Free Bacterial Monomers: ");
                 environ.createMonomers(FBMonomers, "bacterial", xBlocks, yBlocks);
 
+                System.out.print("EPS Monomers: ");
+                environ.createMonomers(EPSMonomers, "EPS", xBlocks, yBlocks);
+
                 System.out.print("Nutrients: ");
                 environ.createNutrients(nutrients, xBlocks, yBlocks);
 
@@ -80,19 +88,12 @@ public class SimulationModel {
 
                 try {
                         synchronized (run) {
-
                                 run.wait();
                         }
-
                         timer.cancel();
                 } catch (InterruptedException e) {
                         e.printStackTrace();
                 }
-                System.out.print("EPS Monomers: ");
-                environ.createMonomers(EPSMonomers, "EPS", xBlocks, yBlocks);
-
-                System.out.print("Nutrients: ");
-                environ.createNutrients(nutrients, xBlocks, yBlocks);
 
                 // while (time < this.duration)
                 // {
