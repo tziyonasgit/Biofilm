@@ -1,10 +1,15 @@
 package backEnd.DanCode;
+
 import backEnd.DanCode.Environment;
+import java.util.Timer;
+import java.util.TimerTask;
+
 // class for managing simulation and creating the simulation environment and setting up its parts
 public class SimulationModel {
     int iNutrients, mNutrients, iFBMonomers, totBMonomers, mBMonomers, iEPSMonomers, mEPSMonomers,
-            iBacteria, mBacteria, duration, yBlocks, xBlocks, time;
+            iBacteria, mBacteria, duration, yBlocks, xBlocks;
     Environment simEnviron;
+    public volatile String run = "sync";
     // Simulation paramaters still to be added here //
 
     // paramaterised constructor for simulation model
@@ -27,9 +32,28 @@ public class SimulationModel {
         this.xBlocks = xBlocks;
         this.simEnviron = createEnvironment(iNutrients, iFBMonomers, totBMonomers, iEPSMonomers, iBacteria,
                 xBlocks, yBlocks);
+
         // Simulation paramaters still to be added here //
     }
 
+        class Helper extends TimerTask
+        {
+                public int i = 0;
+                public void run()
+                {
+                        i++;
+                        Simulation.writeToFile();
+                        Simulation.activities.clear();
+                        if(i == duration)
+                        {
+                                synchronized(run)
+                                {
+                                        run.notifyAll();
+                                }
+                        }
+                }
+        }
+        
     // method for creating environment and its parts (blocks, monomers, nutrients,
     // bacteria)
     // for now also used for hardcoded demoing of methods and functionality //
@@ -52,24 +76,26 @@ public class SimulationModel {
 
         System.out.print("Nutrients: ");
         environ.createNutrients(nutrients, xBlocks, yBlocks);
+       
+        
+        Timer timer = new Timer();
+        TimerTask task = new Helper();
+        timer.schedule(task, 0, 5);
 
-        // while (time < this.duration)
-        // {
-        //         environ.BMonomers.get(0).bond(environ.BMonomers.get(1));
-        //         Bacterium tester = environ.Bacteria.get(0);
-        //         tester.tumble(tester.getBlock(), environ.environBlocks[1][1]);
-        //         tester.otherMove(tester.getBlock(), environ.environBlocks[1][1]);
-        //         tester.reproduce(environ.createBacterium());
-        //         tester.die();;
-        //         tester.collide(environ.Bacteria.get(1));;
-        //         tester.secrete(environ.createEPSMonomer(environ.environBlocks[1][1]));;
-        //         tester.attach(tester.getBlock());
-        //         tester.eat(environ.nutrients.get(0));
-        //         tester.consume(environ.BMonomers.get(0));
-        //         Simulation.riteToFile();
-        //         Simulation.activities.clear();
-        //         time ++;
-        // }
+        try
+        {
+                synchronized(run)
+                {
+                        
+                        run.wait();
+                }
+                
+                timer.cancel();
+        }
+        catch (InterruptedException e)
+        {
+                e.printStackTrace();
+        }
 
         Bacterium tester = environ.Bacteria.get(0);
         tester.move(tester.getBlock(), environ.environBlocks[0][0], environ.environBlocks);

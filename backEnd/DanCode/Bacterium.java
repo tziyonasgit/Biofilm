@@ -114,6 +114,7 @@ public class Bacterium implements Runnable {
         }
         // WHERE THREADS NEEDS TO WAIT ON BARRIER //
         System.out.println(Thread.currentThread().getName() + ", executing run() method!");
+        this.die();
     }
 
     // method that moves a bacterium from a start to a goal block
