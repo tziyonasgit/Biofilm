@@ -33,6 +33,8 @@ public class SimulationModel {
                 this.xBlocks = xBlocks;
                 this.simEnviron = createEnvironment(iNutrients, iFBMonomers, totBMonomers, iEPSMonomers, iBacteria,
                                 xBlocks, yBlocks);
+
+                biofilmSimulation(simEnviron);
         }
         // Simulation paramaters still to be added here //
 
@@ -42,9 +44,8 @@ public class SimulationModel {
                 public void run() {
                         i++;
                         Simulation.writeToFile(i);
-                        
-                        synchronized (Simulation.activities)
-                        {
+
+                        synchronized (Simulation.activities) {
                                 Simulation.activities.clear();
                         }
 
@@ -113,6 +114,14 @@ public class SimulationModel {
                 // time ++;
                 // }
 
+                System.out.println("");
+                System.out.println("Simulation fully set up. Simulation running...");
+
+                return environ;
+        }
+
+        public void biofilmSimulation(Environment environ) {
+
                 Bacterium tester = environ.Bacteria.get(0);
                 tester.run(tester.getBlock(), environ.environBlocks[0][0]); // calls ether run or tumble motion which
                                                                             // calls move method
@@ -127,11 +136,8 @@ public class SimulationModel {
                 System.out.println(environ.nutrients.get(0).position.elements);
                 System.out.println(environ.BMonomers.get(environ.BMonomers.size() - 1).position.elements);
 
-                System.out.println("");
-                System.out.println("Simulation fully set up. Simulation running...");
                 System.out.println("Simulation completed.");
 
-                return environ;
         }
 
 }
