@@ -68,7 +68,7 @@ public class Bacterium implements Runnable {
 
     // bacterium dies, do all bacterial monomers die as well //
     public void die() {
-
+        environ.Bacteria.remove(this);
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Die");
     }
 
