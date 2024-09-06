@@ -146,7 +146,6 @@ public class Environment {
             this.BacteriumID++;
         }
         while (!(number == bacteria)) {
-
         }
         synchronized (Bacteria.get(0).waiting) {
             Bacteria.get(0).waiting.notifyAll();

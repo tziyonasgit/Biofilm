@@ -64,7 +64,7 @@ public class SimulationModel {
         public Environment createEnvironment(int nutrients, int FBMonomers, int totBMonomers, int EPSMonomers,
                         int bacteria,
                         int xBlocks, int yBlocks) {
-                backEnd.src.Environment environ = new Environment(nutrients, totBMonomers, FBMonomers, EPSMonomers,
+                Environment environ = new Environment(nutrients, totBMonomers, FBMonomers, EPSMonomers,
                                 bacteria, xBlocks,
                                 yBlocks);
 
@@ -123,18 +123,24 @@ public class SimulationModel {
         public void biofilmSimulation(Environment environ) {
 
                 Bacterium tester = environ.Bacteria.get(0);
-                tester.run(tester.getBlock(), environ.environBlocks[0][0]); // calls ether run or tumble motion which
-                                                                            // calls move method
+                tester.runMove(tester.getBlock(), environ.environBlocks[0][0]); // calls
+                // either
+                // run or tumble motion which
+                // calls move method
 
                 // testing adding and removing bacterial monomers and nutrients from block's
                 // LinkedList of
                 // bacterial monomers and nutrients
                 System.out.println(environ.nutrients.get(0).position.elements);
-                System.out.println(environ.BMonomers.get(environ.BMonomers.size() - 1).position.elements);
+                System.out.println(environ.BMonomers.get(environ.BMonomers.size() -
+                                1).position.elements);
+
                 environ.Bacteria.get(0).eat(environ.nutrients.get(0));
-                environ.Bacteria.get(0).consume(environ.BMonomers.get(environ.BMonomers.size() - 1));
+                environ.Bacteria.get(0).consume(environ.BMonomers.get(environ.BMonomers.size()
+                                - 1));
                 System.out.println(environ.nutrients.get(0).position.elements);
-                System.out.println(environ.BMonomers.get(environ.BMonomers.size() - 1).position.elements);
+                System.out.println(environ.BMonomers.get(environ.BMonomers.size() -
+                                1).position.elements);
 
                 System.out.println("Simulation completed.");
 

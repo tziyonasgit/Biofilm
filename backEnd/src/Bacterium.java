@@ -46,14 +46,14 @@ public class Bacterium implements Runnable {
         father = bac;
     }
 
-    public void tumble(Block iBlock, Block fBlock) {
+    public void tumbleMove(Block iBlock, Block fBlock) {
         // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Tumble:("
         // + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
         // + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
         move(iBlock, fBlock, environ.environBlocks, "Tumble");
     }
 
-    public void run(Block iBlock, Block fBlock) {
+    public void runMove(Block iBlock, Block fBlock) {
         // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":otherMove:("
         // + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
         // + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
@@ -110,7 +110,6 @@ public class Bacterium implements Runnable {
         }
         // WHERE THREADS NEEDS TO WAIT ON BARRIER //
         System.out.println(Thread.currentThread().getName() + ", executing run() method!");
-        this.die();
     }
 
     // method that moves a bacterium from a start to a goal block
