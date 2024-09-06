@@ -145,7 +145,8 @@ public class Environment {
 
             this.BacteriumID++;
         }
-        while (!(number == bacteria)) {
+
+        while (!(this.number == bacteria)) { // As long as they are not equal, the loop keeps running.
         }
         synchronized (Bacteria.get(0).waiting) {
             Bacteria.get(0).waiting.notifyAll();
