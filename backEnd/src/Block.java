@@ -24,8 +24,13 @@ public class Block {
         this.EPSLevel = level;
     }
 
+    // increase EPS count when secreted by bacterium
+    public void incEPS() {
+        this.EPSLevel += 1;
+    }
+
     // method for setting whether or a not a block is occupied
-    private void setOccupied(boolean value) {
+    public void setOccupied(boolean value) {
         this.occupied = value;
     }
 
@@ -39,9 +44,17 @@ public class Block {
         return positionX;
     }
 
+    public void setXPos(int x) {
+        positionX = x;
+    }
+
     // method for returning y coordinate of block
     public int getYPos() {
         return positionY;
+    }
+
+    public void setYPos(int y) {
+        positionY = y;
     }
 
     // method for returning whether or not a block is occupied

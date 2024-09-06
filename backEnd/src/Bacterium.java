@@ -1,9 +1,14 @@
 package backEnd.src;
 
+import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 import backEnd.src.Environment;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 // class for managing bacterium with methods to manipulate them (activities)
 public class Bacterium implements Runnable {
@@ -17,6 +22,10 @@ public class Bacterium implements Runnable {
     Environment environ;
     public volatile String waiting = "hi";
     public volatile int number = 0;
+    int energy;
+    boolean killThread;
+    LocalDateTime birthTime;
+    static final double doublingTime = 1.2; // Time in hours for bacterium to double in size
 
     // paramaterised constructor for bacterium
     public Bacterium(Block position, int ID, int age, Bacterium father,
@@ -29,6 +38,15 @@ public class Bacterium implements Runnable {
         this.monomers = new BacterialMonomer[20];
         this.strain = strain;
         this.environ = environ;
+        this.energy = 0;
+        this.killThread = false;
+        this.birthTime = LocalDateTime.now();
+    }
+
+    public void resetMonomers() {
+        BacterialMonomer[] tempArray = new BacterialMonomer[14];
+        System.arraycopy(this.monomers, 0, tempArray, 0, 7);
+        this.monomers = tempArray;
     }
 
     // method for returning ID of bacterium
@@ -63,22 +81,51 @@ public class Bacterium implements Runnable {
     public void reproduce(Bacterium child) {
         Bacterium childBac = environ.createBacterium(environ); // creates child bacterium
         childBac.setFather(this); // sets child's father to bacterium that is reproducing
+        this.resetMonomers(); // resets father bacterium to 7 monomers
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + childBac.getBID());
     }
 
     // bacterium dies, do all bacterial monomers die as well //
     public void die() {
         environ.Bacteria.remove(this);
+        position.setOccupied(false); // makes block free
+        this.killThread = true;
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Die");
     }
 
     // hits another bacterium but doesn't stick together //
     public void collide(Bacterium bac) {
+        Random random = new Random();
+        int randomBlock = random.nextInt(4); // Generates a number from 0 to 3
+        int newYcoord, newXcoord = 0;
+        Block destinationPosition = this.position;
+
+        switch (randomBlock) { // moves bacterium to a random adjacent block
+            case 0:
+                newXcoord = this.position.getXPos() - 1;
+                destinationPosition.setXPos(newXcoord);
+                break;
+            case 1:
+                newXcoord = this.position.getXPos() + 1;
+                destinationPosition.setXPos(newXcoord);
+                break;
+            case 2:
+                newYcoord = this.position.getYPos() - 1;
+                destinationPosition.setYPos(newYcoord);
+                break;
+            case 3:
+                newYcoord = this.position.getYPos() + 1;
+                destinationPosition.setYPos(newYcoord);
+                break;
+        }
+
+        move(this.position, destinationPosition, environ.environBlocks, "Run");
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Collide:Bacterium:" + bac.getBID());
     }
 
     // increase EPS count, increase Block EPS //
     public void secrete(EPS eps) {
+        position.incEPS();
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS:" + eps.getID());
     }
 
@@ -91,6 +138,7 @@ public class Bacterium implements Runnable {
     // decrease nutrient count, what does it do to bacterium //
     public void eat(Nutrient nutrient) {
         nutrient.position.removeElement(nutrient);
+        this.energy += 1; // increases energy level
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Eat:Nutrient:" + nutrient.getID());
     }
 
@@ -101,15 +149,28 @@ public class Bacterium implements Runnable {
 
     public void run() {
         try {
+
             synchronized (waiting) {
                 environ.increase();
                 waiting.wait();
             }
+            // WHERE THREADS NEEDS TO WAIT ON BARRIER //
+            System.out.println(Thread.currentThread().getName() + ", executing run() method!");
+
+            while (!killThread) {
+                grow();
+            }
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        // WHERE THREADS NEEDS TO WAIT ON BARRIER //
-        System.out.println(Thread.currentThread().getName() + ", executing run() method!");
+
+    }
+
+    public void grow() { // NEED TO WORK ON
+        Duration timeElapsed = Duration.between(birthTime, LocalDateTime.now());
+        double hoursSinceBirth = timeElapsed.toHours() + timeElapsed.toMinutes() / 60.0;
+        double growthTime = Math.min(hoursSinceBirth, 1.2 * doublingTime);
     }
 
     // method that moves a bacterium from a start to a goal block
@@ -119,6 +180,7 @@ public class Bacterium implements Runnable {
 
         while (!position.compareTo(end)) {
             start = position;
+            start.setOccupied(false);
             if (start.getXPos() > end.getXPos()) {
                 position = environBlocks[start.getXPos() - 1][start.getYPos()]; // move one left
             } else if (start.getXPos() < end.getXPos()) {
@@ -132,7 +194,8 @@ public class Bacterium implements Runnable {
             else if (start.getYPos() > end.getYPos()) {
                 position = environBlocks[start.getXPos()][start.getYPos() - 1]; // move one down
             }
-
+            this.energy -= 1; // decreases energy each movement
+            position.setOccupied(true);
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType + ":("
                     + start.getXPos() + "," + start.getYPos() + ")"
                     + "(" + position.getXPos() + "," + position.getYPos() + ")");
