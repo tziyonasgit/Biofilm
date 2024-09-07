@@ -2,6 +2,7 @@ package backEnd.src;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.CountDownLatch;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -19,7 +20,9 @@ public class Environment {
     int EPSMonomerID;
     int nutrientID;
     // BARRIER FOR THREADS TO WAIT ON //
-    public CyclicBarrier initialise;
+    //public volatile CyclicBarrier timestep;
+    public volatile CyclicBarrier initialise;
+    //public volatile CountDownLatch initialise;
     public int number = 0;
 
     // paramaterised constructor for environment
@@ -40,6 +43,7 @@ public class Environment {
         this.EPSMonomerID = 0;
         this.nutrientID = 0;
         // BARRIER FOR THREADS TO WAIT ON //
+        //this.timestep = new CyclicBarrier(bacteria);
         this.initialise = new CyclicBarrier(bacteria);
     }
 
@@ -124,7 +128,7 @@ public class Environment {
             // //
             // hardcoded for demo //
             Bacterium bac = new Bacterium(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], BacteriumID, 0, null,
-                    7, monomers, "covid", environ);
+                    monomers, "covid", environ);
 
             // creates bacterial monomers making up bacteria
             for (int j = 0; j < 7; j++) {
@@ -144,12 +148,6 @@ public class Environment {
             System.out.print(" ");
 
             this.BacteriumID++;
-        }
-
-        while (!(this.number == bacteria)) { // As long as they are not equal, the loop keeps running.
-        }
-        synchronized (Bacteria.get(0).waiting) {
-            Bacteria.get(0).waiting.notifyAll();
         }
 
         // below print statement won't be in final, just easier for demo
@@ -183,7 +181,7 @@ public class Environment {
         BacterialMonomer bMonomer;
 
         // below hardcoded for the demo //
-        Bacterium bacterium = new Bacterium(environBlocks[0][0], this.BacteriumID, 0, null, 7,
+        Bacterium bacterium = new Bacterium(environBlocks[0][0], this.BacteriumID, 0, null,
                 monomers, "covid", environ);
         for (int j = 0; j < 7; j++) {
             // below hardcoded for the demo //

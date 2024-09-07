@@ -127,11 +127,8 @@ public class Simulation {
     }
 
     // method for adding an simulation acitivity to ArrayList of activities
-    public static synchronized void recActivities(String activity) {
-        synchronized (Simulation.activities)
-        {
-            activities.add(activity);
-        }
+    public static void recActivities(String activity) {
+        activities.add(activity);
     }
 
     // method for running simulation

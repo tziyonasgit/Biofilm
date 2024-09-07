@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
+import java.util.ArrayList;
 
 import backEnd.src.Environment;
 
@@ -17,7 +18,6 @@ public class Bacterium implements Runnable {
     String strain;
     int age;
     Bacterium father;
-    int numMonomers;
     BacterialMonomer[] monomers;
     Environment environ;
     public volatile String waiting = "hi";
@@ -29,12 +29,11 @@ public class Bacterium implements Runnable {
 
     // paramaterised constructor for bacterium
     public Bacterium(Block position, int ID, int age, Bacterium father,
-            int numMonomers, BacterialMonomer[] monomers, String strain, Environment environ) {
+            BacterialMonomer[] monomers, String strain, Environment environ) {
         this.position = position;
         this.bacteriumID = ID; // count of IDs
         this.age = age;
         this.father = father;
-        this.numMonomers = numMonomers;
         this.monomers = new BacterialMonomer[20];
         this.strain = strain;
         this.environ = environ;
@@ -150,18 +149,17 @@ public class Bacterium implements Runnable {
     public void run() {
         try {
 
-            synchronized (waiting) {
-                environ.increase();
-                waiting.wait();
-            }
-            // WHERE THREADS NEEDS TO WAIT ON BARRIER //
+            // waits on CyclicBarrier initialise to ensure all bacteria start their main functioning
+            // simultaneously
+            environ.initialise.await();
+            
             System.out.println(Thread.currentThread().getName() + ", executing run() method!");
 
-            while (!killThread) {
-                grow();
-            }
+            // while (!killThread) {
+            //     grow();
+            // }
 
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
 

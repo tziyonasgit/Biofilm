@@ -38,17 +38,18 @@ public class SimulationModel {
         }
         // Simulation paramaters still to be added here //
 
+        // class for creating and running a task to be completed on each run of a timer
         class Helper extends TimerTask {
                 public int i = 0;
 
                 public void run() {
                         i++;
+                        // writes activities in ArrayList of activities to file and empties the ArrayList
                         Simulation.writeToFile(i);
+                        Simulation.activities.clear();
 
-                        synchronized (Simulation.activities) {
-                                Simulation.activities.clear();
-                        }
-
+                        // if task, and hence number of timesteps done, has been completed as many times as 
+                        // the given duration, timer is stopped (notified that can cancel)
                         if (i == duration) {
                                 synchronized (run) {
                                         run.notifyAll();
@@ -83,10 +84,14 @@ public class SimulationModel {
                 System.out.print("Nutrients: ");
                 environ.createNutrients(nutrients, xBlocks, yBlocks);
 
+                // creates new timer and a task to give to it
                 Timer timer = new Timer();
                 TimerTask task = new Helper();
+
+                // schedules timer to run and perform task every time period 
                 timer.schedule(task, 0, 5);
 
+                // runs timer over and over until notified to cancel and stop
                 try {
                         synchronized (run) {
                                 run.wait();
@@ -95,24 +100,6 @@ public class SimulationModel {
                 } catch (InterruptedException e) {
                         e.printStackTrace();
                 }
-
-                // while (time < this.duration)
-                // {
-                // environ.BMonomers.get(0).bond(environ.BMonomers.get(1));
-                // Bacterium tester = environ.Bacteria.get(0);
-                // tester.tumble(tester.getBlock(), environ.environBlocks[1][1]);
-                // tester.otherMove(tester.getBlock(), environ.environBlocks[1][1]);
-                // tester.reproduce(environ.createBacterium());
-                // tester.die();;
-                // tester.collide(environ.Bacteria.get(1));;
-                // tester.secrete(environ.createEPSMonomer(environ.environBlocks[1][1]));;
-                // tester.attach(tester.getBlock());
-                // tester.eat(environ.nutrients.get(0));
-                // tester.consume(environ.BMonomers.get(0));
-                // Simulation.riteToFile();
-                // Simulation.activities.clear();
-                // time ++;
-                // }
 
                 System.out.println("");
                 System.out.println("Simulation fully set up. Simulation running...");
