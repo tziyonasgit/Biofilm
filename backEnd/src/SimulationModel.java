@@ -44,9 +44,14 @@ public class SimulationModel {
 
                 public void run() {
                         i++;
-                        // writes activities in ArrayList of activities to file and empties the ArrayList
-                        Simulation.writeToFile(i);
-                        Simulation.activities.clear();
+                        // synchronizes on ArrayList of activities to ensure actions not lost if a bacterium
+                        // is busy adding an activity using the recActivities method in Simulation.java
+                        synchronized (Simulation.activities)
+                        {
+                                // writes activities in ArrayList of activities to file and empties the ArrayList
+                                Simulation.writeToFile(i);
+                                Simulation.activities.clear();
+                        }  
 
                         // if task, and hence number of timesteps done, has been completed as many times as 
                         // the given duration, timer is stopped (notified that can cancel)

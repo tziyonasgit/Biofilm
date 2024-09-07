@@ -128,7 +128,12 @@ public class Simulation {
 
     // method for adding an simulation acitivity to ArrayList of activities
     public static void recActivities(String activity) {
-        activities.add(activity);
+        // synchronizes on ArrayList of activities so that no action is lost if the contents of the 
+        // ArrayList is busy being written to the activity file and reset in each timestep in SimulationModel.java
+        synchronized (activities)
+        {
+            activities.add(activity);
+        }   
     }
 
     // method for running simulation

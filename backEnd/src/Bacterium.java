@@ -21,7 +21,7 @@ public class Bacterium implements Runnable {
     BacterialMonomer[] monomers;
     Environment environ;
     public volatile String waiting = "hi";
-    public volatile int number = 0;
+    //public volatile int number = 0;
     int energy;
     boolean killThread;
     LocalDateTime birthTime;
@@ -61,6 +61,12 @@ public class Bacterium implements Runnable {
 
     public void setFather(Bacterium bac) {
         father = bac;
+        // below will come out later (including comment), just easier testing synchronization here //
+        // synchronizes on waiting to ensure that only one bacterium calls recActivities in Simulation.java
+        synchronized (waiting)
+        {
+            Simulation.recActivities("Synchronization test by " + this.getBID());
+        }
     }
 
     public void tumbleMove(Block iBlock, Block fBlock) {
@@ -158,6 +164,9 @@ public class Bacterium implements Runnable {
             // while (!killThread) {
             //     grow();
             // }
+
+            // will not be in final, just for testing synchronization //
+            this.setFather(this);
 
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
