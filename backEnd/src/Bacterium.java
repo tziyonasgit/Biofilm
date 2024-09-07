@@ -3,13 +3,7 @@ package backEnd.src;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-import java.util.ArrayList;
-
-import backEnd.src.Environment;
-
 import java.time.Duration;
-import java.time.LocalDateTime;
 
 // class for managing bacterium with methods to manipulate them (activities)
 public class Bacterium implements Runnable {
@@ -83,8 +77,8 @@ public class Bacterium implements Runnable {
         move(iBlock, fBlock, environ.environBlocks, "Run");
     }
 
-    public void reproduce(Bacterium child) {
-        Bacterium childBac = environ.createBacterium(environ); // creates child bacterium
+    public void reproduce(Bacterium child, Block position) {
+        Bacterium childBac = environ.createBacterium(environ, position); // creates child bacterium
         childBac.setFather(this); // sets child's father to bacterium that is reproducing
         this.resetMonomers(); // resets father bacterium to 7 monomers
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + childBac.getBID());
@@ -142,13 +136,13 @@ public class Bacterium implements Runnable {
 
     // decrease nutrient count, what does it do to bacterium //
     public void eat(Nutrient nutrient) {
-        nutrient.position.removeElement(nutrient);
+        nutrient.position.removeNutrient(nutrient);
         this.energy += 1; // increases energy level
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Eat:Nutrient:" + nutrient.getID());
     }
 
     public void consume(BacterialMonomer bMonomer) {
-        bMonomer.position.removeElement(bMonomer);
+        bMonomer.position.removeBMonomer(bMonomer);
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Consume:BacterialMonomer:" + bMonomer.getID());
     }
 

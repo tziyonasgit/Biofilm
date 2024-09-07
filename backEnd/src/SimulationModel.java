@@ -3,31 +3,24 @@ package backEnd.src;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import backEnd.src.Environment;
-
 // class for managing simulation and creating the simulation environment and setting up its parts
 public class SimulationModel {
-        int iNutrients, mNutrients, iFBMonomers, totBMonomers, mBMonomers, iEPSMonomers, mEPSMonomers,
-                        iBacteria, mBacteria, duration, yBlocks, xBlocks;
+        int iNutrients, iFBMonomers, totBMonomers, iEPSMonomers,
+                        iBacteria, duration, xBlocks, yBlocks;
         Environment simEnviron;
         public volatile String run = "sync";
         // Simulation paramaters still to be added here //
 
         // paramaterised constructor for simulation model
         public SimulationModel(int iFBMonomers, int iEPSMonomers, int iNutrients, int iBacteria, int totBMonomers,
-                        int xBlocks, int yBlocks, int duration, int mBMonomers,
-                        int mEPSMonomers, int mNutrients, int mBacteria)
+                        int xBlocks, int yBlocks, int duration)
         // Simulation paramaters still to be added here //
         {
                 this.iNutrients = iNutrients;
-                this.mNutrients = mNutrients;
                 this.iFBMonomers = iFBMonomers;
                 this.totBMonomers = totBMonomers;
-                this.mBMonomers = mBMonomers;
                 this.iEPSMonomers = iEPSMonomers;
-                this.mEPSMonomers = mEPSMonomers;
                 this.iBacteria = iBacteria;
-                this.mBacteria = mBacteria;
                 this.duration = duration;
                 this.yBlocks = yBlocks;
                 this.xBlocks = xBlocks;
@@ -68,26 +61,24 @@ public class SimulationModel {
         // bacteria)
         // for now also used for hardcoded demoing of methods and functionality //
         public Environment createEnvironment(int nutrients, int FBMonomers, int totBMonomers, int EPSMonomers,
-                        int bacteria,
-                        int xBlocks, int yBlocks) {
+                        int bacteria, int xBlocks, int yBlocks) {
                 Environment environ = new Environment(nutrients, totBMonomers, FBMonomers, EPSMonomers,
-                                bacteria, xBlocks,
-                                yBlocks);
+                                bacteria, xBlocks, yBlocks);
 
                 environ.createBlocks(xBlocks, yBlocks);
 
-                System.out.println("");
-                System.out.print("Bacteria: ");
+                System.out.println("Creating bacteria...");
                 environ.createBacteria(bacteria, xBlocks, yBlocks, environ);
 
-                System.out.print("Free Bacterial Monomers: ");
+                System.out.println("Creating bacterial monomers...");
                 environ.createMonomers(FBMonomers, "bacterial", xBlocks, yBlocks);
 
-                System.out.print("EPS Monomers: ");
+                System.out.println("Creating EPS monomers...");
                 environ.createMonomers(EPSMonomers, "EPS", xBlocks, yBlocks);
 
-                System.out.print("Nutrients: ");
+                System.out.println("Creating nutrients...");
                 environ.createNutrients(nutrients, xBlocks, yBlocks);
+                System.out.println(" ");
 
                 // creates new timer and a task to give to it
                 Timer timer = new Timer();
@@ -123,16 +114,16 @@ public class SimulationModel {
                 // testing adding and removing bacterial monomers and nutrients from block's
                 // LinkedList of
                 // bacterial monomers and nutrients
-                System.out.println(environ.nutrients.get(0).position.elements);
+                System.out.println(environ.nutrients.get(0).position.nutrients);
                 System.out.println(environ.BMonomers.get(environ.BMonomers.size() -
-                                1).position.elements);
+                                1).position.bacMonomers);
 
                 environ.Bacteria.get(0).eat(environ.nutrients.get(0));
                 environ.Bacteria.get(0).consume(environ.BMonomers.get(environ.BMonomers.size()
                                 - 1));
-                System.out.println(environ.nutrients.get(0).position.elements);
+                System.out.println(environ.nutrients.get(0).position.nutrients);
                 System.out.println(environ.BMonomers.get(environ.BMonomers.size() -
-                                1).position.elements);
+                                1).position.bacMonomers);
 
                 System.out.println("Simulation completed.");
 

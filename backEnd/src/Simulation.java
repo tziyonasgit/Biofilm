@@ -21,7 +21,7 @@ public class Simulation {
     // method for taking in initial and boundary conditions
     public static int[] setConditions() {
         // initial and boundary conditions array for passing to main method
-        int[] conds = new int[11];
+        int[] conds = new int[7];
         Scanner input = new Scanner(System.in);
 
         System.out.println("Enter starting free bacterial monomers:");
@@ -42,8 +42,6 @@ public class Simulation {
         System.out.println("Enter simulation height (number of blocks):");
         conds[5] = checks.checkInt(input.nextLine());
 
-        System.out.println(conds[4] * conds[5]);
-
         int[] blocks = checks.checkBlocks(conds[4], conds[5]);
         conds[4] = blocks[0];
         conds[5] = blocks[1];
@@ -54,18 +52,6 @@ public class Simulation {
 
         System.out.println("Enter desired simulation duration (in seconds):");
         conds[6] = checks.checkInt(input.nextLine());
-
-        System.out.println("Enter maximum bacterial monomers:");
-        conds[7] = checks.checkMBMonomers(checks.checkInt(input.nextLine()), totBacterialMonomers);
-
-        System.out.println("Enter maximum EPS monomers:");
-        conds[8] = checks.checkMEPSMonomers(checks.checkInt(input.nextLine()), conds[1]);
-
-        System.out.println("Enter maximum nutrients:");
-        conds[9] = checks.checkMNutrients(checks.checkInt(input.nextLine()), conds[2]);
-
-        System.out.println("Enter maximum bacteria:");
-        conds[10] = checks.checkMBacteria(checks.checkInt(input.nextLine()), conds[3]);
 
         return conds;
     }
@@ -78,13 +64,11 @@ public class Simulation {
         // repeat below lines for each parameter (need decide on them still) //
         System.out.println("Parameter0 : Recommended Value : Enter desired value:");
         params[0] = checks.checkFloat(input.nextLine());
-
-        input.close();
         return params;
     }
 
     // method for creating activity file
-    public static void createFile() {
+    public static void createFile(int[] conds) {
         Scanner input = new Scanner(System.in);
         System.out.println("Enter desired name for activity file:");
         fileName = input.nextLine();
@@ -108,6 +92,22 @@ public class Simulation {
             System.out.println("Something went wrong.");
             e.printStackTrace();
         }
+
+        try {
+            FileWriter actWFile = new FileWriter(fileName);
+            actWFile.write("Starting bacterial monomers: " + conds[0]);
+            actWFile.write("Starting EPS monomers: " + conds[1]);
+            actWFile.write("Starting nutrients: " + conds[2]);
+            actWFile.write("Starting bacteria: " + conds[3]);
+            actWFile.write("Simulation width: " + conds[4]);
+            actWFile.write("Simulation height: " + conds[5]);
+            actWFile.write("Simulation duration: " + conds[6]);
+        } catch (IOException e) {
+            System.out.println("Something went wrong.");
+            e.printStackTrace();
+        }
+
+        input.close();
     }
 
     // method for writing activities ArrayList for simulation to the activity file
@@ -138,17 +138,17 @@ public class Simulation {
 
     // method for running simulation
     public static void main(String[] args) {
-        createFile();
-
         int[] conds = setConditions();
         // below doesn't do anything yet //
         float[] params = setParams();
 
+        // creates file if new and resets if already exists and writes simulation conditions to the file
+        createFile(conds);
+
         System.out.println();
         // creates simulation model
         SimulationModel sim = new SimulationModel(conds[0], conds[1], conds[2], conds[3], totBacterialMonomers,
-                conds[4], conds[5], conds[6], conds[7],
-                conds[8], conds[9], conds[10]);
+                conds[4], conds[5], conds[6]);
         // simulation runs to completion //
 
     }
