@@ -71,7 +71,7 @@ public class Simulation {
     public static void createFile(int[] conds) {
         Scanner input = new Scanner(System.in);
         System.out.println("Enter desired name for activity file:");
-        fileName = input.nextLine();
+        fileName = input.nextLine() + ".txt";
 
         // attempts to create and save file
         try {
@@ -83,6 +83,7 @@ public class Simulation {
                 try {
                     FileWriter actWFile = new FileWriter(fileName);
                     actWFile.write("");
+                    actWFile.close();
                 } catch (IOException e) {
                     System.out.println("Something went wrong.");
                     e.printStackTrace();
@@ -114,11 +115,13 @@ public class Simulation {
     public static void writeToFile(int timestep) {
         try {
             FileWriter actWFile = new FileWriter(fileName, true);
-            actWFile.write("Timestep: " + timestep + "\n");
+            // actWFile.write("Timestep: " + timestep + "\n");
+            if (timestep > 1) {
+                actWFile.write("*\n");
+            }
             for (int i = 0; i < activities.size(); i++) {
                 actWFile.write(activities.get(i) + "\n");
             }
-            actWFile.write("\n");
             actWFile.close();
         } catch (IOException e) {
             System.out.println("Something went wrong.");
@@ -128,12 +131,13 @@ public class Simulation {
 
     // method for adding an simulation acitivity to ArrayList of activities
     public static void recActivities(String activity) {
-        // synchronizes on ArrayList of activities so that no action is lost if the contents of the 
-        // ArrayList is busy being written to the activity file and reset in each timestep in SimulationModel.java
-        synchronized (activities)
-        {
+        // synchronizes on ArrayList of activities so that no action is lost if the
+        // contents of the
+        // ArrayList is busy being written to the activity file and reset in each
+        // timestep in SimulationModel.java
+        synchronized (activities) {
             activities.add(activity);
-        }   
+        }
     }
 
     // method for running simulation
@@ -142,7 +146,8 @@ public class Simulation {
         // below doesn't do anything yet //
         float[] params = setParams();
 
-        // creates file if new and resets if already exists and writes simulation conditions to the file
+        // creates file if new and resets if already exists and writes simulation
+        // conditions to the file
         createFile(conds);
 
         System.out.println();

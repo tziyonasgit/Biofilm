@@ -1,5 +1,6 @@
 package backEnd.src;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.ArrayList;
 import java.util.Random;
@@ -18,8 +19,8 @@ public class Environment {
     int EPSMonomerID;
     int nutrientID;
     // barrier for bacteria to wait on
-    public volatile CyclicBarrier initialise;
-    //public int number = 0;
+    public volatile CountDownLatch initialise;
+    // public int number = 0;
 
     // paramaterised constructor for environment
     public Environment(int nutrients, int totBMonomers, int FBMonomers, int EPSMonomers, int bacteria, int xBlocks,
@@ -38,7 +39,7 @@ public class Environment {
         this.bMonomerID = 0;
         this.EPSMonomerID = 0;
         this.nutrientID = 0;
-        this.initialise = new CyclicBarrier(bacteria);
+        this.initialise = new CountDownLatch(bacteria);
     }
 
     // method for creating individual blocks to create environment
@@ -103,8 +104,7 @@ public class Environment {
         for (int i = 0; i < bacteria; i++) {
             int xBlock = rX.nextInt(xBlocks);
             int yBlock = rY.nextInt(yBlocks);
-            while (environBlocks[xBlock][yBlock].occupied())
-            {
+            while (environBlocks[xBlock][yBlock].occupied()) {
                 xBlock = rX.nextInt(xBlocks);
                 yBlock = rY.nextInt(yBlocks);
             }
@@ -161,6 +161,10 @@ public class Environment {
 
         this.Bacteria.add(bacterium);
         this.BacteriumID++;
+
+        Thread b = new Thread(bacterium);
+        b.start();
+
         return bacterium;
     }
 }
