@@ -34,7 +34,8 @@ class Bacterium:
 
         self.angle = 0.0
 
-        self.dots = []  # List to store the dropped dots
+        self.PSL = []  # List to store the dropped dots
+        self.EPS = []
 
         self.createBody()
 
@@ -96,21 +97,32 @@ class Bacterium:
         self.leftEnd.set_transform(rotate)
         self.rightEnd.set_transform(rotate)
 
-        # Redraw all dots
-        for dot in self.dots:
-            self.ax.add_patch(dot)
+        # Redraw all PSL
+        for PSLdot in self.PSL:
+            self.ax.add_patch(PSLdot)
+
+        # Redraw all EPS
+        for EPSdot in self.EPS:
+            self.ax.add_patch(EPSdot)
 
        # adds new patches to axis
         self.ax.add_patch(self.rectangleBody)
         self.ax.add_patch(self.leftEnd)
         self.ax.add_patch(self.rightEnd)
 
-    def dropDot(self):
+    def dropPSL(self):
         # drops a dot at the current position of the bacterium
-        dot = patches.Circle(self.position.copy(),
-                             radius=0.05, color='red', zorder=5)
-        self.dots.append(dot)  # Store the dot in the list
-        self.ax.add_patch(dot)
+        PSLdot = patches.Circle(self.position.copy(),
+                                radius=0.05, color='red', zorder=5)
+        self.PSL.append(PSLdot)  # Store the dot in the list
+        self.ax.add_patch(PSLdot)
+
+    def dropEPS(self):
+        # drops a dot at the current position of the bacterium
+        EPSdot = patches.Circle(self.position.copy(),
+                                radius=0.05, color='blue', zorder=5)
+        self.EPS.append(EPSdot)  # Store the dot in the list
+        self.ax.add_patch(EPSdot)
 
     def removePatches(self):
         # removes existing patches on plot
@@ -124,16 +136,7 @@ class Bacterium:
             self.rightEnd.set_visible(False)  # hides the patch
             self.rightEnd = None
 
-    def move(self, coordinateFinal):
-        # # moves the bacterium in the specified direction
-        # if direction == "up":
-        #     self.position[1] += 1
-        # elif direction == "down":
-        #     self.position[1] -= 1
-        # elif direction == "left":
-        #     self.position[0] -= 1
-        # elif direction == "right":
-        #     self.position[0] += 1
+    def run(self, coordinateFinal):
 
         # Drop a dot at the current position before moving
         if self.mode == "PSL":
@@ -148,3 +151,30 @@ class Bacterium:
         self.position[1] = coordinateFinal[1]
 
         self.draw()  # redraws the bacterium at the new position
+
+    def tumble(self, coordinateGoal):
+        # Drop a dot at the current position before moving
+        if self.mode == "PSL":
+            self.dropDot()
+
+        # Calculate the angle towards the goal position
+        delta_x = coordinateGoal[0] - self.position[0]
+        delta_y = coordinateGoal[1] - self.position[1]
+        goal_angle = np.arctan2(delta_y, delta_x)
+
+        # Introduce a random jitter to the angle (e.g., between -π/8 and π/8)
+        random_angle_change = np.random.uniform(-np.pi / 8, np.pi / 8)
+        self.angle = goal_angle + random_angle_change
+
+        # Move a small random distance in the direction of the new angle
+        tumble_distance = np.random.uniform(
+            0.5, 2.0)  # Adjust the range as needed
+        delta_x_tumble = tumble_distance * np.cos(self.angle)
+        delta_y_tumble = tumble_distance * np.sin(self.angle)
+
+        # Update the bacterium's position with the new coordinates
+        self.position[0] += delta_x_tumble
+        self.position[1] += delta_y_tumble
+
+        # Redraw the bacterium at the new position
+        self.draw()

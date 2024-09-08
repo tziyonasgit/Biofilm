@@ -56,13 +56,13 @@ class Animation:
             initialPosition = np.array(
                 [father.getPositionX()+1, father.getPositionY()+1])
             bacterium = Bacterium(self.ax, self.mode, id=cellID, age=0, strain="E.coli",
-                                  position=initialPosition, length=2.0, width=1.0, colour='blue', father=father)
+                                  position=initialPosition, length=2.0, width=1.0, colour='orange', father=father)
         self.bacteria.append(bacterium)  # adds bacterium to list bacteria
 
         bacterium.draw()  # draws bacterium on the plot
         self.canvas.draw_idle()  # updates the canvas
 
-    def split(self, cellID, childID):
+    def reproduce(self, cellID, childID):
         # prepares the bacterium for splitting
         father = None
         for bacterium in self.bacteria:
@@ -112,10 +112,10 @@ class Animation:
                 cellID = int(parts[1])  # e.g., "1", "2"
                 action = parts[2]  # e.g., "spawn", "move", "split", "die"
 
-                if action == "spawn":
-                    print(f"Cell {cellID} spawns.")
+                if action == "Spawn":
+                    print(f"Bacterium {cellID} spawns.")
                     self.spawn(cellID, None)
-                elif action == "move":
+                elif (action == "Run") or (action == "Tumble"):
                     if len(parts) > 4:
                         initialPoint = parts[3]  # extracts the initial point
                         finalPoint = parts[4]  # extracts the final point
@@ -123,19 +123,44 @@ class Animation:
                             map(float, initialPoint.strip("()").split(",")))
                         coordinateFinal = tuple(
                             map(float, finalPoint.strip("()").split(",")))
-                        print(f"Cell {cellID} moves from {
+                        print(f"Bacterium {cellID} {action} from {
                             initialPoint} to {finalPoint}.")
-                        for bacterium in self.bacteria:
+                        for bacterium in self.bacteria:  # iterates through bacterium objects until cell.ID matches
                             if bacterium.id == cellID:
-                                bacterium.move(coordinateFinal)
+                                if (action == "Run"):
+                                    bacterium.run(coordinateFinal)
+                                elif (action == "Tumble"):
+                                    bacterium.tumble(coordinateFinal)
                                 break
-                elif action == "split":
+                elif action == "Reproduce":
                     childID = parts[4]
-                    print(f"Cell {cellID} splits.")
-                    self.split(cellID, childID)
-                elif action == "die":
-                    print(f"Cell {cellID} dies.")
+                    print(f"Bacterium {cellID} reproduces.")
+                    self.reproduce(cellID, childID)
+                elif action == "Die":
+                    print(f"Bacterium {cellID} dies.")
                     self.die(cellID)
+                elif action == "Consume":
+                    monomerID = parts[5]
+                    print(f"Bacterium {
+                          cellID} consumes bacterial monomer {monomerID}.")
+                elif action == "Secrete":
+                    for bacterium in self.bacteria:  # iterates through bacterium objects until cell.ID matches
+                        if bacterium.id == cellID:
+                            bacterium.dropEPS()
+                        break
+                    print(f"Bacterium {
+                          cellID} secretes EPS.")
+                elif action == "Attach":
+                    blockCoordinate = parts[3]
+                    print(f"Bacterium {
+                          cellID} attaches to {blockCoordinate}.")
+                elif action == "Eat":
+                    print(f"Bacterium {
+                          cellID} eats nutrient.")
+                elif action == "Collide":
+                    otherBacID = parts[4]
+                    print(f"Bacterium {
+                          cellID} collides with bacterium {otherBacID}.")
                 else:
                     print(f"Unknown action for Cell {cellID}: {action}")
             else:

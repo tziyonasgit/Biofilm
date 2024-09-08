@@ -15,7 +15,7 @@ public class Bacterium implements Runnable {
     BacterialMonomer[] monomers;
     Environment environ;
     public volatile String waiting = "hi";
-    //public volatile int number = 0;
+    // public volatile int number = 0;
     int energy;
     boolean killThread;
     LocalDateTime birthTime;
@@ -34,6 +34,8 @@ public class Bacterium implements Runnable {
         this.energy = 0;
         this.killThread = false;
         this.birthTime = LocalDateTime.now();
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Spawn:" + "(" + position.getXPos() + ","
+                + position.getYPos() + ")");
     }
 
     public void resetMonomers() {
@@ -55,10 +57,11 @@ public class Bacterium implements Runnable {
 
     public void setFather(Bacterium bac) {
         father = bac;
-        // below will come out later (including comment), just easier testing synchronization here //
-        // synchronizes on waiting to ensure that only one bacterium calls recActivities in Simulation.java
-        synchronized (waiting)
-        {
+        // below will come out later (including comment), just easier testing
+        // synchronization here //
+        // synchronizes on waiting to ensure that only one bacterium calls recActivities
+        // in Simulation.java
+        synchronized (waiting) {
             Simulation.recActivities("Synchronization test by " + this.getBID());
         }
     }
@@ -123,9 +126,9 @@ public class Bacterium implements Runnable {
     }
 
     // increase EPS count, increase Block EPS //
-    public void secrete(EPS eps) {
+    public void secrete() {
         position.incEPS();
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS:" + eps.getID());
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS");
     }
 
     // fixed onto block by EPS //
@@ -138,7 +141,7 @@ public class Bacterium implements Runnable {
     public void eat(Nutrient nutrient) {
         nutrient.position.removeNutrient(nutrient);
         this.energy += 1; // increases energy level
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Eat:Nutrient:" + nutrient.getID());
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Eat");
     }
 
     public void consume(BacterialMonomer bMonomer) {
@@ -149,14 +152,15 @@ public class Bacterium implements Runnable {
     public void run() {
         try {
 
-            // waits on CyclicBarrier initialise to ensure all bacteria start their main functioning
+            // waits on CyclicBarrier initialise to ensure all bacteria start their main
+            // functioning
             // simultaneously
             environ.initialise.await();
-            
+
             System.out.println(Thread.currentThread().getName() + ", executing run() method!");
 
             // while (!killThread) {
-            //     grow();
+            // grow();
             // }
 
             // will not be in final, just for testing synchronization //

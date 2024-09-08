@@ -35,7 +35,7 @@ class SaveAnimation:
         self.bacteria.append(bacterium)
         bacterium.draw()
 
-    def split(self, cellID, childID):
+    def reproduce(self, cellID, childID):
         father = next((b for b in self.bacteria if b.id == cellID), None)
         if father:
             self.spawn(childID, father)
@@ -64,21 +64,29 @@ class SaveAnimation:
             if len(parts) >= 3:
                 cellID = int(parts[1])
                 action = parts[2]
-                if action == "spawn":
+                if action == "Spawn":
                     self.spawn(cellID)
-                elif action == "move":
+                elif (action == "Run") or (action == "Tumble"):
                     if len(parts) > 4:
                         coordinateFinal = tuple(
                             map(float, parts[4].strip("()").split(",")))
                         bacterium = next(
                             (b for b in self.bacteria if b.id == cellID), None)
                         if bacterium:
-                            bacterium.move(coordinateFinal)
-                elif action == "split":
+                            if (action == "Run"):
+                                bacterium.run(coordinateFinal)
+                            elif (action == "Tumble"):
+                                bacterium.tumble(coordinateFinal)
+                elif action == "Reproduce":
                     childID = int(parts[4])
-                    self.split(cellID, childID)
-                elif action == "die":
+                    self.reproduce(cellID, childID)
+                elif action == "Die":
                     self.die(cellID)
+                elif action == "Secrete":
+                    for bacterium in self.bacteria:  # iterates through bacterium objects until cell.ID matches
+                        if bacterium.id == cellID:
+                            bacterium.dropEPS()
+                        break
         self.TimeStepLines = []
 
     def updateFrame(self, frame):
