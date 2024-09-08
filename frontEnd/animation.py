@@ -40,6 +40,13 @@ class Animation:
         self.ax.set_xticklabels([])
         self.ax.set_yticklabels([])
 
+        # Create custom patches for the legend
+        green_patch = patches.Patch(color='green', label='Parent Bacteria')
+        blue_patch = patches.Patch(color='blue', label='Child Bacteria')
+
+        # Add the legend to the plot
+        self.ax.legend(handles=[green_patch, blue_patch], loc='upper right')
+
     def spawn(self, cellID, father=None):
         if father is None:
             initialPosition = np.array([0.0, 0.0])  # starts at the center

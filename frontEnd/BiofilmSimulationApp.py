@@ -40,7 +40,17 @@ class BiofilmSimulationApp(tk.Tk):
         window.geometry(f"{width}x{height}+{x}+{y}")
 
     def uploadFile(self):
+        if hasattr(self, 'text_id'):
+            self.ui_canvas.delete(self.text_id)  # Remove the previous text
+
         self.filename = filedialog.askopenfilename()  # stores filename
+        self.text_id = self.ui_canvas.create_text(
+            155.0,
+            130.0,
+            anchor="nw",
+            text="File seleted: " + self.filename,
+            fill="#000000",
+            font=("IstokWeb Bold", 15 * -1))
 
     def startSimulation(self):
         # Create a new window for the simulation
