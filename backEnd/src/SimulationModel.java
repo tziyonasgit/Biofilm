@@ -47,7 +47,6 @@ public class SimulationModel {
                                 Simulation.activities.clear();
                         }
                         i++;
-                        
 
                         // if task, and hence number of timesteps done, has been completed as many times
                         // as
@@ -58,7 +57,7 @@ public class SimulationModel {
                                         System.out.println("Simulation completed.");
                                 }
                                 System.exit(0);
-                                
+
                         }
                 }
 
@@ -88,7 +87,7 @@ public class SimulationModel {
                 System.out.println(" ");
 
                 System.out.println("Simulation fully set up. Simulation running...");
-                
+
                 environ.initialise.countDown();
 
                 return environ;
@@ -106,11 +105,6 @@ public class SimulationModel {
                 // runs timer over and over until notified to cancel and stop
                 try {
 
-                        // Bacterium tester = environ.Bacteria.get(0);
-                        // tester.runMove(tester.getBlock(), environ.environBlocks[0][0]); // calls
-                        // // either
-                        // run or tumble motion which
-                        // calls move method
                         synchronized (run) {
                                 run.wait();
                         }
@@ -120,20 +114,6 @@ public class SimulationModel {
                 } catch (InterruptedException e) {
                         e.printStackTrace();
                 }
-
-                // testing adding and removing bacterial monomers and nutrients from block's
-                // LinkedList of
-                // bacterial monomers and nutrients
-                // System.out.println(environ.nutrients.get(0).position.nutrients);
-                // System.out.println(environ.BMonomers.get(environ.BMonomers.size() -
-                // 1).position.bacMonomers);
-
-                // environ.Bacteria.get(0).eat(environ.nutrients.get(0));
-                // environ.Bacteria.get(0).consume(environ.BMonomers.get(environ.BMonomers.size()
-                // - 1));
-                // System.out.println(environ.nutrients.get(0).position.nutrients);
-                // System.out.println(environ.BMonomers.get(environ.BMonomers.size() -
-                // 1).position.bacMonomers);
 
         }
 

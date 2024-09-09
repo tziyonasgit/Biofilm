@@ -210,7 +210,7 @@ public class Bacterium implements Runnable {
 
         System.out.println(Thread.currentThread().getName() + ", executing run() method!");
 
-        this.runMove(this.getBlock(), environ.environBlocks[0][0]); // calls
+        // this.runMove(this.getBlock(), environ.environBlocks[0][0]); // calls
 
         // while (!killThread) {
         // grow(SimulationModel.duration);
@@ -391,7 +391,7 @@ public class Bacterium implements Runnable {
                 }
                 break;
             case 4:
-                //run
+                // run
                 break;
             case 5:
                 break; // do nothing

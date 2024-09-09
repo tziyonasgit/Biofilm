@@ -109,7 +109,7 @@ public class Environment {
                 yBlock = rY.nextInt(yBlocks);
             }
             Bacterium bac = new Bacterium(environBlocks[xBlock][yBlock], BacteriumID, 0, null,
-                    monomers, "covid", environ);
+                    monomers, "covid", environ, 5);
 
             // creates bacterial monomers making up bacteria
             for (int j = 0; j < 7; j++) {
@@ -132,11 +132,10 @@ public class Environment {
     public BacterialMonomer createBMonomer(Block position) {
         BacterialMonomer bMonomer = new BacterialMonomer(position, this.bMonomerID);
 
-        synchronized (this.BMonomers)
-        {
+        synchronized (this.BMonomers) {
             this.BMonomers.add(bMonomer);
         }
-        
+
         this.bMonomerID++;
         return bMonomer;
     }
@@ -145,11 +144,10 @@ public class Environment {
     public EPS createEPSMonomer(Block position) {
         EPS EPSMonomer = new EPS(position, this.EPSMonomerID);
 
-        synchronized (this.EPSMonomers)
-        {
+        synchronized (this.EPSMonomers) {
             this.EPSMonomers.add(EPSMonomer);
         }
-        
+
         this.EPSMonomerID++;
         return EPSMonomer;
     }
@@ -159,18 +157,15 @@ public class Environment {
         Nutrient nut = new Nutrient(position, this.nutrientID);
 
         // synchronizes on ArrayList of nutrients for the Environment
-        synchronized (this.nutrients)
-        {
+        synchronized (this.nutrients) {
             this.nutrients.add(nut);
         }
-        
-        
+
         // synchronizes on LinkedList of nutrients for block
-        synchronized (position.nutrients)
-        {
+        synchronized (position.nutrients) {
             position.addNutrient(nut);
         }
-        
+
         this.nutrientID++;
         return nut;
     }
@@ -182,23 +177,22 @@ public class Environment {
 
         // below hardcoded for the demo //
         Bacterium bacterium = new Bacterium(position, this.BacteriumID, 0, null,
-                monomers, "covid", environ);
+                monomers, "covid", environ, 5);
+
         for (int j = 0; j < 7; j++) {
             // below hardcoded for the demo //
             bMonomer = createBMonomer(bacterium.position);
             bacterium.monomers[j] = bMonomer;
 
-            synchronized (this.BMonomers)
-            {
+            synchronized (this.BMonomers) {
                 this.BMonomers.add(bMonomer);
             }
         }
 
-        synchronized (this.Bacteria)
-        {
-            this.Bacteria.add(bacterium);   
+        synchronized (this.Bacteria) {
+            this.Bacteria.add(bacterium);
         }
-        
+
         this.BacteriumID++;
 
         Thread b = new Thread(bacterium);
