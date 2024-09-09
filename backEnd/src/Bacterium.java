@@ -98,8 +98,7 @@ public class Bacterium implements Runnable {
     // bacterium dies, do all bacterial monomers die as well //
     public void die() {
 
-        synchronized (environ.Bacteria)
-        {
+        synchronized (environ.Bacteria) {
             environ.Bacteria.remove(this);
         }
 
@@ -163,20 +162,18 @@ public class Bacterium implements Runnable {
     public void attach(Block block) {
         synchronized (waiting) {
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Attach:("
-                + block.getXPos() + "," + block.getYPos() + ")");
+                    + block.getXPos() + "," + block.getYPos() + ")");
         }
     }
 
     // decrease nutrient count, what does it do to bacterium //
     public void eat(Nutrient nutrient) {
         // synchronizes on LinkedList of nutrients for block
-        synchronized (nutrient.position.nutrients)
-        {
+        synchronized (nutrient.position.nutrients) {
             nutrient.position.removeNutrient(nutrient);
         }
 
-        synchronized (environ.nutrients)
-        {
+        synchronized (environ.nutrients) {
             environ.nutrients.remove(nutrient);
         }
 
@@ -197,18 +194,15 @@ public class Bacterium implements Runnable {
         // waits on countdownlatch initialise to ensure all bacteria start their main
         // functioning
         // simultaneously
-        try
-        {
+        try {
             environ.initialise.countDown();
             environ.initialise.await();
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         System.out.println(Thread.currentThread().getName() + ", executing run() method!");
-        
+
         this.runMove(this.getBlock(), environ.environBlocks[0][0]); // calls
 
         // while (!killThread) {
@@ -246,6 +240,58 @@ public class Bacterium implements Runnable {
 
     }
 
+    public void moveLeft(Block[][] environBlocks, String moveType, Block start) {
+        position = environBlocks[start.getXPos() - 1][start.getYPos()];
+        this.energy -= 1; // decreases energy each movement
+        position.setOccupied(true);
+        // synchronized (waiting) {
+        // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType +
+        // ":("
+        // + start.getXPos() + "," + start.getYPos() + "):"
+        // + "(" + position.getXPos() + "," + position.getYPos() + ")");
+        // }
+
+    }
+
+    public void moveRight(Block[][] environBlocks, String moveType, Block start) {
+        position = environBlocks[start.getXPos() + 1][start.getYPos()];
+        this.energy -= 1; // decreases energy each movement
+        position.setOccupied(true);
+        // synchronized (waiting) {
+        // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType +
+        // ":("
+        // + start.getXPos() + "," + start.getYPos() + "):"
+        // + "(" + position.getXPos() + "," + position.getYPos() + ")");
+        // }
+
+    }
+
+    public void moveUp(Block[][] environBlocks, String moveType, Block start) {
+        position = environBlocks[start.getXPos()][start.getYPos() + 1];
+        this.energy -= 1; // decreases energy each movement
+        position.setOccupied(true);
+        // synchronized (waiting) {
+        // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType +
+        // ":("
+        // + start.getXPos() + "," + start.getYPos() + "):"
+        // + "(" + position.getXPos() + "," + position.getYPos() + ")");
+        // }
+
+    }
+
+    public void moveDown(Block[][] environBlocks, String moveType, Block start) {
+        position = environBlocks[start.getXPos()][start.getYPos() - 1];
+        this.energy -= 1; // decreases energy each movement
+        position.setOccupied(true);
+        // synchronized (waiting) {
+        // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType +
+        // ":("
+        // + start.getXPos() + "," + start.getYPos() + "):"
+        // + "(" + position.getXPos() + "," + position.getYPos() + ")");
+        // }
+
+    }
+
     // method that moves a bacterium from a start to a goal block
     public void move(Block start, Block end, Block[][] environBlocks, String moveType) {
 
@@ -255,22 +301,23 @@ public class Bacterium implements Runnable {
             start = position;
             start.setOccupied(false);
             if (start.getXPos() > end.getXPos()) {
-                position = environBlocks[start.getXPos() - 1][start.getYPos()]; // move one left
+                this.moveLeft(environBlocks, moveType, start);// move one left
             } else if (start.getXPos() < end.getXPos()) {
-                position = environBlocks[start.getXPos() + 1][start.getYPos()]; // move one right
+                this.moveRight(environBlocks, moveType, start);// move one right
             }
 
             else if (start.getYPos() < end.getYPos()) {
-                position = environBlocks[start.getXPos()][start.getYPos() + 1]; // move one up
+                this.moveUp(environBlocks, moveType, start);// move one up
             }
 
             else if (start.getYPos() > end.getYPos()) {
-                position = environBlocks[start.getXPos()][start.getYPos() - 1]; // move one down
+                this.moveDown(environBlocks, moveType, start); // move one down
             }
-            this.energy -= 1; // decreases energy each movement
-            position.setOccupied(true);
+
             // System.out.println("hi");
-            synchronized (waiting) {
+            synchronized (waiting) { // not sure what this does...put it in comments in the move up, down, left,
+                                     // right methods, if it is used to record when a movement happens then uncomment
+                                     // it....Thalia
                 Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType + ":("
                         + start.getXPos() + "," + start.getYPos() + "):"
                         + "(" + position.getXPos() + "," + position.getYPos() + ")");
