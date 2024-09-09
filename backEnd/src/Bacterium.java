@@ -21,10 +21,16 @@ public class Bacterium implements Runnable {
     boolean killThread;
     LocalDateTime birthTime;
     double doublingTime = 0; // Time in hours for bacterium to double in size
+    MersenneTwister mt;
+    int maxAge = 100;
+    int maxEnergy = 100;
+    int probDie = 0;
+    int probEat = 0;
+    int probGrow = 0;
 
     // paramaterised constructor for bacterium
     public Bacterium(Block position, int ID, int age, Bacterium father,
-            BacterialMonomer[] monomers, String strain, Environment environ) {
+            BacterialMonomer[] monomers, String strain, Environment environ, long seed) {
         this.position = position;
         this.bacteriumID = ID; // count of IDs
         this.age = age;
@@ -36,6 +42,7 @@ public class Bacterium implements Runnable {
         this.killThread = false;
         this.birthTime = LocalDateTime.now();
         this.doublingTime = generateDoublingTime(1.0);
+        this.mt = new MersenneTwister(seed);
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Spawn:" + "(" + position.getXPos() + ","
                 + position.getYPos() + ")");
     }
@@ -322,6 +329,73 @@ public class Bacterium implements Runnable {
                         + start.getXPos() + "," + start.getYPos() + "):"
                         + "(" + position.getXPos() + "," + position.getYPos() + ")");
             }
+        }
+
+    }
+
+    public void doSomething() {
+        int event = mt.nextInt(6);
+        switch (event) {
+            case 0:
+                // tumble
+                break;
+
+            case 1:
+                if (this.probDie == 100) {
+                    probDie = 0;
+                    this.die();
+
+                } else if (((this.age) / maxAge) * 100 <= 20) {
+                    probDie += 2;
+                } else if (((this.age) / maxAge) * 100 <= 40) {
+                    probDie += 4;
+                } else if (((this.age) / maxAge) * 100 <= 60) {
+                    probDie += 5;
+                } else if (((this.age) / maxAge) * 100 <= 80) {
+                    probDie += 10;
+                } else {
+                    probDie += 15;
+                }
+                break;
+            case 2:
+                if (this.probEat == 100) {
+                    this.probEat = 0;
+                    this.eat(null);// needs to do something
+
+                } else if ((this.energy / this.maxEnergy) * 100 <= 40) {
+                    probEat += 20;
+
+                } else if ((this.energy / this.maxEnergy) * 100 <= 60) {
+                    probEat += 15;
+
+                } else if ((this.energy / this.maxEnergy) * 100 <= 80) {
+                    probEat += 10;
+
+                } else {
+                    probEat += 5;
+                }
+                break;
+            case 3:
+                if (this.probGrow == 100 && this.energy >= 40) {
+                    this.consume(null); // do something
+                } else if (this.energy / this.maxEnergy * 100 <= 20) {
+                    probGrow += 2;
+                } else if (this.energy / this.maxEnergy * 100 <= 40) {
+                    probGrow += 10;
+                } else if (this.energy / this.maxEnergy * 100 <= 60) {
+                    probGrow += 12;
+                } else if (this.energy / this.maxEnergy * 100 <= 80) {
+                    probGrow += 15;
+                } else {
+                    probGrow += 20;
+                }
+                break;
+            case 4:
+                //run
+                break;
+            case 5:
+                break; // do nothing
+
         }
 
     }
