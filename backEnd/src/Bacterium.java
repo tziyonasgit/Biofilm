@@ -67,13 +67,6 @@ public class Bacterium implements Runnable {
 
     public void setFather(Bacterium bac) {
         father = bac;
-        // below will come out later (including comment), just easier testing
-        // synchronization here //
-        // synchronizes on waiting to ensure that only one bacterium calls recActivities
-        // in Simulation.java
-        synchronized (waiting) {
-            Simulation.recActivities("Synchronization test by " + this.getBID());
-        }
     }
 
     public void tumbleMove(Block iBlock, Block fBlock) {
@@ -94,15 +87,28 @@ public class Bacterium implements Runnable {
         Bacterium childBac = environ.createBacterium(environ, position); // creates child bacterium
         childBac.setFather(this); // sets child's father to bacterium that is reproducing
         this.resetMonomers(); // resets father bacterium to 7 monomers
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + childBac.getBID());
+
+        // synchronizes on waiting to ensure that only one bacterium calls recActivities
+        // in Simulation.java
+        synchronized (waiting) {
+            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + childBac.getBID());
+        }
     }
 
     // bacterium dies, do all bacterial monomers die as well //
     public void die() {
-        environ.Bacteria.remove(this);
+
+        synchronized (environ.Bacteria)
+        {
+            environ.Bacteria.remove(this);
+        }
+
         position.setOccupied(false); // makes block free
         this.killThread = true;
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Die");
+
+        synchronized (waiting) {
+            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Die");
+        }
     }
 
     public Block getRandomAdjacentFreeBlock(Block position) {
@@ -137,47 +143,80 @@ public class Bacterium implements Runnable {
         Block destinationPosition = getRandomAdjacentFreeBlock(this.position);
 
         move(this.position, destinationPosition, environ.environBlocks, "Run");
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Collide:Bacterium:" + bac.getBID());
+        synchronized (waiting) {
+            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Collide:Bacterium:" + bac.getBID());
+        }
     }
 
     // increase EPS count, increase Block EPS //
     public void secrete() {
         position.incEPS();
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS");
+        // not sure if we need the below
+        environ.EPSMonomers.add(environ.createEPSMonomer(position));
+
+        synchronized (waiting) {
+            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS");
+        }
     }
 
     // fixed onto block by EPS //
     public void attach(Block block) {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Attach:("
+        synchronized (waiting) {
+            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Attach:("
                 + block.getXPos() + "," + block.getYPos() + ")");
+        }
     }
 
     // decrease nutrient count, what does it do to bacterium //
     public void eat(Nutrient nutrient) {
-        nutrient.position.removeNutrient(nutrient);
+        // synchronizes on LinkedList of nutrients for block
+        synchronized (nutrient.position.nutrients)
+        {
+            nutrient.position.removeNutrient(nutrient);
+        }
+
+        synchronized (environ.nutrients)
+        {
+            environ.nutrients.remove(nutrient);
+        }
+
         this.energy += 1; // increases energy level
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Eat");
+        synchronized (waiting) {
+            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Eat");
+        }
     }
 
     public void consume(BacterialMonomer bMonomer) {
         bMonomer.position.removeBMonomer(bMonomer);
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Consume:BacterialMonomer:" + bMonomer.getID());
+        synchronized (waiting) {
+            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Consume:BacterialMonomer:" + bMonomer.getID());
+        }
     }
 
     public void run() {
         // waits on countdownlatch initialise to ensure all bacteria start their main
         // functioning
         // simultaneously
-        environ.initialise.countDown();
+        try
+        {
+            environ.initialise.countDown();
+            environ.initialise.await();
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
 
         System.out.println(Thread.currentThread().getName() + ", executing run() method!");
+        
+        this.runMove(this.getBlock(), environ.environBlocks[0][0]); // calls
 
         // while (!killThread) {
         // grow(SimulationModel.duration);
         // }
 
         // // will not be in final, just for testing synchronization //
-        // this.setFather(this);
+        this.setFather(this);
 
     }
 
@@ -230,9 +269,12 @@ public class Bacterium implements Runnable {
             }
             this.energy -= 1; // decreases energy each movement
             position.setOccupied(true);
-            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType + ":("
-                    + start.getXPos() + "," + start.getYPos() + "):"
-                    + "(" + position.getXPos() + "," + position.getYPos() + ")");
+            // System.out.println("hi");
+            synchronized (waiting) {
+                Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType + ":("
+                        + start.getXPos() + "," + start.getYPos() + "):"
+                        + "(" + position.getXPos() + "," + position.getYPos() + ")");
+            }
         }
 
     }

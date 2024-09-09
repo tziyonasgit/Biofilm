@@ -37,7 +37,6 @@ public class SimulationModel {
                 public int i = 0;
 
                 public void run() {
-                        i++;
                         // synchronizes on ArrayList of activities to ensure actions not lost if a
                         // bacterium
                         // is busy adding an activity using the recActivities method in Simulation.java
@@ -47,6 +46,8 @@ public class SimulationModel {
                                 Simulation.writeToFile(i);
                                 Simulation.activities.clear();
                         }
+                        i++;
+                        
 
                         // if task, and hence number of timesteps done, has been completed as many times
                         // as
@@ -54,7 +55,10 @@ public class SimulationModel {
                         if (i == duration) {
                                 synchronized (run) {
                                         run.notifyAll();
+                                        System.out.println("Simulation completed.");
                                 }
+                                System.exit(0);
+                                
                         }
                 }
 
@@ -84,6 +88,8 @@ public class SimulationModel {
                 System.out.println(" ");
 
                 System.out.println("Simulation fully set up. Simulation running...");
+                
+                environ.initialise.countDown();
 
                 return environ;
         }
@@ -95,13 +101,13 @@ public class SimulationModel {
                 TimerTask task = new Helper();
 
                 // schedules timer to run and perform task every time period
-                timer.schedule(task, 0, 1);
+                timer.schedule(task, 0, 10);
 
                 // runs timer over and over until notified to cancel and stop
                 try {
 
-                        Bacterium tester = environ.Bacteria.get(0);
-                        tester.runMove(tester.getBlock(), environ.environBlocks[0][0]); // calls
+                        // Bacterium tester = environ.Bacteria.get(0);
+                        // tester.runMove(tester.getBlock(), environ.environBlocks[0][0]); // calls
                         // // either
                         // run or tumble motion which
                         // calls move method
@@ -109,8 +115,7 @@ public class SimulationModel {
                                 run.wait();
                         }
                         timer.cancel();
-                        System.out.println("Simulation completed.");
-                        System.exit(0); // Exit the program
+                        // System.exit(0); // Exit the program
 
                 } catch (InterruptedException e) {
                         e.printStackTrace();

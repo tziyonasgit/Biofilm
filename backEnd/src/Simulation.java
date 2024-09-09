@@ -96,13 +96,14 @@ public class Simulation {
 
         try {
             FileWriter actWFile = new FileWriter(fileName);
-            actWFile.write("Starting bacterial monomers: " + conds[0]);
-            actWFile.write("Starting EPS monomers: " + conds[1]);
-            actWFile.write("Starting nutrients: " + conds[2]);
-            actWFile.write("Starting bacteria: " + conds[3]);
-            actWFile.write("Simulation width: " + conds[4]);
-            actWFile.write("Simulation height: " + conds[5]);
-            actWFile.write("Simulation duration: " + conds[6]);
+            actWFile.write("Starting bacterial monomers: " + conds[0] + "\n");
+            actWFile.write("Starting EPS monomers: " + conds[1] + "\n");
+            actWFile.write("Starting nutrients: " + conds[2] + "\n");
+            actWFile.write("Starting bacteria: " + conds[3] + "\n");
+            actWFile.write("Simulation width: " + conds[4] + "\n");
+            actWFile.write("Simulation height: " + conds[5] + "\n");
+            actWFile.write("Simulation duration: " + conds[6] + "\n\n");
+            actWFile.close();
         } catch (IOException e) {
             System.out.println("Something went wrong.");
             e.printStackTrace();
@@ -115,13 +116,11 @@ public class Simulation {
     public static void writeToFile(int timestep) {
         try {
             FileWriter actWFile = new FileWriter(fileName, true);
-            // actWFile.write("Timestep: " + timestep + "\n");
-            if (timestep > 1) {
-                actWFile.write("*\n");
-            }
+            actWFile.write("Timestep: " + timestep + "\n");
             for (int i = 0; i < activities.size(); i++) {
                 actWFile.write(activities.get(i) + "\n");
             }
+            actWFile.write("*\n");
             actWFile.close();
         } catch (IOException e) {
             System.out.println("Something went wrong.");

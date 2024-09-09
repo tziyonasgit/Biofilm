@@ -1,0 +1,492 @@
+Starting bacterial monomers: 2
+Starting EPS monomers: 2
+Starting nutrients: 2
+Starting bacteria: 2
+Simulation width: 200
+Simulation height: 200
+Simulation duration: 200
+
+Timestep: 0
+Bacterium:0:Spawn:(86,159)
+Bacterium:1:Spawn:(131,8)
+*
+Timestep: 1
+*
+Timestep: 2
+*
+Timestep: 3
+*
+Timestep: 4
+*
+Timestep: 5
+Bacterium:0:Run:(86,159):(85,159)
+Bacterium:0:Run:(85,159):(84,159)
+Bacterium:0:Run:(84,159):(83,159)
+Bacterium:0:Run:(83,159):(82,159)
+Bacterium:0:Run:(82,159):(81,159)
+Bacterium:0:Run:(81,159):(80,159)
+Bacterium:0:Run:(80,159):(79,159)
+Bacterium:0:Run:(79,159):(78,159)
+Bacterium:0:Run:(78,159):(77,159)
+Bacterium:0:Run:(77,159):(76,159)
+Bacterium:0:Run:(76,159):(75,159)
+Bacterium:0:Run:(75,159):(74,159)
+Bacterium:0:Run:(74,159):(73,159)
+Bacterium:0:Run:(73,159):(72,159)
+Bacterium:0:Run:(72,159):(71,159)
+Bacterium:0:Run:(71,159):(70,159)
+Bacterium:0:Run:(70,159):(69,159)
+Bacterium:0:Run:(69,159):(68,159)
+Bacterium:0:Run:(68,159):(67,159)
+Bacterium:0:Run:(67,159):(66,159)
+Bacterium:0:Run:(66,159):(65,159)
+Bacterium:0:Run:(65,159):(64,159)
+Bacterium:0:Run:(64,159):(63,159)
+Bacterium:0:Run:(63,159):(62,159)
+Bacterium:0:Run:(62,159):(61,159)
+Bacterium:0:Run:(61,159):(60,159)
+Bacterium:0:Run:(60,159):(59,159)
+Bacterium:0:Run:(59,159):(58,159)
+Bacterium:0:Run:(58,159):(57,159)
+Bacterium:0:Run:(57,159):(56,159)
+Bacterium:0:Run:(56,159):(55,159)
+Bacterium:0:Run:(55,159):(54,159)
+Bacterium:0:Run:(54,159):(53,159)
+Bacterium:0:Run:(53,159):(52,159)
+Bacterium:0:Run:(52,159):(51,159)
+Bacterium:0:Run:(51,159):(50,159)
+Bacterium:0:Run:(50,159):(49,159)
+Bacterium:0:Run:(49,159):(48,159)
+Bacterium:0:Run:(48,159):(47,159)
+Bacterium:0:Run:(47,159):(46,159)
+Bacterium:0:Run:(46,159):(45,159)
+Bacterium:0:Run:(45,159):(44,159)
+Bacterium:0:Run:(44,159):(43,159)
+Bacterium:0:Run:(43,159):(42,159)
+Bacterium:0:Run:(42,159):(41,159)
+Bacterium:0:Run:(41,159):(40,159)
+Bacterium:0:Run:(40,159):(39,159)
+Bacterium:0:Run:(39,159):(38,159)
+Bacterium:0:Run:(38,159):(37,159)
+Bacterium:0:Run:(37,159):(36,159)
+Bacterium:0:Run:(36,159):(35,159)
+Bacterium:0:Run:(35,159):(34,159)
+Bacterium:0:Run:(34,159):(33,159)
+Bacterium:0:Run:(33,159):(32,159)
+Bacterium:0:Run:(32,159):(31,159)
+Bacterium:0:Run:(31,159):(30,159)
+Bacterium:0:Run:(30,159):(29,159)
+Bacterium:0:Run:(29,159):(28,159)
+Bacterium:0:Run:(28,159):(27,159)
+Bacterium:0:Run:(27,159):(26,159)
+*
+Timestep: 6
+*
+Timestep: 7
+*
+Timestep: 8
+*
+Timestep: 9
+*
+Timestep: 10
+*
+Timestep: 11
+*
+Timestep: 12
+*
+Timestep: 13
+*
+Timestep: 14
+*
+Timestep: 15
+*
+Timestep: 16
+*
+Timestep: 17
+*
+Timestep: 18
+*
+Timestep: 19
+*
+Timestep: 20
+*
+Timestep: 21
+*
+Timestep: 22
+*
+Timestep: 23
+*
+Timestep: 24
+*
+Timestep: 25
+*
+Timestep: 26
+Bacterium:0:Run:(26,159):(25,159)
+*
+Timestep: 27
+Bacterium:0:Run:(25,159):(24,159)
+*
+Timestep: 28
+*
+Timestep: 29
+*
+Timestep: 30
+*
+Timestep: 31
+Bacterium:0:Run:(24,159):(23,159)
+*
+Timestep: 32
+*
+Timestep: 33
+*
+Timestep: 34
+*
+Timestep: 35
+*
+Timestep: 36
+*
+Timestep: 37
+*
+Timestep: 38
+*
+Timestep: 39
+*
+Timestep: 40
+*
+Timestep: 41
+*
+Timestep: 42
+Bacterium:0:Run:(23,159):(22,159)
+*
+Timestep: 43
+*
+Timestep: 44
+*
+Timestep: 45
+*
+Timestep: 46
+*
+Timestep: 47
+*
+Timestep: 48
+*
+Timestep: 49
+*
+Timestep: 50
+*
+Timestep: 51
+*
+Timestep: 52
+*
+Timestep: 53
+*
+Timestep: 54
+*
+Timestep: 55
+*
+Timestep: 56
+*
+Timestep: 57
+*
+Timestep: 58
+*
+Timestep: 59
+*
+Timestep: 60
+*
+Timestep: 61
+*
+Timestep: 62
+*
+Timestep: 63
+Bacterium:0:Run:(22,159):(21,159)
+*
+Timestep: 64
+*
+Timestep: 65
+*
+Timestep: 66
+*
+Timestep: 67
+Bacterium:0:Run:(21,159):(20,159)
+*
+Timestep: 68
+*
+Timestep: 69
+*
+Timestep: 70
+*
+Timestep: 71
+*
+Timestep: 72
+*
+Timestep: 73
+Bacterium:0:Run:(20,159):(19,159)
+*
+Timestep: 74
+*
+Timestep: 75
+Bacterium:0:Run:(19,159):(18,159)
+*
+Timestep: 76
+Bacterium:0:Run:(18,159):(17,159)
+*
+Timestep: 77
+*
+Timestep: 78
+*
+Timestep: 79
+*
+Timestep: 80
+*
+Timestep: 81
+*
+Timestep: 82
+*
+Timestep: 83
+*
+Timestep: 84
+*
+Timestep: 85
+*
+Timestep: 86
+*
+Timestep: 87
+*
+Timestep: 88
+*
+Timestep: 89
+*
+Timestep: 90
+*
+Timestep: 91
+*
+Timestep: 92
+Bacterium:0:Run:(17,159):(16,159)
+*
+Timestep: 93
+*
+Timestep: 94
+Bacterium:0:Run:(16,159):(15,159)
+*
+Timestep: 95
+*
+Timestep: 96
+Bacterium:0:Run:(15,159):(14,159)
+*
+Timestep: 97
+*
+Timestep: 98
+*
+Timestep: 99
+Bacterium:0:Run:(14,159):(13,159)
+*
+Timestep: 100
+Bacterium:0:Run:(13,159):(12,159)
+*
+Timestep: 101
+Bacterium:0:Run:(12,159):(11,159)
+*
+Timestep: 102
+*
+Timestep: 103
+*
+Timestep: 104
+*
+Timestep: 105
+*
+Timestep: 106
+*
+Timestep: 107
+*
+Timestep: 108
+*
+Timestep: 109
+*
+Timestep: 110
+*
+Timestep: 111
+*
+Timestep: 112
+*
+Timestep: 113
+*
+Timestep: 114
+*
+Timestep: 115
+*
+Timestep: 116
+*
+Timestep: 117
+*
+Timestep: 118
+Bacterium:0:Run:(11,159):(10,159)
+*
+Timestep: 119
+*
+Timestep: 120
+*
+Timestep: 121
+*
+Timestep: 122
+*
+Timestep: 123
+*
+Timestep: 124
+*
+Timestep: 125
+*
+Timestep: 126
+*
+Timestep: 127
+Bacterium:0:Run:(10,159):(9,159)
+*
+Timestep: 128
+*
+Timestep: 129
+*
+Timestep: 130
+*
+Timestep: 131
+*
+Timestep: 132
+*
+Timestep: 133
+*
+Timestep: 134
+*
+Timestep: 135
+*
+Timestep: 136
+*
+Timestep: 137
+*
+Timestep: 138
+*
+Timestep: 139
+*
+Timestep: 140
+*
+Timestep: 141
+*
+Timestep: 142
+*
+Timestep: 143
+*
+Timestep: 144
+*
+Timestep: 145
+*
+Timestep: 146
+*
+Timestep: 147
+*
+Timestep: 148
+*
+Timestep: 149
+*
+Timestep: 150
+*
+Timestep: 151
+*
+Timestep: 152
+*
+Timestep: 153
+*
+Timestep: 154
+*
+Timestep: 155
+*
+Timestep: 156
+*
+Timestep: 157
+*
+Timestep: 158
+*
+Timestep: 159
+*
+Timestep: 160
+*
+Timestep: 161
+*
+Timestep: 162
+*
+Timestep: 163
+*
+Timestep: 164
+*
+Timestep: 165
+*
+Timestep: 166
+*
+Timestep: 167
+*
+Timestep: 168
+*
+Timestep: 169
+*
+Timestep: 170
+*
+Timestep: 171
+*
+Timestep: 172
+*
+Timestep: 173
+*
+Timestep: 174
+Bacterium:0:Run:(9,159):(8,159)
+*
+Timestep: 175
+Bacterium:0:Run:(8,159):(7,159)
+*
+Timestep: 176
+*
+Timestep: 177
+*
+Timestep: 178
+*
+Timestep: 179
+*
+Timestep: 180
+*
+Timestep: 181
+*
+Timestep: 182
+*
+Timestep: 183
+*
+Timestep: 184
+*
+Timestep: 185
+Bacterium:0:Run:(7,159):(6,159)
+*
+Timestep: 186
+*
+Timestep: 187
+*
+Timestep: 188
+Bacterium:0:Run:(6,159):(5,159)
+Bacterium:0:Run:(5,159):(4,159)
+*
+Timestep: 189
+*
+Timestep: 190
+*
+Timestep: 191
+*
+Timestep: 192
+*
+Timestep: 193
+*
+Timestep: 194
+*
+Timestep: 195
+*
+Timestep: 196
+*
+Timestep: 197
+*
+Timestep: 198
+*
+Timestep: 199
+*

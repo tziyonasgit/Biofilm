@@ -39,7 +39,7 @@ public class Environment {
         this.bMonomerID = 0;
         this.EPSMonomerID = 0;
         this.nutrientID = 0;
-        this.initialise = new CountDownLatch(bacteria);
+        this.initialise = new CountDownLatch(bacteria + 1);
     }
 
     // method for creating individual blocks to create environment
@@ -131,7 +131,12 @@ public class Environment {
     // method for creating singular bacterial monomer
     public BacterialMonomer createBMonomer(Block position) {
         BacterialMonomer bMonomer = new BacterialMonomer(position, this.bMonomerID);
-        this.BMonomers.add(bMonomer);
+
+        synchronized (this.BMonomers)
+        {
+            this.BMonomers.add(bMonomer);
+        }
+        
         this.bMonomerID++;
         return bMonomer;
     }
@@ -139,9 +144,35 @@ public class Environment {
     // method for creating singular EPS monomer
     public EPS createEPSMonomer(Block position) {
         EPS EPSMonomer = new EPS(position, this.EPSMonomerID);
-        this.EPSMonomers.add(EPSMonomer);
+
+        synchronized (this.EPSMonomers)
+        {
+            this.EPSMonomers.add(EPSMonomer);
+        }
+        
         this.EPSMonomerID++;
         return EPSMonomer;
+    }
+
+    // method for creating singular nutrient
+    public Nutrient createNutrient(Block position) {
+        Nutrient nut = new Nutrient(position, this.nutrientID);
+
+        // synchronizes on ArrayList of nutrients for the Environment
+        synchronized (this.nutrients)
+        {
+            this.nutrients.add(nut);
+        }
+        
+        
+        // synchronizes on LinkedList of nutrients for block
+        synchronized (position.nutrients)
+        {
+            position.addNutrient(nut);
+        }
+        
+        this.nutrientID++;
+        return nut;
     }
 
     // method for creating singular bacterium
@@ -156,10 +187,18 @@ public class Environment {
             // below hardcoded for the demo //
             bMonomer = createBMonomer(bacterium.position);
             bacterium.monomers[j] = bMonomer;
-            this.BMonomers.add(bMonomer);
+
+            synchronized (this.BMonomers)
+            {
+                this.BMonomers.add(bMonomer);
+            }
         }
 
-        this.Bacteria.add(bacterium);
+        synchronized (this.Bacteria)
+        {
+            this.Bacteria.add(bacterium);   
+        }
+        
         this.BacteriumID++;
 
         Thread b = new Thread(bacterium);
