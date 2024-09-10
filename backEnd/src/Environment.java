@@ -18,6 +18,8 @@ public class Environment {
     int bMonomerID;
     int EPSMonomerID;
     int nutrientID;
+    int xBlocks;
+    int yBlocks;
     // barrier for bacteria to wait on
     public volatile CountDownLatch initialise;
     // public int number = 0;
@@ -39,7 +41,18 @@ public class Environment {
         this.bMonomerID = 0;
         this.EPSMonomerID = 0;
         this.nutrientID = 0;
+        this.xBlocks = xBlocks;
+        this.yBlocks = yBlocks;
         this.initialise = new CountDownLatch(bacteria + 1);
+    }
+
+    public int getxBlocks(){
+        return this.xBlocks;
+
+    }
+
+    public int getyBlocks(){
+        return this.yBlocks;
     }
 
     // method for creating individual blocks to create environment

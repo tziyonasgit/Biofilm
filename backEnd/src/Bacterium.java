@@ -369,19 +369,58 @@ public class Bacterium implements Runnable {
 
     }
 
-    public void doSomething() {
+    // method that determines what the bacterium does
+    public void doSomething(Block[][] environBlocks) {
         int event = mt.nextInt(6);
+        int x = 0;
+        int y = 0;
+        boolean accepted = false;
+        int maxDistance = (int) Math
+                .sqrt(Math.pow(environ.getxBlocks(), 2) + Math.pow(environ.getyBlocks(), 2));
         switch (event) {
-            case 0:
-                // tumble
+            case 0: // tumble
+                if (energy == 0){
+                    break;
+                }
+                accepted = false;
+
+                while (!accepted) {
+                    x = mt.nextInt(environ.getxBlocks() / 2);
+                    y = mt.nextInt(environ.getyBlocks()) / 2;
+                    int distance = (int) Math
+                            .sqrt(Math.pow(x - position.getXPos(), 2) + Math.pow(y - position.getYPos(), 2));
+
+                    if (distance >= (maxDistance) / 4) { // if the distance is too far for a tubmle do another tumble
+                        accepted = false;
+                    }
+                    int energyLevel = this.energy / maxEnergy * 100; // checks if co-ordinates are viable for the
+                                                                     // bacterium
+                    if (energyLevel >= 80) {
+                        accepted = true;
+                    } else if (energyLevel >= 60 && distance <= (maxDistance * 4) / 5) {
+                        accepted = true;
+                    } else if (energyLevel >= 40 && distance <= (maxDistance * 3) / 5) {
+                        accepted = true;
+                    } else if (energyLevel >= 20 && distance <= (maxDistance * 2) / 5) {
+                        accepted = true;
+                    } else if (energyLevel >= 1 && distance <= (maxDistance * 1) / 5) {
+                        accepted = true;
+                    } else {
+                        accepted = false;
+                    }
+
+                }
+                String type = "tumble";
+                this.move(position, environBlocks[x][y], environBlocks, type); // make bacterium go to that block
+
                 break;
 
-            case 1:
+            case 1: // die
                 if (this.probDie == 100) {
                     probDie = 0;
                     this.die();
 
-                } else if (((this.age) / maxAge) * 100 <= 20) {
+                } else if (((this.age) / maxAge) * 100 <= 20) { // adds to probDie based on liklihood of bacterium dying
                     probDie += 2;
                 } else if (((this.age) / maxAge) * 100 <= 40) {
                     probDie += 4;
@@ -393,12 +432,13 @@ public class Bacterium implements Runnable {
                     probDie += 15;
                 }
                 break;
-            case 2:
+            case 2: // eat
                 if (this.probEat == 100) {
                     this.probEat = 0;
                     this.eat(null);// needs to do something
 
-                } else if ((this.energy / this.maxEnergy) * 100 <= 40) {
+                } else if ((this.energy / this.maxEnergy) * 100 <= 40) { // adds to probEat based on liklihood of
+                                                                         // bacterium eating
                     probEat += 20;
 
                 } else if ((this.energy / this.maxEnergy) * 100 <= 60) {
@@ -411,8 +451,9 @@ public class Bacterium implements Runnable {
                     probEat += 5;
                 }
                 break;
-            case 3:
-                if (this.probGrow == 100 && this.energy >= 40) {
+            case 3: // grow
+                if (this.probGrow == 100 && this.energy >= 40) { // adds to probGrow based on liklihood of bacterium
+                                                                 // growing
                     this.consume(null); // do something
                 } else if (this.energy / this.maxEnergy * 100 <= 20) {
                     probGrow += 2;
@@ -426,11 +467,42 @@ public class Bacterium implements Runnable {
                     probGrow += 20;
                 }
                 break;
-            case 4:
-                // run
+            case 4:// run
+                if (energy == 0){
+                    break;
+                }
+                accepted = false;
+                while (!accepted) {
+                    x = mt.nextInt(environ.getxBlocks() / 2);
+                    y = mt.nextInt(environ.getyBlocks()) / 2;
+                    int distance = (int) Math
+                            .sqrt(Math.pow(x - position.getXPos(), 2) + Math.pow(y - position.getYPos(), 2));
+
+                    if (distance >= (maxDistance) / 4) {
+                        accepted = false;
+                    }
+                    int energyLevel = this.energy / maxEnergy * 100; // checks if co-ordinates are viable for the
+                                                                     // bacterium
+                    if (energyLevel >= 80) {
+                        accepted = true;
+                    } else if (energyLevel >= 60 && distance <= (maxDistance * 4) / 5) {
+                        accepted = true;
+                    } else if (energyLevel >= 40 && distance <= (maxDistance * 3) / 5) {
+                        accepted = true;
+                    } else if (energyLevel >= 20 && distance <= (maxDistance * 2) / 5) {
+                        accepted = true;
+                    } else if (energyLevel >= 1 && distance <= (maxDistance * 1) / 5) {
+                        accepted = true;
+                    } else {
+                        accepted = false;
+                    }
+
+                }
+                type = "run";
+                this.move(position, environBlocks[x][y], environBlocks, type); // make bacterium go to that block
                 break;
-            case 5:
-                break; // do nothing
+            case 5:// do nothing
+                break;
 
         }
 
