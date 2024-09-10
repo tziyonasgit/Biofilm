@@ -16,7 +16,8 @@ public class Bacterium implements Runnable {
     BacterialMonomer[] monomers;
     Environment environ;
     public volatile String waiting = "hi";
-    // public volatile int number = 0;
+    private volatile String currentAction = "";
+    private Block moveDestination;
     int energy;
     boolean killThread;
     LocalDateTime birthTime;
@@ -43,8 +44,6 @@ public class Bacterium implements Runnable {
         this.birthTime = LocalDateTime.now();
         this.doublingTime = generateDoublingTime(1.0);
         this.mt = new MersenneTwister(seed);
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Spawn:" + "(" + position.getXPos() + ","
-                + position.getYPos() + ")");
     }
 
     public static double generateDoublingTime(double mean) {
@@ -84,9 +83,6 @@ public class Bacterium implements Runnable {
     }
 
     public void runMove(Block iBlock, Block fBlock) {
-        // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":otherMove:("
-        // + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
-        // + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
         move(iBlock, fBlock, environ.environBlocks, "Run");
     }
 
@@ -99,6 +95,11 @@ public class Bacterium implements Runnable {
         // in Simulation.java
         synchronized (waiting) {
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + childBac.getBID());
+            try {
+                SimulationModel.barrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -114,6 +115,11 @@ public class Bacterium implements Runnable {
 
         synchronized (waiting) {
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Die");
+            try {
+                SimulationModel.barrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -151,6 +157,11 @@ public class Bacterium implements Runnable {
         move(this.position, destinationPosition, environ.environBlocks, "Run");
         synchronized (waiting) {
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Collide:Bacterium:" + bac.getBID());
+            try {
+                SimulationModel.barrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -162,6 +173,11 @@ public class Bacterium implements Runnable {
 
         synchronized (waiting) {
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS");
+            try {
+                SimulationModel.barrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -170,6 +186,11 @@ public class Bacterium implements Runnable {
         synchronized (waiting) {
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Attach:("
                     + block.getXPos() + "," + block.getYPos() + ")");
+            try {
+                SimulationModel.barrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -187,6 +208,11 @@ public class Bacterium implements Runnable {
         this.energy += 1; // increases energy level
         synchronized (waiting) {
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Eat");
+            try {
+                SimulationModel.barrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -194,6 +220,11 @@ public class Bacterium implements Runnable {
         bMonomer.position.removeBMonomer(bMonomer);
         synchronized (waiting) {
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Consume:BacterialMonomer:" + bMonomer.getID());
+            try {
+                SimulationModel.barrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -204,20 +235,48 @@ public class Bacterium implements Runnable {
         try {
             environ.initialise.countDown();
             environ.initialise.await();
+
+            System.out.println(Thread.currentThread().getName() + ", executing run() method!");
+            spawn();
+
+            while (!killThread) {
+                synchronized (this) {
+                    // Wait for an action to be set
+                    while (currentAction.isEmpty()) {
+                        wait(); // Wait until an action is set
+                    }
+
+                    // Perform the action based on the external command
+                    if (currentAction.equals("runMove")) {
+                        runMove(this.getBlock(), moveDestination); // Run move action
+                    } else if (currentAction.equals("tumbleMove")) {
+                        tumbleMove(this.getBlock(), moveDestination); // Tumble move action
+                    }
+
+                    // Clear the action after performing
+                    currentAction = "";
+                }
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        System.out.println(Thread.currentThread().getName() + ", executing run() method!");
+    }
 
-        // this.runMove(this.getBlock(), environ.environBlocks[0][0]); // calls
+    public synchronized void setAction(String action, Block destination) {
+        this.currentAction = action;
+        this.moveDestination = destination;
+        notify(); // Notify the thread to wake up and perform the action
+    }
 
-        // while (!killThread) {
-        // grow(SimulationModel.duration);
-        // }
-
-        // // will not be in final, just for testing synchronization //
-        this.setFather(this);
+    public void spawn() {
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Spawn:" + "(" + position.getXPos() + ","
+                + position.getYPos() + ")");
+        try {
+            SimulationModel.barrier.await();
+        } catch (InterruptedException | BrokenBarrierException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -251,25 +310,12 @@ public class Bacterium implements Runnable {
         position = environBlocks[start.getXPos() - 1][start.getYPos()];
         this.energy -= 1; // decreases energy each movement
         position.setOccupied(true);
-        // synchronized (waiting) {
-        // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType +
-        // ":("
-        // + start.getXPos() + "," + start.getYPos() + "):"
-        // + "(" + position.getXPos() + "," + position.getYPos() + ")");
-        // }
-
     }
 
     public void moveRight(Block[][] environBlocks, String moveType, Block start) {
         position = environBlocks[start.getXPos() + 1][start.getYPos()];
         this.energy -= 1; // decreases energy each movement
         position.setOccupied(true);
-        // synchronized (waiting) {
-        // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType +
-        // ":("
-        // + start.getXPos() + "," + start.getYPos() + "):"
-        // + "(" + position.getXPos() + "," + position.getYPos() + ")");
-        // }
 
     }
 
@@ -277,12 +323,6 @@ public class Bacterium implements Runnable {
         position = environBlocks[start.getXPos()][start.getYPos() + 1];
         this.energy -= 1; // decreases energy each movement
         position.setOccupied(true);
-        // synchronized (waiting) {
-        // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType +
-        // ":("
-        // + start.getXPos() + "," + start.getYPos() + "):"
-        // + "(" + position.getXPos() + "," + position.getYPos() + ")");
-        // }
 
     }
 
@@ -290,12 +330,6 @@ public class Bacterium implements Runnable {
         position = environBlocks[start.getXPos()][start.getYPos() - 1];
         this.energy -= 1; // decreases energy each movement
         position.setOccupied(true);
-        // synchronized (waiting) {
-        // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType +
-        // ":("
-        // + start.getXPos() + "," + start.getYPos() + "):"
-        // + "(" + position.getXPos() + "," + position.getYPos() + ")");
-        // }
 
     }
 
@@ -321,14 +355,16 @@ public class Bacterium implements Runnable {
                 this.moveDown(environBlocks, moveType, start); // move one down
             }
 
-            // System.out.println("hi");
-            synchronized (waiting) { // not sure what this does...put it in comments in the move up, down, left,
-                                     // right methods, if it is used to record when a movement happens then uncomment
-                                     // it....Thalia
-                Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType + ":("
-                        + start.getXPos() + "," + start.getYPos() + "):"
-                        + "(" + position.getXPos() + "," + position.getYPos() + ")");
+            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType + ":("
+                    + start.getXPos() + "," + start.getYPos() + "):"
+                    + "(" + position.getXPos() + "," + position.getYPos() + ")");
+            try {
+                SimulationModel.barrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+
+                e.printStackTrace();
             }
+
         }
 
     }

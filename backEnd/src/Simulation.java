@@ -113,10 +113,9 @@ public class Simulation {
     }
 
     // method for writing activities ArrayList for simulation to the activity file
-    public static void writeToFile(int timestep) {
+    public static void writeToFile() {
         try {
             FileWriter actWFile = new FileWriter(fileName, true);
-            actWFile.write("Timestep: " + timestep + "\n");
             for (int i = 0; i < activities.size(); i++) {
                 actWFile.write(activities.get(i) + "\n");
             }

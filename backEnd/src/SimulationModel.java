@@ -1,7 +1,9 @@
 package backEnd.src;
 
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CyclicBarrier;
 
 // class for managing simulation and creating the simulation environment and setting up its parts
 public class SimulationModel {
@@ -10,6 +12,10 @@ public class SimulationModel {
         public static double duration;
         Environment simEnviron;
         public volatile String run = "sync";
+        public static CyclicBarrier barrier;
+        private final Object runLock = new Object();
+        public long startTime;
+        public Timer timer;
         // Simulation paramaters still to be added here //
 
         // paramaterised constructor for simulation model
@@ -25,38 +31,44 @@ public class SimulationModel {
                 SimulationModel.duration = duration;
                 this.yBlocks = yBlocks;
                 this.xBlocks = xBlocks;
+                barrier = new CyclicBarrier(iBacteria, new Runnable() {
+                        @Override
+                        public void run() {
+                                Simulation.writeToFile();
+                                Simulation.activities.clear();
+                        }
+                });
                 this.simEnviron = createEnvironment(iNutrients, iFBMonomers, totBMonomers, iEPSMonomers, iBacteria,
                                 xBlocks, yBlocks);
 
+                startSimulation();
+        }
+
+        // Method to start the simulation
+        private void startSimulation() {
+                startTime = System.currentTimeMillis(); // Capture the start time
+
+                // Run the simulation
                 biofilmSimulation(simEnviron);
         }
         // Simulation paramaters still to be added here //
 
         // class for creating and running a task to be completed on each run of a timer
-        class Helper extends TimerTask {
-                public int i = 0;
-
+        class DurationCheckTask extends TimerTask {
+                @Override
                 public void run() {
-                        // synchronizes on ArrayList of activities to ensure actions not lost if a
-                        // bacterium
-                        // is busy adding an activity using the recActivities method in Simulation.java
-                        synchronized (Simulation.activities) {
-                                // writes activities in ArrayList of activities to file and empties the
-                                // ArrayList
-                                Simulation.writeToFile(i);
-                                Simulation.activities.clear();
-                        }
-                        i++;
+                        long currentTime = System.currentTimeMillis();
+                        double elapsedTimeInSeconds = (currentTime - startTime) / 1000.0;
 
-                        // if task, and hence number of timesteps done, has been completed as many times
-                        // as
-                        // the given duration, timer is stopped (notified that can cancel)
-                        if (i == duration) {
-                                synchronized (run) {
-                                        run.notifyAll();
-                                        System.out.println("Simulation completed.");
+                        if (elapsedTimeInSeconds >= duration) {
+                                synchronized (runLock) {
+                                        System.out.println("duration is:" + duration);
+                                        System.out.println("Time elapsed is:" + elapsedTimeInSeconds);
+                                        System.out.println("Duration reached. Notifying completion...");
+                                        timer.cancel(); // Cancel the timer
+                                        System.out.println("Simulation is done!");
+                                        System.exit(0);
                                 }
-                                System.exit(0);
 
                         }
                 }
@@ -97,22 +109,17 @@ public class SimulationModel {
 
                 // creates new timer and a task to give to it
                 Timer timer = new Timer();
-                TimerTask task = new Helper();
+                TimerTask durationCheckTask = new DurationCheckTask();
+                this.timer = timer;
 
-                // schedules timer to run and perform task every time period
-                timer.schedule(task, 0, 10);
+                timer.scheduleAtFixedRate(durationCheckTask, 0, 1000); // Check every second
 
-                // runs timer over and over until notified to cancel and stop
-                try {
+                Random random = new Random(); // Create a Random object once
 
-                        synchronized (run) {
-                                run.wait();
-                        }
-                        timer.cancel();
-                        // System.exit(0); // Exit the program
-
-                } catch (InterruptedException e) {
-                        e.printStackTrace();
+                for (int i = 0; i < iBacteria; i++) {
+                        int x = random.nextInt(environ.environBlocks.length); // Random x within the number of columns
+                        int y = random.nextInt(environ.environBlocks[0].length); // Random y within the number of rows
+                        environ.Bacteria.get(i).setAction("runMove", environ.environBlocks[x][y]);
                 }
 
         }
