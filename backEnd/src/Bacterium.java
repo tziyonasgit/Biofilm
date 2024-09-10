@@ -306,33 +306,6 @@ public class Bacterium implements Runnable {
 
     }
 
-    public void moveLeft(Block[][] environBlocks, String moveType, Block start) {
-        position = environBlocks[start.getXPos() - 1][start.getYPos()];
-        this.energy -= 1; // decreases energy each movement
-        position.setOccupied(true);
-    }
-
-    public void moveRight(Block[][] environBlocks, String moveType, Block start) {
-        position = environBlocks[start.getXPos() + 1][start.getYPos()];
-        this.energy -= 1; // decreases energy each movement
-        position.setOccupied(true);
-
-    }
-
-    public void moveUp(Block[][] environBlocks, String moveType, Block start) {
-        position = environBlocks[start.getXPos()][start.getYPos() + 1];
-        this.energy -= 1; // decreases energy each movement
-        position.setOccupied(true);
-
-    }
-
-    public void moveDown(Block[][] environBlocks, String moveType, Block start) {
-        position = environBlocks[start.getXPos()][start.getYPos() - 1];
-        this.energy -= 1; // decreases energy each movement
-        position.setOccupied(true);
-
-    }
-
     // method that moves a bacterium from a start to a goal block
     public void move(Block start, Block end, Block[][] environBlocks, String moveType) {
 
@@ -342,26 +315,28 @@ public class Bacterium implements Runnable {
             start = position;
             start.setOccupied(false);
             if (start.getXPos() > end.getXPos()) {
-                this.moveLeft(environBlocks, moveType, start);// move one left
+                position = environBlocks[start.getXPos() - 1][start.getYPos()]; // move one left
             } else if (start.getXPos() < end.getXPos()) {
-                this.moveRight(environBlocks, moveType, start);// move one right
+                position = environBlocks[start.getXPos() + 1][start.getYPos()]; // move one right
             }
 
             else if (start.getYPos() < end.getYPos()) {
-                this.moveUp(environBlocks, moveType, start);// move one up
+                position = environBlocks[start.getXPos()][start.getYPos() + 1]; // move one up
             }
 
             else if (start.getYPos() > end.getYPos()) {
-                this.moveDown(environBlocks, moveType, start); // move one down
+                position = environBlocks[start.getXPos()][start.getYPos() - 1]; // move one down
             }
+            this.energy -= 1; // decreases energy each movement
+            position.setOccupied(true);
 
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType + ":("
                     + start.getXPos() + "," + start.getYPos() + "):"
                     + "(" + position.getXPos() + "," + position.getYPos() + ")");
+
             try {
                 SimulationModel.barrier.await();
             } catch (InterruptedException | BrokenBarrierException e) {
-
                 e.printStackTrace();
             }
 
@@ -379,7 +354,7 @@ public class Bacterium implements Runnable {
                 .sqrt(Math.pow(environ.getxBlocks(), 2) + Math.pow(environ.getyBlocks(), 2));
         switch (event) {
             case 0: // tumble
-                if (energy == 0){
+                if (energy == 0) {
                     break;
                 }
                 accepted = false;
@@ -468,7 +443,7 @@ public class Bacterium implements Runnable {
                 }
                 break;
             case 4:// run
-                if (energy == 0){
+                if (energy == 0) {
                     break;
                 }
                 accepted = false;
