@@ -28,6 +28,7 @@ public class Bacterium implements Runnable {
     int probDie = 0;
     int probEat = 0;
     int probGrow = 0;
+    boolean stuck = false;
 
     // paramaterised constructor for bacterium
     public Bacterium(Block position, int ID, int age, Bacterium father,
@@ -184,6 +185,7 @@ public class Bacterium implements Runnable {
     // fixed onto block by EPS //
     public void attach(Block block) {
         synchronized (waiting) {
+            stuck = true;
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Attach:("
                     + block.getXPos() + "," + block.getYPos() + ")");
             try {
@@ -352,9 +354,15 @@ public class Bacterium implements Runnable {
         boolean accepted = false;
         int maxDistance = (int) Math
                 .sqrt(Math.pow(environ.getxBlocks(), 2) + Math.pow(environ.getyBlocks(), 2));
+        if (position.EPSLevel>= 100){
+            this.attach(position);
+        }
+        if (monomers.length >= 14){
+            this.reproduce(father, position); //fill in
+        }
         switch (event) {
             case 0: // tumble
-                if (energy == 0) {
+                if (energy == 0 || stuck) {
                     break;
                 }
                 accepted = false;
@@ -443,7 +451,7 @@ public class Bacterium implements Runnable {
                 }
                 break;
             case 4:// run
-                if (energy == 0) {
+                if (energy == 0 || stuck) {
                     break;
                 }
                 accepted = false;
