@@ -370,7 +370,7 @@ public class Bacterium implements Runnable {
 
     // method that determines what the bacterium does
     public void doSomething(Block[][] environBlocks) {
-        int event = mt.nextInt(6);
+        int event = mt.nextInt(7);
         int x = 0;
         int y = 0;
         boolean accepted = false;
@@ -504,7 +504,10 @@ public class Bacterium implements Runnable {
                 type = "run";
                 this.move(position, environBlocks[x][y], environBlocks, type); // make bacterium go to that block
                 break;
-            case 5:// do nothing
+            case 5: //secrete
+                this.secrete();
+                break;
+            case 6: //do nothing
                 break;
 
         }
