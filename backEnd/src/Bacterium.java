@@ -2,9 +2,13 @@ package backEnd.src;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.BrokenBarrierException;
 import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
+
+import backEnd.src.SimulationModel.*;
 
 // class for managing bacterium with methods to manipulate them (activities)
 public class Bacterium implements Runnable {
@@ -22,6 +26,8 @@ public class Bacterium implements Runnable {
     boolean killThread;
     LocalDateTime birthTime;
     double doublingTime = 0; // Time in hours for bacterium to double in size
+    Timer timer = new Timer();
+    TimerTask grow = new grow();
     MersenneTwister mt;
     int maxAge = 100;
     int maxEnergy = 100;
@@ -29,6 +35,10 @@ public class Bacterium implements Runnable {
     int probEat = 0;
     int probGrow = 0;
     boolean stuck = false;
+    double length;
+    double scalingFactor;
+    double scaledGrowthRate;
+    double scaledDoublingTime;
 
     // paramaterised constructor for bacterium
     public Bacterium(Block position, int ID, int age, Bacterium father,
@@ -42,9 +52,13 @@ public class Bacterium implements Runnable {
         this.environ = environ;
         this.energy = 0;
         this.killThread = false;
-        this.birthTime = LocalDateTime.now();
-        this.doublingTime = generateDoublingTime(1.0);
+        this.doublingTime = generateDoublingTime(1.0); // time is in hours
         this.mt = new MersenneTwister(seed);
+
+        this.scalingFactor = 60 / (this.doublingTime * 3600); // choose intial number but can change
+        this.scaledGrowthRate = (1 / this.scalingFactor) * (7 / (this.doublingTime * 3600)); // units/second
+        this.scaledDoublingTime = (1 / this.scalingFactor) * (this.doublingTime * 3600);
+
     }
 
     public static double generateDoublingTime(double mean) {
@@ -87,11 +101,10 @@ public class Bacterium implements Runnable {
         move(iBlock, fBlock, environ.environBlocks, "Run");
     }
 
-    public void reproduce(Bacterium child, Block position) {
-        Bacterium childBac = environ.createBacterium(environ, position); // creates child bacterium
-        childBac.setFather(this); // sets child's father to bacterium that is reproducing
+    public void reproduce(Block position) {
+        Bacterium childBac = environ.createBacterium(environ, position, this); // creates child bacterium
         this.resetMonomers(); // resets father bacterium to 7 monomers
-
+        this.length = monomers.length;
         // synchronizes on waiting to ensure that only one bacterium calls recActivities
         // in Simulation.java
         synchronized (waiting) {
@@ -107,8 +120,8 @@ public class Bacterium implements Runnable {
     // bacterium dies, do all bacterial monomers die as well //
     public void die() {
 
-        synchronized (environ.Bacteria) {
-            environ.Bacteria.remove(this);
+        synchronized (Environment.Bacteria) {
+            Environment.Bacteria.remove(this);
         }
 
         position.setOccupied(false); // makes block free
@@ -240,6 +253,10 @@ public class Bacterium implements Runnable {
 
             System.out.println(Thread.currentThread().getName() + ", executing run() method!");
             spawn();
+            // grow(SimulationModel.duration);
+
+            // scheduling the task at interval
+            timer.schedule(grow, 0, 1000); // growth rate is per second
 
             while (!killThread) {
                 synchronized (this) {
@@ -265,6 +282,31 @@ public class Bacterium implements Runnable {
 
     }
 
+    class grow extends TimerTask {
+        @Override
+        public void run() {
+            // Check if the bacterium should reproduce
+            if (length >= 14) {
+                reproduce(getRandomAdjacentFreeBlock(position));
+            }
+
+            // Calculate the time elapsed since birth
+            Duration timeElapsed = Duration.between(birthTime, LocalDateTime.now());
+
+            // Convert the elapsed time into hours (floating point for better precision)
+            double timeElapsedSeconds = timeElapsed.toSeconds();
+
+            // Update the length based on the growth rate, limiting it by doubling time
+            length = 7 + scaledGrowthRate * Math.min(timeElapsedSeconds,
+                    1.2 * scaledDoublingTime); // scaled time bounds as well
+
+            // Print information for debugging
+            System.out.println("Scaled growth rate is : " + scaledGrowthRate + " units per second");
+            System.out.println("Time elapsed since birth : " + timeElapsed);
+            System.out.println("My size is : " + length);
+        }
+    }
+
     public synchronized void setAction(String action, Block destination) {
         this.currentAction = action;
         this.moveDestination = destination;
@@ -272,38 +314,16 @@ public class Bacterium implements Runnable {
     }
 
     public void spawn() {
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Spawn:" + "(" + position.getXPos() + ","
-                + position.getYPos() + ")");
+        this.birthTime = LocalDateTime.now();
+        this.length = monomers.length; // gets current length of bacterium which is 7 monomers long
+        if (father == null) {
+            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Spawn:" + "(" + position.getXPos() + ","
+                    + position.getYPos() + ")");
+        }
         try {
             SimulationModel.barrier.await();
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
-        }
-
-    }
-
-    public void grow(double totalDuration) {
-        Duration timeElapsed = Duration.between(birthTime, LocalDateTime.now());
-        double hoursSinceBirth = timeElapsed.toHours() + timeElapsed.toMinutes() / 60.0; // converts the elapsed time
-                                                                                         // into hours.
-
-        // Calculate the proportion of simulation duration that has passed.
-        double simulationProportion = hoursSinceBirth / totalDuration;
-
-        double growthTime = Math.min(simulationProportion * hoursSinceBirth, 1.2 * doublingTime);
-
-        // Check if the bacterium has reached its doubling time
-        if (growthTime >= doublingTime) {
-            // Trigger reproduction when doubling time is met or exceeded
-            Block newPosition = getRandomAdjacentFreeBlock(this.position); // Get a free block for the new bacterium
-            Bacterium child = environ.createBacterium(environ, newPosition); // Create the child bacterium
-
-            // Call the reproduce method to handle child creation and other tasks
-            reproduce(child, newPosition);
-
-            // Reset growth
-            this.birthTime = LocalDateTime.now(); // Reset the birth time after reproduction
-
         }
 
     }
@@ -354,12 +374,10 @@ public class Bacterium implements Runnable {
         boolean accepted = false;
         int maxDistance = (int) Math
                 .sqrt(Math.pow(environ.getxBlocks(), 2) + Math.pow(environ.getyBlocks(), 2));
-        if (position.EPSLevel>= 100){
+        if (position.EPSLevel >= 100) {
             this.attach(position);
         }
-        if (monomers.length >= 14){
-            this.reproduce(father, position); //fill in
-        }
+
         switch (event) {
             case 0: // tumble
                 if (energy == 0 || stuck) {

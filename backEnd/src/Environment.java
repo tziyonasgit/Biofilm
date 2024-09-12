@@ -10,7 +10,7 @@ public class Environment {
     int totNutrients, totBMonomers, FBMonomers, totEPSMonomers, totBacteria, freeBlocks;
     Block environBlocks[][];
     ArrayList<BacterialMonomer> BMonomers;
-    ArrayList<Bacterium> Bacteria;
+    public static ArrayList<Bacterium> Bacteria;
     ArrayList<EPS> EPSMonomers;
     ArrayList<Nutrient> nutrients;
     // initialises IDs for the different parts of the environment
@@ -35,7 +35,7 @@ public class Environment {
         this.freeBlocks = yBlocks * xBlocks;
         this.BMonomers = new ArrayList<BacterialMonomer>();
         this.EPSMonomers = new ArrayList<EPS>();
-        this.Bacteria = new ArrayList<Bacterium>();
+        Environment.Bacteria = new ArrayList<Bacterium>();
         this.nutrients = new ArrayList<Nutrient>();
         this.BacteriumID = 0;
         this.bMonomerID = 0;
@@ -46,12 +46,12 @@ public class Environment {
         this.initialise = new CountDownLatch(bacteria + 1);
     }
 
-    public int getxBlocks(){
+    public int getxBlocks() {
         return this.xBlocks;
 
     }
 
-    public int getyBlocks(){
+    public int getyBlocks() {
         return this.yBlocks;
     }
 
@@ -109,7 +109,7 @@ public class Environment {
 
     // method for creating initial bacteria
     public void createBacteria(int bacteria, int xBlocks, int yBlocks, Environment environ) {
-        BacterialMonomer[] monomers = new BacterialMonomer[20];
+        BacterialMonomer[] monomers = new BacterialMonomer[14];
         BacterialMonomer bMonomer;
         Random rX = new Random();
         Random rY = new Random();
@@ -184,12 +184,12 @@ public class Environment {
     }
 
     // method for creating singular bacterium
-    public Bacterium createBacterium(Environment environ, Block position) {
+    public Bacterium createBacterium(Environment environ, Block position, Bacterium father) {
         BacterialMonomer[] monomers = new BacterialMonomer[20];
         BacterialMonomer bMonomer;
 
         // below hardcoded for the demo //
-        Bacterium bacterium = new Bacterium(position, this.BacteriumID, 0, null,
+        Bacterium bacterium = new Bacterium(position, this.BacteriumID, 0, father,
                 monomers, "covid", environ, 5);
 
         for (int j = 0; j < 7; j++) {
@@ -202,8 +202,9 @@ public class Environment {
             }
         }
 
-        synchronized (this.Bacteria) {
-            this.Bacteria.add(bacterium);
+        synchronized (Environment.Bacteria) {
+            Environment.Bacteria.add(bacterium);
+            SimulationModel.resetBarrier();
         }
 
         this.BacteriumID++;

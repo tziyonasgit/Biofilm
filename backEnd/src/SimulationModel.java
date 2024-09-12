@@ -7,7 +7,7 @@ import java.util.concurrent.CyclicBarrier;
 
 // class for managing simulation and creating the simulation environment and setting up its parts
 public class SimulationModel {
-        public int iNutrients, iFBMonomers, totBMonomers, iEPSMonomers,
+        public static int iNutrients, iFBMonomers, totBMonomers, iEPSMonomers,
                         iBacteria, xBlocks, yBlocks;
         public static double duration;
         Environment simEnviron;
@@ -23,14 +23,15 @@ public class SimulationModel {
                         int xBlocks, int yBlocks, double duration)
         // Simulation paramaters still to be added here //
         {
-                this.iNutrients = iNutrients;
-                this.iFBMonomers = iFBMonomers;
-                this.totBMonomers = totBMonomers;
-                this.iEPSMonomers = iEPSMonomers;
-                this.iBacteria = iBacteria;
+                SimulationModel.iNutrients = iNutrients;
+                SimulationModel.iFBMonomers = iFBMonomers;
+                SimulationModel.totBMonomers = totBMonomers;
+                SimulationModel.iEPSMonomers = iEPSMonomers;
+                SimulationModel.iBacteria = iBacteria;
                 SimulationModel.duration = duration;
-                this.yBlocks = yBlocks;
-                this.xBlocks = xBlocks;
+                SimulationModel.yBlocks = yBlocks;
+                SimulationModel.xBlocks = xBlocks;
+
                 barrier = new CyclicBarrier(iBacteria, new Runnable() {
                         @Override
                         public void run() {
@@ -42,6 +43,17 @@ public class SimulationModel {
                                 xBlocks, yBlocks);
 
                 startSimulation();
+        }
+
+        public static void resetBarrier() {
+                iBacteria = Environment.Bacteria.size();
+                barrier = new CyclicBarrier(iBacteria, new Runnable() {
+                        @Override
+                        public void run() {
+                                Simulation.writeToFile();
+                                Simulation.activities.clear();
+                        }
+                });
         }
 
         // Method to start the simulation
@@ -119,7 +131,7 @@ public class SimulationModel {
                 for (int i = 0; i < iBacteria; i++) {
                         int x = random.nextInt(environ.environBlocks.length); // Random x within the number of columns
                         int y = random.nextInt(environ.environBlocks[0].length); // Random y within the number of rows
-                        environ.Bacteria.get(i).setAction("runMove", environ.environBlocks[x][y]);
+                        Environment.Bacteria.get(i).setAction("runMove", environ.environBlocks[x][y]);
                 }
 
         }
