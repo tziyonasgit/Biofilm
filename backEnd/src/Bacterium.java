@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 
+import backEnd.src.Bacterium.grow;
 import backEnd.src.SimulationModel.*;
 
 // class for managing bacterium with methods to manipulate them (activities)
@@ -20,7 +21,7 @@ public class Bacterium implements Runnable {
     Bacterium father;
     ArrayList<BacterialMonomer> monomers;
     Environment environ;
-    public volatile String waiting = "hi";
+    public volatile String waiting = "wait";
     private volatile String currentAction = "";
     private Block moveDestination;
     int energy;
@@ -28,7 +29,7 @@ public class Bacterium implements Runnable {
     LocalDateTime birthTime;
     double doublingTime = 0; // Time in hours for bacterium to double in size
     Timer timer = new Timer();
-    TimerTask grow = new grow();
+    TimerTask grow;
     MersenneTwister mt;
     int maxAge = 100;
     int maxEnergy = 100;
@@ -55,8 +56,9 @@ public class Bacterium implements Runnable {
         this.killThread = false;
         this.doublingTime = generateDoublingTime(1.0); // time is in hours
         this.mt = new MersenneTwister(seed);
+        this.grow = new grow(this);
 
-        this.scalingFactor = 60 / (this.doublingTime * 3600); // choose intial number but can change
+        this.scalingFactor = 5 / (this.doublingTime * 3600); // choose intial number but can change
         this.scaledGrowthRate = (1 / this.scalingFactor) * (7 / (this.doublingTime * 3600)); // units/second
         this.scaledDoublingTime = (1 / this.scalingFactor) * (this.doublingTime * 3600);
 
@@ -68,10 +70,6 @@ public class Bacterium implements Runnable {
 
         // Use the inverse transform method to get an exponentially distributed value
         return -mean * Math.log(1 - u);
-    }
-
-    public void resetMonomers() {
-        this.length = 7;
     }
 
     // method for returning ID of bacterium
@@ -90,9 +88,6 @@ public class Bacterium implements Runnable {
     }
 
     public void tumbleMove(Block iBlock, Block fBlock) {
-        // Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Tumble:("
-        // + iBlock.getXPos() + "," + iBlock.getYPos() + ")"
-        // + "(" + fBlock.getXPos() + "," + fBlock.getYPos() + ")");
         move(iBlock, fBlock, environ.environBlocks, "Tumble");
     }
 
@@ -100,19 +95,32 @@ public class Bacterium implements Runnable {
         move(iBlock, fBlock, environ.environBlocks, "Run");
     }
 
-    public void reproduce(Block position) {
-        //this.resetMonomers(); // resets father bacterium to 7 monomers
+    public void reproduce(Block position) throws InterruptedException, BrokenBarrierException {
+        System.out.println(Thread.currentThread().getName() + " is reproducing!");
+        // System.out.println("Bacteria " + this.bacteriumID + " is reproducing!");
+        // this.resetMonomers(); // resets father bacterium to 7 monomers
+        this.length = 7;
+        this.birthTime = LocalDateTime.now();
         Bacterium childBac = environ.createBacterium(environ, position, this); // creates child bacterium
-        //this.length = monomers.size();
+        // this.length = monomers.size();
         // synchronizes on waiting to ensure that only one bacterium calls recActivities
         // in Simulation.java
+        // System.out.println(Thread.currentThread().getName() + " is executing
+        // reproduce() for Bacterium "
+        // + this.bacteriumID);
         synchronized (waiting) {
+            System.out.println(
+                    Thread.currentThread().getName() + " is waiting for the child bacterium to start running...");
+            waiting.wait(); // Wait until the child notifies that it has started running
+
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + childBac.getBID());
             try {
                 SimulationModel.barrier.await();
             } catch (InterruptedException | BrokenBarrierException e) {
                 e.printStackTrace();
             }
+            SimulationModel.resetBarrier();
+
         }
     }
 
@@ -243,15 +251,20 @@ public class Bacterium implements Runnable {
     }
 
     public void run() {
+        synchronized (waiting) {
+            // Notify parent bacterium that this child thread has started
+            waiting.notify(); // Notify the parent thread that the child is now running
+        }
         // waits on countdownlatch initialise to ensure all bacteria start their main
         // functioning simultaneously
         try {
             environ.initialise.countDown();
             environ.initialise.await();
 
-            System.out.println(Thread.currentThread().getName() + ", executing run() method!");
-            spawn();
-            // grow(SimulationModel.duration);
+            System.out.println(Thread.currentThread().getName()
+                    + ", executing run() method!");
+            this.birthTime = LocalDateTime.now();
+            this.length = monomers.size(); // gets current length of bacterium which is 7 monomers long
 
             // scheduling the task at interval
             timer.schedule(grow, 0, 1000); // growth rate is per second
@@ -262,50 +275,71 @@ public class Bacterium implements Runnable {
                     while (currentAction.isEmpty()) {
                         wait(); // Wait until an action is set
                     }
-
+                    System.out.println(Thread.currentThread().getName() + " is setting action");
                     // Perform the action based on the external command
                     if (currentAction.equals("runMove")) {
-                        runMove(this.getBlock(), moveDestination); // Run move action
-                    } else if (currentAction.equals("tumbleMove")) {
-                        tumbleMove(this.getBlock(), moveDestination); // Tumble move action
-                    }
 
+                        System.out.println("starting movement");
+                        this.runMove(this.getBlock(), moveDestination); // Run move action
+                    } else if (currentAction.equals("tumbleMove")) {
+                        this.tumbleMove(this.getBlock(), moveDestination); // Tumble move action
+                    } else if (currentAction.equals("reproduce")) {
+                        this.reproduce(getRandomAdjacentFreeBlock(position));
+                    }
                     // Clear the action after performing
                     currentAction = "";
+
+                    Random random = new Random(); // Create a Random object once
+                    int x = random.nextInt(environ.environBlocks.length); // Random x within the
+                    // number of columns
+                    int y = random.nextInt(environ.environBlocks[0].length); // Random y within
+                    // the number of rows
+
+                    this.setAction("runMove", environ.environBlocks[x][y]);
+
                 }
             }
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (BrokenBarrierException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
     }
 
     class grow extends TimerTask {
+        private Bacterium bacterium;
+
+        public grow(Bacterium bacterium) {
+            this.bacterium = bacterium;
+        }
+
         @Override
         public void run() {
-            // Check if the bacterium should reproduce
-            if (length >= 14) {
-                synchronized (this)
-                {
-                    resetMonomers();
-                }
-                reproduce(getRandomAdjacentFreeBlock(position));
-            }
 
+            // Check if the bacterium should reproduce
+            if (bacterium.length >= 14) {
+                synchronized (bacterium) {
+                    bacterium.setAction("reproduce", null);
+                }
+
+            }
             // Calculate the time elapsed since birth
-            Duration timeElapsed = Duration.between(birthTime, LocalDateTime.now());
+            Duration timeElapsed = Duration.between(bacterium.birthTime, LocalDateTime.now());
 
             // Convert the elapsed time into hours (floating point for better precision)
             double timeElapsedSeconds = timeElapsed.toSeconds();
 
             // Update the length based on the growth rate, limiting it by doubling time
-            length = 7 + scaledGrowthRate * Math.min(timeElapsedSeconds,
+            bacterium.length = 7 + scaledGrowthRate * Math.min(timeElapsedSeconds,
                     1.2 * scaledDoublingTime); // scaled time bounds as well
 
             // Print information for debugging
-            System.out.println("Scaled growth rate is : " + scaledGrowthRate + " units per second");
-            System.out.println("Time elapsed since birth : " + timeElapsed);
-            System.out.println("My size is : " + length + " " + bacteriumID);
+            // System.out.println("Scaled growth rate is : " + scaledGrowthRate + " units
+            // per second");
+            // System.out.println("Time elapsed since birth : " + timeElapsed);
+
         }
     }
 
@@ -365,6 +399,7 @@ public class Bacterium implements Runnable {
             }
 
         }
+        System.out.println("done moving");
 
     }
 
@@ -504,10 +539,10 @@ public class Bacterium implements Runnable {
                 type = "run";
                 this.move(position, environBlocks[x][y], environBlocks, type); // make bacterium go to that block
                 break;
-            case 5: //secrete
+            case 5: // secrete
                 this.secrete();
                 break;
-            case 6: //do nothing
+            case 6: // do nothing
                 break;
 
         }

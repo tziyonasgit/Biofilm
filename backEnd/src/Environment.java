@@ -1,8 +1,11 @@
 package backEnd.src;
 
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 // class for managing the environment with methods for adding new parts to the environment
@@ -10,7 +13,7 @@ public class Environment {
     int totNutrients, totBMonomers, FBMonomers, totEPSMonomers, totBacteria, freeBlocks;
     Block environBlocks[][];
     ArrayList<BacterialMonomer> BMonomers;
-    public static ArrayList<Bacterium> Bacteria;
+    public static List<Bacterium> Bacteria = Collections.synchronizedList(new ArrayList<>());
     ArrayList<EPS> EPSMonomers;
     ArrayList<Nutrient> nutrients;
     // initialises IDs for the different parts of the environment
@@ -35,7 +38,7 @@ public class Environment {
         this.freeBlocks = yBlocks * xBlocks;
         this.BMonomers = new ArrayList<BacterialMonomer>();
         this.EPSMonomers = new ArrayList<EPS>();
-        Environment.Bacteria = new ArrayList<Bacterium>();
+        Environment.Bacteria = Collections.synchronizedList(new ArrayList<>());
         this.nutrients = new ArrayList<Nutrient>();
         this.BacteriumID = 0;
         this.bMonomerID = 0;
@@ -134,9 +137,10 @@ public class Environment {
             Thread b = new Thread(bac);
             b.start();
 
-            this.Bacteria.add(bac);
+            Environment.Bacteria.add(bac);
 
             this.BacteriumID++;
+            bac.spawn();
         }
 
     }
@@ -184,7 +188,8 @@ public class Environment {
     }
 
     // method for creating singular bacterium
-    public Bacterium createBacterium(Environment environ, Block position, Bacterium father) {
+    public Bacterium createBacterium(Environment environ, Block position, Bacterium father)
+            throws InterruptedException, BrokenBarrierException {
         ArrayList<BacterialMonomer> monomers = new ArrayList<BacterialMonomer>();
         BacterialMonomer bMonomer;
 
@@ -204,8 +209,7 @@ public class Environment {
 
         synchronized (Bacteria) {
             Bacteria.add(bacterium);
-            SimulationModel.resetBarrier();
-            System.out.println("testing");
+
         }
 
         this.BacteriumID++;

@@ -3,6 +3,7 @@ package backEnd.src;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 // class for managing simulation and creating the simulation environment and setting up its parts
@@ -13,6 +14,7 @@ public class SimulationModel {
         Environment simEnviron;
         public volatile String run = "sync";
         public static CyclicBarrier barrier;
+        public static CyclicBarrier barrier2;
         private final Object runLock = new Object();
         public long startTime;
         public Timer timer;
@@ -35,6 +37,11 @@ public class SimulationModel {
                 barrier = new CyclicBarrier(iBacteria, new Runnable() {
                         @Override
                         public void run() {
+                                // System.out.println("Writing to file with " + iBacteria + " bacteria");
+                                for (int i = 0; i < Simulation.activities.size(); i++) {
+                                        System.out.println(Simulation.activities.get(i));
+                                }
+                                System.out.println(Thread.currentThread().getName() + " is writing to file");
                                 Simulation.writeToFile();
                                 Simulation.activities.clear();
                         }
@@ -45,16 +52,26 @@ public class SimulationModel {
                 startSimulation();
         }
 
-        public static void resetBarrier() {
+        public synchronized static void resetBarrier() throws InterruptedException, BrokenBarrierException {
+                // Simulation.writeToFile();
+                // Simulation.activities.clear();
+                System.out.println("resetting");
+                // barrier.await();
                 iBacteria = Environment.Bacteria.size();
-                System.out.println(Environment.Bacteria.size());
-                barrier = new CyclicBarrier(iBacteria, new Runnable() {
+
+                SimulationModel.barrier = new CyclicBarrier(iBacteria, new Runnable() {
                         @Override
                         public void run() {
+                                // System.out.println("Writing to file with " + iBacteria + " bacteria");
+                                // for (int i = 0; i < Simulation.activities.size(); i++) {
+                                // System.out.println(Simulation.activities.get(i));
+                                // }
+                                System.out.println(Thread.currentThread().getName() + " is writing to file2");
                                 Simulation.writeToFile();
                                 Simulation.activities.clear();
                         }
                 });
+                System.out.println("New barrier set with " + iBacteria + " bacteria.");
         }
 
         // Method to start the simulation
@@ -125,14 +142,17 @@ public class SimulationModel {
                 TimerTask durationCheckTask = new DurationCheckTask();
                 this.timer = timer;
 
-                timer.scheduleAtFixedRate(durationCheckTask, 0, 1000); // Check every second
+                timer.scheduleAtFixedRate(durationCheckTask, 0, 100); // Check every 100 ms
 
                 Random random = new Random(); // Create a Random object once
 
                 for (int i = 0; i < iBacteria; i++) {
-                        int x = random.nextInt(environ.environBlocks.length); // Random x within the number of columns
-                        int y = random.nextInt(environ.environBlocks[0].length); // Random y within the number of rows
+                        int x = random.nextInt(environ.environBlocks.length); // Random x within the
+                        // number of columns
+                        int y = random.nextInt(environ.environBlocks[0].length); // Random y within
+                        // the number of rows
                         Environment.Bacteria.get(i).setAction("runMove", environ.environBlocks[x][y]);
+
                 }
 
         }
