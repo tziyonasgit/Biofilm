@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import java.util.concurrent.BrokenBarrierException;
 import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
 
 import backEnd.src.SimulationModel.*;
 
@@ -17,7 +18,7 @@ public class Bacterium implements Runnable {
     String strain;
     int age;
     Bacterium father;
-    BacterialMonomer[] monomers;
+    ArrayList<BacterialMonomer> monomers;
     Environment environ;
     public volatile String waiting = "hi";
     private volatile String currentAction = "";
@@ -35,19 +36,19 @@ public class Bacterium implements Runnable {
     int probEat = 0;
     int probGrow = 0;
     boolean stuck = false;
-    double length;
+    public double length;
     double scalingFactor;
     double scaledGrowthRate;
     double scaledDoublingTime;
 
     // paramaterised constructor for bacterium
     public Bacterium(Block position, int ID, int age, Bacterium father,
-            BacterialMonomer[] monomers, String strain, Environment environ, long seed) {
+            ArrayList<BacterialMonomer> monomers, String strain, Environment environ, long seed) {
         this.position = position;
         this.bacteriumID = ID; // count of IDs
         this.age = age;
         this.father = father;
-        this.monomers = new BacterialMonomer[14];
+        this.monomers = new ArrayList<BacterialMonomer>();
         this.strain = strain;
         this.environ = environ;
         this.energy = 0;
@@ -70,9 +71,7 @@ public class Bacterium implements Runnable {
     }
 
     public void resetMonomers() {
-        BacterialMonomer[] tempArray = new BacterialMonomer[14];
-        System.arraycopy(this.monomers, 0, tempArray, 0, 7);
-        this.monomers = tempArray;
+        this.length = 7;
     }
 
     // method for returning ID of bacterium
@@ -102,9 +101,9 @@ public class Bacterium implements Runnable {
     }
 
     public void reproduce(Block position) {
+        //this.resetMonomers(); // resets father bacterium to 7 monomers
         Bacterium childBac = environ.createBacterium(environ, position, this); // creates child bacterium
-        this.resetMonomers(); // resets father bacterium to 7 monomers
-        this.length = monomers.length;
+        //this.length = monomers.size();
         // synchronizes on waiting to ensure that only one bacterium calls recActivities
         // in Simulation.java
         synchronized (waiting) {
@@ -245,8 +244,7 @@ public class Bacterium implements Runnable {
 
     public void run() {
         // waits on countdownlatch initialise to ensure all bacteria start their main
-        // functioning
-        // simultaneously
+        // functioning simultaneously
         try {
             environ.initialise.countDown();
             environ.initialise.await();
@@ -287,6 +285,10 @@ public class Bacterium implements Runnable {
         public void run() {
             // Check if the bacterium should reproduce
             if (length >= 14) {
+                synchronized (this)
+                {
+                    resetMonomers();
+                }
                 reproduce(getRandomAdjacentFreeBlock(position));
             }
 
@@ -303,7 +305,7 @@ public class Bacterium implements Runnable {
             // Print information for debugging
             System.out.println("Scaled growth rate is : " + scaledGrowthRate + " units per second");
             System.out.println("Time elapsed since birth : " + timeElapsed);
-            System.out.println("My size is : " + length);
+            System.out.println("My size is : " + length + " " + bacteriumID);
         }
     }
 
@@ -315,7 +317,7 @@ public class Bacterium implements Runnable {
 
     public void spawn() {
         this.birthTime = LocalDateTime.now();
-        this.length = monomers.length; // gets current length of bacterium which is 7 monomers long
+        this.length = monomers.size(); // gets current length of bacterium which is 7 monomers long
         if (father == null) {
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Spawn:" + "(" + position.getXPos() + ","
                     + position.getYPos() + ")");

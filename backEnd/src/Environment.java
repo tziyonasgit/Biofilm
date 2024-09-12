@@ -109,7 +109,7 @@ public class Environment {
 
     // method for creating initial bacteria
     public void createBacteria(int bacteria, int xBlocks, int yBlocks, Environment environ) {
-        BacterialMonomer[] monomers = new BacterialMonomer[14];
+        ArrayList<BacterialMonomer> monomers = new ArrayList<BacterialMonomer>();
         BacterialMonomer bMonomer;
         Random rX = new Random();
         Random rY = new Random();
@@ -127,7 +127,7 @@ public class Environment {
             // creates bacterial monomers making up bacteria
             for (int j = 0; j < 7; j++) {
                 bMonomer = createBMonomer(bac.position);
-                bac.monomers[j] = bMonomer;
+                bac.monomers.add(bMonomer);
                 this.BMonomers.add(bMonomer);
             }
 
@@ -185,7 +185,7 @@ public class Environment {
 
     // method for creating singular bacterium
     public Bacterium createBacterium(Environment environ, Block position, Bacterium father) {
-        BacterialMonomer[] monomers = new BacterialMonomer[20];
+        ArrayList<BacterialMonomer> monomers = new ArrayList<BacterialMonomer>();
         BacterialMonomer bMonomer;
 
         // below hardcoded for the demo //
@@ -195,16 +195,17 @@ public class Environment {
         for (int j = 0; j < 7; j++) {
             // below hardcoded for the demo //
             bMonomer = createBMonomer(bacterium.position);
-            bacterium.monomers[j] = bMonomer;
+            bacterium.monomers.add(bMonomer);
 
             synchronized (this.BMonomers) {
                 this.BMonomers.add(bMonomer);
             }
         }
 
-        synchronized (Environment.Bacteria) {
-            Environment.Bacteria.add(bacterium);
+        synchronized (Bacteria) {
+            Bacteria.add(bacterium);
             SimulationModel.resetBarrier();
+            System.out.println("testing");
         }
 
         this.BacteriumID++;

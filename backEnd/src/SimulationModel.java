@@ -47,6 +47,7 @@ public class SimulationModel {
 
         public static void resetBarrier() {
                 iBacteria = Environment.Bacteria.size();
+                System.out.println(Environment.Bacteria.size());
                 barrier = new CyclicBarrier(iBacteria, new Runnable() {
                         @Override
                         public void run() {
