@@ -15,7 +15,7 @@ public class SimulationModel {
         public volatile String run = "sync";
         public static CyclicBarrier barrier;
         public static CyclicBarrier barrier2;
-        private final Object runLock = new Object();
+        public static Object runLock = new Object();
         public long startTime;
         public Timer timer;
         // Simulation paramaters still to be added here //
@@ -38,12 +38,16 @@ public class SimulationModel {
                         @Override
                         public void run() {
                                 // System.out.println("Writing to file with " + iBacteria + " bacteria");
-                                for (int i = 0; i < Simulation.activities.size(); i++) {
-                                        System.out.println(Simulation.activities.get(i));
-                                }
-                                System.out.println(Thread.currentThread().getName() + " is writing to file");
+                                // for (int i = 0; i < Simulation.activities.size(); i++) {
+                                // System.out.println(Simulation.activities.get(i));
+                                // }
+                                // System.out.println(Thread.currentThread().getName() + " is writing to file");
                                 Simulation.writeToFile();
                                 Simulation.activities.clear();
+                                // Notify all bacteria threads after writing to file
+                                // synchronized (runLock) {
+                                // runLock.notifyAll(); // Notify all waiting threads
+                                // }
                         }
                 });
                 this.simEnviron = createEnvironment(iNutrients, iFBMonomers, totBMonomers, iEPSMonomers, iBacteria,
@@ -69,6 +73,10 @@ public class SimulationModel {
                                 System.out.println(Thread.currentThread().getName() + " is writing to file2");
                                 Simulation.writeToFile();
                                 Simulation.activities.clear();
+                                // Notify all bacteria threads after writing to file
+                                // synchronized (runLock) {
+                                // runLock.notifyAll(); // Notify all waiting threads
+                                // }
                         }
                 });
                 System.out.println("New barrier set with " + iBacteria + " bacteria.");
@@ -142,18 +150,7 @@ public class SimulationModel {
                 TimerTask durationCheckTask = new DurationCheckTask();
                 this.timer = timer;
 
-                timer.scheduleAtFixedRate(durationCheckTask, 0, 100); // Check every 100 ms
-
-                Random random = new Random(); // Create a Random object once
-
-                for (int i = 0; i < iBacteria; i++) {
-                        int x = random.nextInt(environ.environBlocks.length); // Random x within the
-                        // number of columns
-                        int y = random.nextInt(environ.environBlocks[0].length); // Random y within
-                        // the number of rows
-                        Environment.Bacteria.get(i).setAction("runMove", environ.environBlocks[x][y]);
-
-                }
+                timer.scheduleAtFixedRate(durationCheckTask, 0, 1000); // Check every 1 sec
 
         }
 

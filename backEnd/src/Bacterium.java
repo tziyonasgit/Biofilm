@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import java.util.concurrent.BrokenBarrierException;
 import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.ArrayList;
 
 import backEnd.src.Bacterium.grow;
@@ -14,6 +15,7 @@ import backEnd.src.SimulationModel.*;
 
 // class for managing bacterium with methods to manipulate them (activities)
 public class Bacterium implements Runnable {
+    private static final AtomicInteger ID_GENERATOR = new AtomicInteger(0);
     Block position;
     int bacteriumID;
     String strain;
@@ -46,7 +48,7 @@ public class Bacterium implements Runnable {
     public Bacterium(Block position, int ID, int age, Bacterium father,
             ArrayList<BacterialMonomer> monomers, String strain, Environment environ, long seed) {
         this.position = position;
-        this.bacteriumID = ID; // count of IDs
+        this.bacteriumID = ID_GENERATOR.getAndIncrement(); // Thread-safe ID generation
         this.age = age;
         this.father = father;
         this.monomers = new ArrayList<BacterialMonomer>();
@@ -88,11 +90,11 @@ public class Bacterium implements Runnable {
     }
 
     public void tumbleMove(Block iBlock, Block fBlock) {
-        move(iBlock, fBlock, environ.environBlocks, "Tumble");
+        move(iBlock, fBlock, Environment.environBlocks, "Tumble");
     }
 
     public void runMove(Block iBlock, Block fBlock) {
-        move(iBlock, fBlock, environ.environBlocks, "Run");
+        move(iBlock, fBlock, Environment.environBlocks, "Run");
     }
 
     public void reproduce(Block position) throws InterruptedException, BrokenBarrierException {
@@ -102,12 +104,7 @@ public class Bacterium implements Runnable {
         this.length = 7;
         this.birthTime = LocalDateTime.now();
         Bacterium childBac = environ.createBacterium(environ, position, this); // creates child bacterium
-        // this.length = monomers.size();
-        // synchronizes on waiting to ensure that only one bacterium calls recActivities
-        // in Simulation.java
-        // System.out.println(Thread.currentThread().getName() + " is executing
-        // reproduce() for Bacterium "
-        // + this.bacteriumID);
+
         synchronized (waiting) {
             System.out.println(
                     Thread.currentThread().getName() + " is waiting for the child bacterium to start running...");
@@ -175,7 +172,7 @@ public class Bacterium implements Runnable {
     public void collide(Bacterium bac) {
         Block destinationPosition = getRandomAdjacentFreeBlock(this.position);
 
-        move(this.position, destinationPosition, environ.environBlocks, "Run");
+        move(this.position, destinationPosition, Environment.environBlocks, "Run");
         synchronized (waiting) {
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Collide:Bacterium:" + bac.getBID());
             try {
@@ -255,11 +252,11 @@ public class Bacterium implements Runnable {
             // Notify parent bacterium that this child thread has started
             waiting.notify(); // Notify the parent thread that the child is now running
         }
-        // waits on countdownlatch initialise to ensure all bacteria start their main
-        // functioning simultaneously
+
         try {
             environ.initialise.countDown();
             environ.initialise.await();
+            Random random = new Random(); // Create a Random object once
 
             System.out.println(Thread.currentThread().getName()
                     + ", executing run() method!");
@@ -271,39 +268,51 @@ public class Bacterium implements Runnable {
 
             while (!killThread) {
                 synchronized (this) {
-                    // Wait for an action to be set
-                    while (currentAction.isEmpty()) {
-                        wait(); // Wait until an action is set
-                    }
-                    System.out.println(Thread.currentThread().getName() + " is setting action");
-                    // Perform the action based on the external command
-                    if (currentAction.equals("runMove")) {
+                    // Check if the bacterium should reproduce
+                    if (this.length >= 14) {
+                        this.setAction("reproduce", null);
+                    } else if (currentAction.isEmpty()) {
+                        // If no current action, choose one
+                        int x = ThreadLocalRandom.current().nextInt(Environment.environBlocks.length);
+                        int y = ThreadLocalRandom.current().nextInt(Environment.environBlocks[0].length);
 
-                        System.out.println("starting movement");
+                        this.setAction("runMove", Environment.environBlocks[x][y]);
+                    }
+
+                    // Perform the chosen action
+                    if (currentAction.equals("runMove")) {
+                        System.out.println("Starting runMove action");
                         this.runMove(this.getBlock(), moveDestination); // Run move action
                     } else if (currentAction.equals("tumbleMove")) {
+                        System.out.println("Starting tumbleMove action");
                         this.tumbleMove(this.getBlock(), moveDestination); // Tumble move action
                     } else if (currentAction.equals("reproduce")) {
+                        System.out.println("Starting reproduce action");
                         this.reproduce(getRandomAdjacentFreeBlock(position));
                     }
-                    // Clear the action after performing
+
+                    // Clear the action after performing it
                     currentAction = "";
 
-                    Random random = new Random(); // Create a Random object once
-                    int x = random.nextInt(environ.environBlocks.length); // Random x within the
-                    // number of columns
-                    int y = random.nextInt(environ.environBlocks[0].length); // Random y within
-                    // the number of rows
-
-                    this.setAction("runMove", environ.environBlocks[x][y]);
-
+                    // Sleep for one second to enforce one action per second
+                    Thread.sleep(1000);
                 }
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (BrokenBarrierException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+    }
+
+    public String chooseTask() {
+        Random rand = new Random();
+        int choice = rand.nextInt(2); // Random integer between 0 and 1
+
+        if (choice == 0) {
+            return "runMove"; // Task 1 if 0
+        } else {
+            return "tumbleMove"; // Task 2 if 1
         }
 
     }
@@ -318,13 +327,6 @@ public class Bacterium implements Runnable {
         @Override
         public void run() {
 
-            // Check if the bacterium should reproduce
-            if (bacterium.length >= 14) {
-                synchronized (bacterium) {
-                    bacterium.setAction("reproduce", null);
-                }
-
-            }
             // Calculate the time elapsed since birth
             Duration timeElapsed = Duration.between(bacterium.birthTime, LocalDateTime.now());
 
@@ -335,10 +337,7 @@ public class Bacterium implements Runnable {
             bacterium.length = 7 + scaledGrowthRate * Math.min(timeElapsedSeconds,
                     1.2 * scaledDoublingTime); // scaled time bounds as well
 
-            // Print information for debugging
-            // System.out.println("Scaled growth rate is : " + scaledGrowthRate + " units
-            // per second");
-            // System.out.println("Time elapsed since birth : " + timeElapsed);
+            System.out.println(Thread.currentThread().getName() + " size is : " + bacterium.length);
 
         }
     }
@@ -369,7 +368,7 @@ public class Bacterium implements Runnable {
 
         Block position = start;
 
-        while (!position.compareTo(end)) {
+        if (!position.compareTo(end)) {
             start = position;
             start.setOccupied(false);
             if (start.getXPos() > end.getXPos()) {
@@ -378,7 +377,7 @@ public class Bacterium implements Runnable {
                 position = environBlocks[start.getXPos() + 1][start.getYPos()]; // move one right
             }
 
-            else if (start.getYPos() < end.getYPos()) {
+            if (start.getYPos() < end.getYPos()) {
                 position = environBlocks[start.getXPos()][start.getYPos() + 1]; // move one up
             }
 
@@ -399,7 +398,7 @@ public class Bacterium implements Runnable {
             }
 
         }
-        System.out.println("done moving");
+        // System.out.println("done moving");
 
     }
 

@@ -11,7 +11,7 @@ import java.util.Random;
 // class for managing the environment with methods for adding new parts to the environment
 public class Environment {
     int totNutrients, totBMonomers, FBMonomers, totEPSMonomers, totBacteria, freeBlocks;
-    Block environBlocks[][];
+    public static Block environBlocks[][];
     ArrayList<BacterialMonomer> BMonomers;
     public static List<Bacterium> Bacteria = Collections.synchronizedList(new ArrayList<>());
     ArrayList<EPS> EPSMonomers;
@@ -61,7 +61,7 @@ public class Environment {
     // method for creating individual blocks to create environment
     public void createBlocks(int xBlocks, int yBlocks) {
         // block array that is physical environment
-        this.environBlocks = new Block[xBlocks][yBlocks];
+        Environment.environBlocks = new Block[xBlocks][yBlocks];
         // above may not be an array in the final product //
 
         for (int i = 0; i < xBlocks; i++) {
@@ -139,7 +139,7 @@ public class Environment {
 
             Environment.Bacteria.add(bac);
 
-            this.BacteriumID++;
+            // this.BacteriumID++;
             bac.spawn();
         }
 
@@ -212,7 +212,7 @@ public class Environment {
 
         }
 
-        this.BacteriumID++;
+        // this.BacteriumID++;
 
         Thread b = new Thread(bacterium);
         b.start();
