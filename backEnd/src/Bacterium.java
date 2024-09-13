@@ -43,6 +43,8 @@ public class Bacterium implements Runnable {
     double scalingFactor;
     double scaledGrowthRate;
     double scaledDoublingTime;
+    Block goal;
+    String moveType = null;
 
     // paramaterised constructor for bacterium
     public Bacterium(Block position, int ID, int age, Bacterium father,
@@ -59,6 +61,7 @@ public class Bacterium implements Runnable {
         this.doublingTime = generateDoublingTime(1.0); // time is in hours
         this.mt = new MersenneTwister(seed);
         this.grow = new grow(this);
+        this.goal = this.position;
 
         this.scalingFactor = 5 / (this.doublingTime * 3600); // choose intial number but can change
         this.scaledGrowthRate = (1 / this.scalingFactor) * (7 / (this.doublingTime * 3600)); // units/second
@@ -413,6 +416,10 @@ public class Bacterium implements Runnable {
         if (position.EPSLevel >= 100) {
             this.attach(position);
         }
+        if (!goal.compareTo(position)){
+            this.move(position, goal, environBlocks, moveType);
+
+        }
 
         switch (event) {
             case 0: // tumble
@@ -447,8 +454,9 @@ public class Bacterium implements Runnable {
                     }
 
                 }
-                String type = "tumble";
-                this.move(position, environBlocks[x][y], environBlocks, type); // make bacterium go to that block
+                moveType = "tumble";
+                goal = environBlocks [x][y];
+                this.move(position, goal, environBlocks, moveType); // make bacterium go to that block
 
                 break;
 
@@ -505,39 +513,40 @@ public class Bacterium implements Runnable {
                 }
                 break;
             case 4:// run
-                if (energy == 0 || stuck) {
-                    break;
-                }
-                accepted = false;
-                while (!accepted) {
-                    x = mt.nextInt(environ.getxBlocks() / 2);
-                    y = mt.nextInt(environ.getyBlocks()) / 2;
-                    int distance = (int) Math
-                            .sqrt(Math.pow(x - position.getXPos(), 2) + Math.pow(y - position.getYPos(), 2));
-
-                    if (distance >= (maxDistance) / 4) {
-                        accepted = false;
-                    }
-                    int energyLevel = this.energy / maxEnergy * 100; // checks if co-ordinates are viable for the
-                                                                     // bacterium
-                    if (energyLevel >= 80) {
-                        accepted = true;
-                    } else if (energyLevel >= 60 && distance <= (maxDistance * 4) / 5) {
-                        accepted = true;
-                    } else if (energyLevel >= 40 && distance <= (maxDistance * 3) / 5) {
-                        accepted = true;
-                    } else if (energyLevel >= 20 && distance <= (maxDistance * 2) / 5) {
-                        accepted = true;
-                    } else if (energyLevel >= 1 && distance <= (maxDistance * 1) / 5) {
-                        accepted = true;
-                    } else {
-                        accepted = false;
-                    }
-
-                }
-                type = "run";
-                this.move(position, environBlocks[x][y], environBlocks, type); // make bacterium go to that block
+            if (energy == 0 || stuck) {
                 break;
+            }
+            accepted = false;
+
+            while (!accepted) {
+                x = mt.nextInt(environ.getxBlocks() / 2);
+                y = mt.nextInt(environ.getyBlocks()) / 2;
+                int distance = (int) Math
+                        .sqrt(Math.pow(x - position.getXPos(), 2) + Math.pow(y - position.getYPos(), 2));
+
+            
+                int energyLevel = this.energy / maxEnergy * 100; // checks if co-ordinates are viable for the
+                                                                 // bacterium
+                if (energyLevel >= 80) {
+                    accepted = true;
+                } else if (energyLevel >= 60 && distance <= (maxDistance * 4) / 5) {
+                    accepted = true;
+                } else if (energyLevel >= 40 && distance <= (maxDistance * 3) / 5) {
+                    accepted = true;
+                } else if (energyLevel >= 20 && distance <= (maxDistance * 2) / 5) {
+                    accepted = true;
+                } else if (energyLevel >= 1 && distance <= (maxDistance * 1) / 5) {
+                    accepted = true;
+                } else {
+                    accepted = false;
+                }
+
+            }
+            moveType = "run";
+            goal = environBlocks [x][y];
+            this.move(position, goal, environBlocks, moveType); // make bacterium go to that block
+
+            break;
             case 5: // secrete
                 this.secrete();
                 break;
