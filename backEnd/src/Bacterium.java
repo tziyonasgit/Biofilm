@@ -120,7 +120,6 @@ public class Bacterium implements Runnable {
                 e.printStackTrace();
             }
             SimulationModel.resetBarrier();
-
         }
     }
 
@@ -145,6 +144,7 @@ public class Bacterium implements Runnable {
     }
 
     public Block getRandomAdjacentFreeBlock(Block position) {
+        
         Random random = new Random();
         int randomBlock = random.nextInt(4); // Generates a number from 0 to 3
         int newYcoord, newXcoord = 0;
@@ -154,18 +154,86 @@ public class Bacterium implements Runnable {
             case 0:
                 newXcoord = this.position.getXPos() - 1;
                 destinationPosition.setXPos(newXcoord);
+                
+                synchronized (destinationPosition)
+                {
+                    while (destinationPosition.occupied())
+                    {
+                        try 
+                        {
+                            destinationPosition.wait();
+                        }
+                        catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                    destinationPosition.setOccupied(true);
+                }
+
                 break;
             case 1:
                 newXcoord = this.position.getXPos() + 1;
                 destinationPosition.setXPos(newXcoord);
+
+                synchronized (destinationPosition)
+                {
+                    while (destinationPosition.occupied())
+                    {
+                        try 
+                        {
+                            destinationPosition.wait();
+                        }
+                        catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                    destinationPosition.setOccupied(true);
+                }
+
                 break;
             case 2:
                 newYcoord = this.position.getYPos() - 1;
                 destinationPosition.setYPos(newYcoord);
+
+                synchronized (destinationPosition)
+                {
+                    while (destinationPosition.occupied())
+                    {
+                        try 
+                        {
+                            destinationPosition.wait();
+                        }
+                        catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                    destinationPosition.setOccupied(true);
+                }
+
                 break;
             case 3:
                 newYcoord = this.position.getYPos() + 1;
                 destinationPosition.setYPos(newYcoord);
+
+                synchronized (destinationPosition)
+                {
+                    while (destinationPosition.occupied())
+                    {
+                        try 
+                        {
+                            destinationPosition.wait();
+                        }
+                        catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                    destinationPosition.setOccupied(true);
+                }
+
                 break;
         }
         return destinationPosition;
@@ -248,8 +316,9 @@ public class Bacterium implements Runnable {
                 SimulationModel.barrier.await();
             } catch (InterruptedException | BrokenBarrierException e) {
                 e.printStackTrace();
-            }
+            } 
         }
+        
     }
 
     public void run() {
@@ -369,12 +438,12 @@ public class Bacterium implements Runnable {
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Spawn:" + "(" + position.getXPos() + ","
                     + position.getYPos() + ")");
         }
-        try {
-            SimulationModel.barrier.await();
-        } catch (InterruptedException | BrokenBarrierException e) {
-            e.printStackTrace();
-        }
-
+        // try {
+        //     SimulationModel.barrier.await();
+        //     System.out.println("h");
+        // } catch (InterruptedException | BrokenBarrierException e) {
+        //     e.printStackTrace();
+        // }
     }
 
     // method that moves a bacterium from a start to a goal block
@@ -384,7 +453,7 @@ public class Bacterium implements Runnable {
 
         if (!position.compareTo(end)) {
             start = position;
-            start.setOccupied(false);
+
             if (start.getXPos() > end.getXPos()) {
                 position = environBlocks[start.getXPos() - 1][start.getYPos()]; // move one left
             } else if (start.getXPos() < end.getXPos()) {
@@ -398,8 +467,28 @@ public class Bacterium implements Runnable {
             else if (start.getYPos() > end.getYPos()) {
                 position = environBlocks[start.getXPos()][start.getYPos() - 1]; // move one down
             }
-            this.energy -= 1; // decreases energy each movement
-            position.setOccupied(true);
+            synchronized (position)
+            {
+                while (position.occupied())
+                {
+                    try 
+                    {
+                        position.wait();
+                    }
+                    catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                this.energy -= 1; // decreases energy each movement
+                position.setOccupied(true);
+            }
+            synchronized (start)
+            {
+                start.setOccupied(false);
+                start.notifyAll();
+            }
+            
 
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType + ":("
                     + start.getXPos() + "," + start.getYPos() + "):"
@@ -563,6 +652,10 @@ public class Bacterium implements Runnable {
             }
 
         }
+        // if (SimulationModel.barrier.getNumberWaiting() == 0)
+        // {
+        //     SimulationModel.resetBarrier();
+        // }
 
     }
 

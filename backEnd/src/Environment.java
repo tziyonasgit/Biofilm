@@ -116,9 +116,10 @@ public class Environment {
         BacterialMonomer bMonomer;
         Random rX = new Random();
         Random rY = new Random();
-        long seed = BacteriumID;
 
         for (int i = 0; i < bacteria; i++) {
+            
+            long seed = BacteriumID;
             int xBlock = rX.nextInt(xBlocks);
             int yBlock = rY.nextInt(yBlocks);
             while (environBlocks[xBlock][yBlock].occupied()) {
@@ -135,15 +136,14 @@ public class Environment {
                 this.BMonomers.add(bMonomer);
             }
 
-            Thread b = new Thread(bac);
-            b.start();
-
             Environment.Bacteria.add(bac);
 
-            // this.BacteriumID++;
+            this.BacteriumID++;
             bac.spawn();
+            Thread b = new Thread(bac);
+            b.start();
         }
-
+        
     }
 
     // method for creating singular bacterial monomer
@@ -214,7 +214,7 @@ public class Environment {
 
         }
 
-        // this.BacteriumID++;
+        this.BacteriumID++;
 
         Thread b = new Thread(bacterium);
         b.start();

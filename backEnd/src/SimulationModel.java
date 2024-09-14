@@ -70,9 +70,12 @@ public class SimulationModel {
                                 // for (int i = 0; i < Simulation.activities.size(); i++) {
                                 // System.out.println(Simulation.activities.get(i));
                                 // }
-                                System.out.println(Thread.currentThread().getName() + " is writing to file2");
-                                Simulation.writeToFile();
-                                Simulation.activities.clear();
+                                synchronized (Simulation.activities)
+                                {
+                                        System.out.println(Thread.currentThread().getName() + " is writing to file2");
+                                        Simulation.writeToFile();
+                                        Simulation.activities.clear();
+                                }
                                 // Notify all bacteria threads after writing to file
                                 // synchronized (runLock) {
                                 // runLock.notifyAll(); // Notify all waiting threads
