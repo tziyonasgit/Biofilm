@@ -1,14 +1,36 @@
-Starting bacterial monomers: 1
+Starting bacterial monomers: 2
 Starting EPS monomers: 1
-Starting nutrients: 11
-Starting bacteria: 1
+Starting nutrients: 1
+Starting bacteria: 3
 Simulation width: 100
 Simulation height: 100
-Simulation duration: 2
+Simulation duration: 30
 
-Bacterium:0:Spawn:(99,95)
+Bacterium:0:Spawn:(94,91)
+Bacterium:1:Spawn:(35,0)
+Bacterium:2:Spawn:(78,5)
+Bacterium:2:Run:(78,5):(77,5)
+Bacterium:0:Run:(94,91):(93,91)
+Bacterium:1:Run:(35,0):(34,0)
 *
-Bacterium:0:Run:(99,95):(99,94)
+Bacterium:2:Run:(77,5):(76,5)
+Bacterium:1:Run:(34,0):(33,0)
+Bacterium:0:Run:(93,91):(92,91)
 *
-Bacterium:0:Run:(99,95):(99,94)
+Bacterium:1:Run:(33,0):(32,0)
+Bacterium:0:Run:(92,91):(91,91)
+Bacterium:2:Run:(76,5):(75,5)
+*
+Bacterium:2:Run:(75,5):(74,5)
+Bacterium:0:Run:(91,91):(90,91)
+Bacterium:1:Run:(32,0):(31,0)
+*
+Bacterium:1:Run:(31,0):(30,0)
+Bacterium:0:Run:(90,91):(89,91)
+Bacterium:2:Run:(74,5):(73,5)
+*
+Bacterium:3:Run:(30,1):(29,1)
+Bacterium:1:Reproduce:Bacterium:3
+Bacterium:0:Reproduce:Bacterium:4
+Bacterium:4:Run:(90,91):(90,90)
 *

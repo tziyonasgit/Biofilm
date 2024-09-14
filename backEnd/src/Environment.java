@@ -118,7 +118,7 @@ public class Environment {
         Random rY = new Random();
 
         for (int i = 0; i < bacteria; i++) {
-            
+
             long seed = BacteriumID;
             int xBlock = rX.nextInt(xBlocks);
             int yBlock = rY.nextInt(yBlocks);
@@ -143,7 +143,7 @@ public class Environment {
             Thread b = new Thread(bac);
             b.start();
         }
-        
+
     }
 
     // method for creating singular bacterial monomer

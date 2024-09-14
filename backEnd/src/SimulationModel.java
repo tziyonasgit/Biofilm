@@ -42,13 +42,13 @@ public class SimulationModel {
                                 // for (int i = 0; i < Simulation.activities.size(); i++) {
                                 // System.out.println(Simulation.activities.get(i));
                                 // }
-                                // System.out.println(Thread.currentThread().getName() + " is writing to file");
+                                System.out.println(Thread.currentThread().getName() + " is writing to file");
                                 Simulation.writeToFile();
                                 Simulation.activities.clear();
                                 // Notify all bacteria threads after writing to file
-                                // synchronized (runLock) {
-                                // runLock.notifyAll(); // Notify all waiting threads
-                                // }
+                                synchronized (runLock) {
+                                        runLock.notifyAll(); // Notify all waiting threads
+                                }
                         }
                 });
                 this.simEnviron = createEnvironment(iNutrients, iFBMonomers, totBMonomers, iEPSMonomers, iBacteria,
@@ -57,10 +57,11 @@ public class SimulationModel {
                 startSimulation();
         }
 
-        public synchronized static void resetBarrier() throws InterruptedException, BrokenBarrierException {
+        public synchronized static void resetBarrier()
+                        throws InterruptedException, BrokenBarrierException {
                 // Simulation.writeToFile();
                 // Simulation.activities.clear();
-                System.out.println("resetting");
+                // System.out.println("resetting");
                 // barrier.await();
                 iBacteria = Environment.Bacteria.size();
 
@@ -71,19 +72,19 @@ public class SimulationModel {
                                 // for (int i = 0; i < Simulation.activities.size(); i++) {
                                 // System.out.println(Simulation.activities.get(i));
                                 // }
-                                synchronized (Simulation.activities)
-                                {
-                                        System.out.println(Thread.currentThread().getName() + " is writing to file2");
-                                        Simulation.writeToFile();
-                                        Simulation.activities.clear();
-                                }
-                                // Notify all bacteria threads after writing to file
-                                // synchronized (runLock) {
-                                // runLock.notifyAll(); // Notify all waiting threads
+                                // synchronized (Simulation.activities) {
+                                System.out.println(Thread.currentThread().getName() + " is writing to file2");
+                                Simulation.writeToFile();
+                                Simulation.activities.clear();
                                 // }
+                                // Notify all bacteria threads after writing to file
+                                synchronized (runLock) {
+                                        runLock.notifyAll(); // Notify all waiting threads
+                                }
                         }
                 });
                 System.out.println("New barrier set with " + iBacteria + " bacteria.");
+                // bac.reset.notifyAll();
         }
 
         // Method to start the simulation

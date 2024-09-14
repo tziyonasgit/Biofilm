@@ -118,4 +118,8 @@ public class Block {
             return false;
         }
     }
+
+    public String getStringFormat() {
+        return "Block(" + this.getXPos() + ", " + this.getYPos() + ")";
+    }
 }
