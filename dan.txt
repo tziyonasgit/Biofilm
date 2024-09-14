@@ -4,10 +4,40 @@ Starting nutrients: 1
 Starting bacteria: 1
 Simulation width: 100
 Simulation height: 100
-Simulation duration: 65
+Simulation duration: 20
 
-Bacterium:0:Spawn:(60,66)
+Bacterium:0:Spawn:(61,78)
+Bacterium:0:Secrete:EPS
+*
+Bacterium:0:Secrete:EPS
+*
+Bacterium:0:Secrete:EPS
+*
+Bacterium:0:Secrete:EPS
+*
 Bacterium:0:Secrete:EPS
 *
 Bacterium:0:Reproduce:Bacterium:1
+Bacterium:1:Secrete:EPS
+*
+*
+Bacterium:0:Secrete:EPS
+Bacterium:1:Secrete:EPS
+*
+Bacterium:1:Secrete:EPS
+Bacterium:0:Secrete:EPS
+*
+Bacterium:1:Secrete:EPS
+Bacterium:0:Secrete:EPS
+*
+Bacterium:0:Secrete:EPS
+Bacterium:1:Secrete:EPS
+*
+Bacterium:1:Reproduce:Bacterium:2
+Bacterium:0:Secrete:EPS
+*
+Bacterium:2:Secrete:EPS
+Bacterium:1:Secrete:EPS
+Bacterium:0:Reproduce:Bacterium:3
+Bacterium:3:Secrete:EPS
 *
