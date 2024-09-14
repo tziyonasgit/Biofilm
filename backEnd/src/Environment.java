@@ -116,6 +116,7 @@ public class Environment {
         BacterialMonomer bMonomer;
         Random rX = new Random();
         Random rY = new Random();
+        long seed = BacteriumID;
 
         for (int i = 0; i < bacteria; i++) {
             int xBlock = rX.nextInt(xBlocks);
@@ -125,7 +126,7 @@ public class Environment {
                 yBlock = rY.nextInt(yBlocks);
             }
             Bacterium bac = new Bacterium(environBlocks[xBlock][yBlock], BacteriumID, 0, null,
-                    monomers, "covid", environ, 5);
+                    monomers, "covid", environ, seed);
 
             // creates bacterial monomers making up bacteria
             for (int j = 0; j < 7; j++) {
@@ -192,10 +193,11 @@ public class Environment {
             throws InterruptedException, BrokenBarrierException {
         ArrayList<BacterialMonomer> monomers = new ArrayList<BacterialMonomer>();
         BacterialMonomer bMonomer;
+        long seed = BacteriumID;
 
         // below hardcoded for the demo //
         Bacterium bacterium = new Bacterium(position, this.BacteriumID, 0, father,
-                monomers, "covid", environ, 5);
+                monomers, "covid", environ, seed);
 
         for (int j = 0; j < 7; j++) {
             // below hardcoded for the demo //
