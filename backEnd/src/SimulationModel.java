@@ -18,6 +18,7 @@ public class SimulationModel {
         public static Object runLock = new Object();
         public long startTime;
         public Timer timer;
+        public static boolean reset;
         // Simulation paramaters still to be added here //
 
         // paramaterised constructor for simulation model

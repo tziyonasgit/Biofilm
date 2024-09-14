@@ -189,7 +189,7 @@ public class Environment {
     }
 
     // method for creating singular bacterium
-    public Bacterium createBacterium(Environment environ, Block position, Bacterium father)
+    public synchronized Bacterium createBacterium(Environment environ, Block position, Bacterium father)
             throws InterruptedException, BrokenBarrierException {
         ArrayList<BacterialMonomer> monomers = new ArrayList<BacterialMonomer>();
         BacterialMonomer bMonomer;
