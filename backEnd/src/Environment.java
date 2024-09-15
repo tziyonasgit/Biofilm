@@ -3,6 +3,7 @@ package backEnd.src;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +18,7 @@ public class Environment {
     ArrayList<EPS> EPSMonomers;
     ArrayList<Nutrient> nutrients;
     // initialises IDs for the different parts of the environment
-    int BacteriumID;
+    public AtomicInteger BacteriumID = new AtomicInteger(0);
     int bMonomerID;
     int EPSMonomerID;
     int nutrientID;
@@ -40,7 +41,7 @@ public class Environment {
         this.EPSMonomers = new ArrayList<EPS>();
         Environment.Bacteria = Collections.synchronizedList(new ArrayList<>());
         this.nutrients = new ArrayList<Nutrient>();
-        this.BacteriumID = 0;
+        // this.BacteriumID = 0;
         this.bMonomerID = 0;
         this.EPSMonomerID = 0;
         this.nutrientID = 0;
@@ -118,15 +119,16 @@ public class Environment {
         Random rY = new Random();
 
         for (int i = 0; i < bacteria; i++) {
-
-            long seed = BacteriumID;
+            int currentBacteriumID = BacteriumID.getAndIncrement(); // Atomically increment the BacteriumID and use it
+                                                                    // as ID and seed
+            long seed = currentBacteriumID;
             int xBlock = rX.nextInt(xBlocks);
             int yBlock = rY.nextInt(yBlocks);
             while (environBlocks[xBlock][yBlock].occupied()) {
                 xBlock = rX.nextInt(xBlocks);
                 yBlock = rY.nextInt(yBlocks);
             }
-            Bacterium bac = new Bacterium(environBlocks[xBlock][yBlock], BacteriumID, 0, null,
+            Bacterium bac = new Bacterium(environBlocks[xBlock][yBlock], currentBacteriumID, 0, null,
                     monomers, "covid", environ, seed);
 
             // creates bacterial monomers making up bacteria
@@ -138,7 +140,7 @@ public class Environment {
 
             Environment.Bacteria.add(bac);
 
-            this.BacteriumID++;
+            // this.BacteriumID++;
             bac.spawn();
             Thread b = new Thread(bac);
             b.start();
@@ -193,10 +195,11 @@ public class Environment {
             throws InterruptedException, BrokenBarrierException {
         ArrayList<BacterialMonomer> monomers = new ArrayList<BacterialMonomer>();
         BacterialMonomer bMonomer;
-        long seed = BacteriumID;
-
+        int currentBacteriumID = BacteriumID.getAndIncrement(); // Atomically increment the BacteriumID and use it as ID
+                                                                // and seed
+        long seed = currentBacteriumID;
         // below hardcoded for the demo //
-        Bacterium bacterium = new Bacterium(position, this.BacteriumID, 0, father,
+        Bacterium bacterium = new Bacterium(position, currentBacteriumID, 0, father,
                 monomers, "covid", environ, seed);
 
         for (int j = 0; j < 7; j++) {
@@ -214,7 +217,7 @@ public class Environment {
 
         }
 
-        this.BacteriumID++;
+        // this.BacteriumID++;
         SimulationModel.iBacteria++;
         Thread b = new Thread(bacterium);
         b.start();

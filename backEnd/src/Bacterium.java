@@ -108,7 +108,8 @@ public class Bacterium implements Runnable {
 
     public void reproduce(Block newPosition) throws InterruptedException, BrokenBarrierException {
 
-        System.out.println(Thread.currentThread().getName() + " is in reproducing method");
+        // System.out.println(Thread.currentThread().getName() + " is in reproducing
+        // method");
 
         this.length = 7;
         this.birthTime = LocalDateTime.now();
@@ -122,7 +123,8 @@ public class Bacterium implements Runnable {
 
         // synchronized (waiting) {
         try {
-            System.out.println(Thread.currentThread().getName() + " at  reproduce barrier");
+            // System.out.println(Thread.currentThread().getName() + " at reproduce
+            // barrier");
             SimulationModel.barrier.await();
             synchronized (waiting) {
                 if (SimulationModel.reset == true) {
@@ -131,22 +133,12 @@ public class Bacterium implements Runnable {
                 }
             }
             SimulationModel.resetting = SimulationModel.resetting - 1;
-            System.out.println(Thread.currentThread().getName() + " passed reproduce barrier");
+            // System.out.println(Thread.currentThread().getName() + " passed reproduce
+            // barrier");
 
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
-        // }
-        // Wait for file to be written
-        // synchronized (SimulationModel.runLock) {
-        // // This wait ensures the thread pauses until it's notified after file writing
-        // SimulationModel.runLock.wait();
-        // }
-        // SimulationModel.resetBarrier();
-        // waiting.wait(); // Wait until the child notifies that it has started running
-        //
-
-        // }
 
     }
 
