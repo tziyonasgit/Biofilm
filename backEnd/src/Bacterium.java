@@ -107,34 +107,43 @@ public class Bacterium implements Runnable {
     }
 
     public void reproduce(Block newPosition) throws InterruptedException, BrokenBarrierException {
+
         System.out.println(Thread.currentThread().getName() + " is in reproducing method");
 
         this.length = 7;
         this.birthTime = LocalDateTime.now();
         Bacterium childBac;
 
+        System.out.println(Thread.currentThread().getName() + " adding act");
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + environ.BacteriumID);
         childBac = environ.createBacterium(environ, newPosition, this);
         // System.out.println("child position is " + newPosition.getStringFormat());
         // System.out.println("parent position is " + this.position.getStringFormat());
 
-        System.out.println(Thread.currentThread().getName() + " adding act");
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + childBac.getBID());
-        synchronized (waiting) {
+        
+        // synchronized (waiting) {
             try {
                 System.out.println(Thread.currentThread().getName() + " at  reproduce barrier");
                 SimulationModel.barrier.await();
+                synchronized (waiting) {
+                    if (SimulationModel.reset == true) {
+                        SimulationModel.resetBarrier();
+                        SimulationModel.reset = false;
+                    }
+                }
+                SimulationModel.resetting = SimulationModel.resetting - 1;
                 System.out.println(Thread.currentThread().getName() + " passed reproduce barrier");
 
             } catch (InterruptedException | BrokenBarrierException e) {
                 e.printStackTrace();
             }
-        }
+        //}
         // Wait for file to be written
         // synchronized (SimulationModel.runLock) {
         // // This wait ensures the thread pauses until it's notified after file writing
         // SimulationModel.runLock.wait();
         // }
-        SimulationModel.resetBarrier();
+        // SimulationModel.resetBarrier();
         // waiting.wait(); // Wait until the child notifies that it has started running
         //
 
@@ -348,7 +357,21 @@ public class Bacterium implements Runnable {
 
     public void run() {
         this.thread = Thread.currentThread();
-
+        synchronized (waiting) {
+            if (SimulationModel.iBacteria > 1)
+            {   
+                try
+                {
+                    waiting.wait();
+                    waiting.notifyAll();
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+                
+            }
+        }
         // synchronized (waiting) {
         // // Notify parent bacterium that this child thread has started
         // waiting.notify(); // Notify the parent thread that the child is now running
@@ -369,6 +392,15 @@ public class Bacterium implements Runnable {
             timer.schedule(grow, 0, 1000); // growth rate is per second
 
             while (!killThread) {
+
+                synchronized (waiting) {
+                    if (SimulationModel.resetting == 0)
+                        {
+                            SimulationModel.reset = true;
+                            SimulationModel.resetting = SimulationModel.iBacteria;
+                            System.out.println(SimulationModel.resetting);
+                        }
+                }
 
                 synchronized (this) {
                     // Check if the bacterium should reproduce
@@ -464,7 +496,8 @@ public class Bacterium implements Runnable {
     }
 
     // method that moves a bacterium from a start to a goal block
-    public synchronized void move(Block start, Block end, Block[][] environBlocks, String moveType) {
+    public void move(Block start, Block end, Block[][] environBlocks, String moveType) {
+
         System.out.println(Thread.currentThread().getName() + " is starting move action");
         Block proposedBlock = null;
         boolean blockFound = false;
@@ -473,7 +506,7 @@ public class Bacterium implements Runnable {
         // this.position.getXPos() + ","
         // + this.position.getYPos() + ")");
         Block position = start;
-        this.position.setOccupied(false);
+        //this.position.setOccupied(false);
 
         if (!position.compareTo(end)) {
             newGoal = false;
@@ -537,23 +570,24 @@ public class Bacterium implements Runnable {
             System.out.println(Thread.currentThread().getName() + " has pos");
             this.position = proposedBlock;
 
-            // synchronized (position) {
-            // while (position.occupied()) {
-            // try {
-            // position.wait();
-            // } catch (InterruptedException e) {
-            // e.printStackTrace();
-            // }
-            // }
+            synchronized (position) {
+                while (position.occupied()) {
+                    try {
+                        position.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                this.energy -= 1; // decreases energy each movement
+                position.setOccupied(true);
+            }
+
+            synchronized (start) {
+                start.setOccupied(false);
+                start.notifyAll();
+            }
             // this.energy -= 1; // decreases energy each movement
-            // position.setOccupied(true);
-            // }
-            // synchronized (start) {
-            // start.setOccupied(false);
-            // start.notifyAll();
-            // }
-            this.energy -= 1; // decreases energy each movement
-            this.position.setOccupied(true);
+            // this.position.setOccupied(true);
 
             System.out.println(Thread.currentThread().getName() + " adding act");
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType + ":("
@@ -567,7 +601,17 @@ public class Bacterium implements Runnable {
                 // waitingThreads);
                 System.out.println(Thread.currentThread().getName() + " at move barrier");
                 SimulationModel.barrier.await();
+
+                synchronized (waiting) {
+                    if (SimulationModel.reset == true) {
+                        SimulationModel.resetBarrier();
+                        SimulationModel.reset = false;
+                    }
+                }
+
+                SimulationModel.resetting = SimulationModel.resetting - 1;
                 System.out.println(Thread.currentThread().getName() + " passed move barrier");
+                
             } catch (InterruptedException | BrokenBarrierException e) {
                 e.printStackTrace();
             }

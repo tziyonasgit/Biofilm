@@ -18,7 +18,8 @@ public class SimulationModel {
         public static Object runLock = new Object();
         public long startTime;
         public Timer timer;
-        public static boolean reset;
+        public static boolean reset = false;
+        public static volatile int resetting;
         // Simulation paramaters still to be added here //
 
         // paramaterised constructor for simulation model
@@ -34,6 +35,7 @@ public class SimulationModel {
                 SimulationModel.duration = duration;
                 SimulationModel.yBlocks = yBlocks;
                 SimulationModel.xBlocks = xBlocks;
+                SimulationModel.resetting = iBacteria;
 
                 barrier = new CyclicBarrier(iBacteria, new Runnable() {
                         @Override
@@ -63,7 +65,7 @@ public class SimulationModel {
                 // Simulation.activities.clear();
                 // System.out.println("resetting");
                 // barrier.await();
-                iBacteria = Environment.Bacteria.size();
+                // iBacteria = Environment.Bacteria.size();
 
                 SimulationModel.barrier = new CyclicBarrier(iBacteria, new Runnable() {
                         @Override
@@ -84,6 +86,7 @@ public class SimulationModel {
                         }
                 });
                 System.out.println("New barrier set with " + iBacteria + " bacteria.");
+                Environment.Bacteria.get(0).waiting.notifyAll();
                 // bac.reset.notifyAll();
         }
 

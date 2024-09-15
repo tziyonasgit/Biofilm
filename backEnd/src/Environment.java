@@ -215,7 +215,7 @@ public class Environment {
         }
 
         this.BacteriumID++;
-
+        SimulationModel.iBacteria ++;
         Thread b = new Thread(bacterium);
         b.start();
 
