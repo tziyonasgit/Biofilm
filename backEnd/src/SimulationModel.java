@@ -20,7 +20,7 @@ public class SimulationModel {
         public Timer timer;
         public static boolean reset = false;
         public static volatile int resetting;
-        public static boolean initialBacteria;
+        public static boolean initialBacteriaMade;
         // Simulation paramaters still to be added here //
 
         // paramaterised constructor for simulation model
@@ -28,6 +28,7 @@ public class SimulationModel {
                         int xBlocks, int yBlocks, double duration)
         // Simulation paramaters still to be added here //
         {
+                SimulationModel.initialBacteriaMade = false;
                 SimulationModel.iNutrients = iNutrients;
                 SimulationModel.iFBMonomers = iFBMonomers;
                 SimulationModel.totBMonomers = totBMonomers;
@@ -131,7 +132,6 @@ public class SimulationModel {
                                 bacteria, xBlocks, yBlocks);
 
                 environ.createBlocks(xBlocks, yBlocks);
-                SimulationModel.initialBacteria = true;
 
                 System.out.println("Creating bacteria...");
                 environ.createBacteria(bacteria, xBlocks, yBlocks, environ);
@@ -149,9 +149,7 @@ public class SimulationModel {
                 System.out.println("Simulation fully set up. Simulation running...");
 
                 environ.initialise.countDown();
-
-                SimulationModel.initialBacteria = false;
-
+                SimulationModel.initialBacteriaMade = true;
                 return environ;
         }
 

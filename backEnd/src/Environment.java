@@ -47,7 +47,7 @@ public class Environment {
         this.nutrientID = 0;
         this.xBlocks = xBlocks;
         this.yBlocks = yBlocks;
-        this.initialise = new CountDownLatch(bacteria);
+        this.initialise = new CountDownLatch(bacteria + 1);
     }
 
     public int getxBlocks() {
