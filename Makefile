@@ -4,6 +4,7 @@ JAVAC = javac
 # Directories
 SRC_DIR = backEnd/src
 BIN_DIR = backEnd/bin
+ARGS=""
 
 # Source files
 SOURCES = $(shell find $(SRC_DIR) -name "*.java")
@@ -18,7 +19,8 @@ all: $(SOURCES)
 
 # Run the main class
 run: all
-	java -cp $(BIN_DIR) $(MAIN)
+	java -cp $(BIN_DIR) $(MAIN) $(ARGS)
+
 
 # Clean compiled classes
 clean:

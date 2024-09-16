@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 // class for taking in conditions and parameters, creating and writing to an activity file 
 // and running the simulation
-public class Simulation {
+public class SimulationOriginal {
     static File actFile;
     static String fileName;
     // ArrayList for storing simulation activities so can be written to file in one
@@ -19,49 +19,59 @@ public class Simulation {
     static Checks checks = new Checks();
 
     // method for taking in initial and boundary conditions
-    public static int[] setConditions(String[] args) {
+    public static int[] setConditions() {
+        // initial and boundary conditions array for passing to main method
         int[] conds = new int[7];
+        Scanner input = new Scanner(System.in);
 
-        // Use command-line arguments instead of Scanner input
-        conds[0] = checks.checkInt(args[0]); // Free bacterial monomers
-        conds[1] = checks.checkInt(args[1]); // Free EPS monomers
-        conds[2] = checks.checkInt(args[2]); // Nutrients
-        conds[3] = checks.checkInt(args[3]); // Starting bacteria
-        conds[4] = checks.checkInt(args[4]); // Simulation width
-        conds[5] = checks.checkInt(args[5]); // Simulation height
+        System.out.println("Enter starting free bacterial monomers:");
+        conds[0] = checks.checkInt(input.nextLine());
 
-        // Check block size and adjust
+        System.out.println("Enter starting free EPS monomers:");
+        conds[1] = checks.checkInt(input.nextLine());
+
+        System.out.println("Enter starting nutrients:");
+        conds[2] = checks.checkInt(input.nextLine());
+
+        System.out.println("Enter starting bacteria:");
+        conds[3] = checks.checkInt(input.nextLine());
+
+        System.out.println("Enter simulation width (number of blocks):");
+        conds[4] = checks.checkInt(input.nextLine());
+
+        System.out.println("Enter simulation height (number of blocks):");
+        conds[5] = checks.checkInt(input.nextLine());
+
         int[] blocks = checks.checkBlocks(conds[4], conds[5]);
         conds[4] = blocks[0];
         conds[5] = blocks[1];
         conds[3] = checks.checkIBacteria(conds[3], conds[4], conds[5]);
-
-        // Calculate total bacterial monomers from free bacterial monomers and bacteria
+        // calculates total bacterial monomers from free bacterial monomers and bacteria
+        // (7 bacterial monomers = 1 bacterium)
         totBacterialMonomers = conds[0] + conds[3] * 7;
 
-        // Simulation duration
-        conds[6] = checks.checkInt(args[6]); // Simulation duration
+        System.out.println("Enter desired simulation duration (in seconds):");
+        conds[6] = checks.checkInt(input.nextLine());
 
         return conds;
     }
 
-    // // method for taking in other parameters
-    // public static float[] setParams() {
-    // Scanner input = new Scanner(System.in);
-    // float[] params = new float[10];
-    // // will display recommended parameters, allow to change if want to //
-    // // repeat below lines for each parameter (need decide on them still) //
-    // System.out.println("Parameter0 : Recommended Value : Enter desired value:");
-    // params[0] = checks.checkFloat(input.nextLine());
-    // return params;
-    // }
+    // method for taking in other parameters
+    public static float[] setParams() {
+        Scanner input = new Scanner(System.in);
+        float[] params = new float[10];
+        // will display recommended parameters, allow to change if want to //
+        // repeat below lines for each parameter (need decide on them still) //
+        System.out.println("Parameter0 : Recommended Value : Enter desired value:");
+        params[0] = checks.checkFloat(input.nextLine());
+        return params;
+    }
 
     // method for creating activity file
-    public static void createFile(int[] conds, String[] args) {
+    public static void createFile(int[] conds) {
         Scanner input = new Scanner(System.in);
-        // System.out.println("Enter desired name for activity file:");
-        // fileName = input.nextLine() + ".txt";
-        fileName = args[7] + ".txt";
+        System.out.println("Enter desired name for activity file:");
+        fileName = input.nextLine() + ".txt";
 
         // attempts to create and save file
         try {
@@ -130,13 +140,13 @@ public class Simulation {
 
     // method for running simulation
     public static void main(String[] args) {
-        int[] conds = setConditions(args);
+        int[] conds = setConditions();
         // below doesn't do anything yet //
-        // float[] params = setParams();
+        float[] params = setParams();
 
         // creates file if new and resets if already exists and writes simulation
         // conditions to the file
-        createFile(conds, args);
+        createFile(conds);
 
         System.out.println();
         // creates simulation model

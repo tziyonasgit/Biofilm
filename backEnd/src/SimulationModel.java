@@ -88,13 +88,12 @@ public class SimulationModel {
                                 }
 
                                 System.out.println("New barrier set with " + iBacteria + " bacteria.");
-                                synchronized (Environment.Bacteria.get(0).waiting)
-                                {
+                                synchronized (Environment.Bacteria.get(0).waiting) {
                                         Environment.Bacteria.get(0).waiting.notifyAll();
                                 }
                         }
                 });
-                
+
                 // bac.reset.notifyAll();
         }
 
