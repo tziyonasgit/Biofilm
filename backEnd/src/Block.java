@@ -10,6 +10,7 @@ public class Block {
     LinkedList<Monomer> nutrients;
     LinkedList<Monomer> bacMonomers;
     LinkedList<Monomer> eps;
+    Bacterium occupier;
 
     // paramaterised constructor for block
     public Block(int positionX, int positionY, int levelEPS, boolean occupied) {
@@ -29,7 +30,7 @@ public class Block {
 
     // increase EPS count when secreted by bacterium
     public void incEPS() {
-        this.EPSLevel += 1;
+        this.EPSLevel += 50;
     }
 
     // method for setting whether or a not a block is occupied
