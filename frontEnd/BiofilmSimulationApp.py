@@ -52,12 +52,25 @@ class BiofilmSimulationApp(tk.Tk):
             fill="#000000",
             font=("IstokWeb Bold", 15 * -1))
 
+        self.update_idletasks()
+        canvas_width = self.ui_canvas.winfo_width()
+
+        # Get the bounding box of the text to calculate its width
+        bbox = self.ui_canvas.bbox(self.text_id)
+        text_width = bbox[2] - bbox[0]  # Calculate the width of the text
+
+        # Calculate the x-coordinate to center the text
+        x = (canvas_width - text_width) / 2
+
+        # Move the text to the center horizontally
+        self.ui_canvas.coords(self.text_id, x, 130.0)
+
     def startSimulation(self):
         # Create a new window for the simulation
         simulation_window = tk.Toplevel(self)
 
         simulation_window.title("Simulation Window")
-        simulation_window.geometry("800x600")
+        simulation_window.geometry("1000x600")
         self.centerWindow(simulation_window)
         simulation_window.attributes("-topmost", True)
 
@@ -75,21 +88,33 @@ class BiofilmSimulationApp(tk.Tk):
         SaveAnimation.startAnimation(self.filename, self.mode)
 
     def createWidgets(self):
-
         self.ui_canvas = tk.Canvas(
-            self, bg="#FFFFFF", width=900, height=900, bd=0, highlightthickness=0)
+            self, bg="#FFFFFF", width=1000, height=1000, bd=0, highlightthickness=0)
         self.ui_canvas.pack()
 
-        def relative_to_assets(path: str) -> Path:
-            return ASSETS_PATH / Path(path)
-
-        self.ui_canvas.create_text(
+        text_id = self.ui_canvas.create_text(
             45.0,
             30.0,
             anchor="nw",
             text="BIOFILM SIMULATOR",
             fill="#000000",
             font=("IstokWeb Bold", 64 * -1))
+
+        self.update_idletasks()
+
+        canvas_width = self.ui_canvas.winfo_width()
+        canvas_height = self.ui_canvas.winfo_height()
+
+        bbox = self.ui_canvas.bbox(text_id)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+        x = (canvas_width - text_width) / 2
+        y = (canvas_height - text_height) / 2 - 120
+
+        self.ui_canvas.coords(text_id, x, y)
+
+        def relative_to_assets(path: str) -> Path:
+            return ASSETS_PATH / Path(path)
 
         self.uploadBtnImage = PhotoImage(
             file=relative_to_assets("upload.png"))

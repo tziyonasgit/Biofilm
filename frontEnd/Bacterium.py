@@ -113,14 +113,14 @@ class Bacterium:
     def dropPSL(self):
         # drops a dot at the current position of the bacterium
         PSLdot = patches.Circle(self.position.copy(),
-                                radius=0.05, color='red', zorder=5)
+                                radius=0.5, color='red', zorder=5)
         self.PSL.append(PSLdot)  # Store the dot in the list
         self.ax.add_patch(PSLdot)
 
     def dropEPS(self):
         # drops a dot at the current position of the bacterium
         EPSdot = patches.Circle(self.position.copy(),
-                                radius=0.05, color='blue', zorder=5)
+                                radius=0.3, color='blue', zorder=5)
         self.EPS.append(EPSdot)  # Store the dot in the list
         self.ax.add_patch(EPSdot)
 
