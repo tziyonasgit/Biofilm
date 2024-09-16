@@ -636,6 +636,17 @@ public class Bacterium implements Runnable {
 
         int event = mt.nextInt(6); // Mersenne Twister generates event
         System.out.println(event);
+        if (environBlocks[position.getXPos()-1][position.getYPos()+1].occupied()
+        ||environBlocks[position.getXPos()][position.getYPos()+1].occupied()
+        ||environBlocks[position.getXPos()+1][position.getYPos()+1].occupied()
+        ||environBlocks[position.getXPos()-1][position.getYPos()].occupied()
+        ||environBlocks[position.getXPos()+1][position.getYPos()].occupied()
+        ||environBlocks[position.getXPos()-1][position.getYPos()-1].occupied()
+        ||environBlocks[position.getXPos()][position.getYPos()-1].occupied()
+        ||environBlocks[position.getXPos()+1][position.getYPos()-1].occupied()){
+            action = "secrete";
+            event = 8;
+        }
         switch (event) {
             case 0: // tumble
 
