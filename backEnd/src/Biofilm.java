@@ -1,18 +1,24 @@
 package backEnd.src;
+import java.util.ArrayList;
 
 // class for managing biofilms
 public class Biofilm {
     int numBacteria;
     int numEPS;
     int age;
-    String type;
+    ArrayList<Bacterium> bioBacs; 
 
     // paramaterised constructor for biofilm
-    public Biofilm(int bacteria, int EPS, int age, String type) {
+    public Biofilm(int bacteria, int EPS, int age) {
         this.numBacteria = bacteria;
         this.numEPS = EPS;
         this.age = age;
-        this.type = type;
+        this.bioBacs = new ArrayList<Bacterium>();
+    }
+
+    public void addBac(Bacterium bac)
+    {
+        this.bioBacs.add(bac);
     }
 
     // breaks up biofilm, how and when //
