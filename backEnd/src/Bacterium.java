@@ -610,16 +610,18 @@ public class Bacterium implements Runnable {
 
                 accepted = false;
                 while (!accepted) {
+                    x =mt.nextInt(environ.xBlocks);
+                    y = mt.nextInt(environ.getyBlocks());
+
                     int distance = (int) Math
                             .sqrt(Math.pow(x - position.getXPos(), 2) + Math.pow(y - position.getYPos(), 2));
 
-                    if (distance >= (maxDistance) / 4) { // if the distance is too far for a tubmle do another tumble
+                    if (distance >= (maxDistance) / 4) { // if the distance is too large for a tubmle reject the coordinate and try again
                         accepted = false;
                     }
-                    int energyLevel = (int) ((double) this.energy / maxEnergy * 100); // checks if co-ordinates are
-                                                                                      // viable for the
-                    // bacterium
-                    if (energyLevel >= 80) {
+                    int energyLevel = (int) ((double) this.energy / maxEnergy * 100); // calculating energy level to be used to validae coordinate
+                    
+                    if (energyLevel >= 80) { //validating coordinate
                         accepted = true;
                     } else if (energyLevel >= 60 && distance <= (maxDistance * 4) / 5) {
                         accepted = true;
@@ -682,6 +684,8 @@ public class Bacterium implements Runnable {
             case 3:// run
                 accepted = false;
                 while (!accepted) {
+                    x =mt.nextInt(environ.xBlocks);
+                    y = mt.nextInt(environ.getyBlocks());
 
                     int distance = (int) Math
                             .sqrt(Math.pow(x - position.getXPos(), 2) + Math.pow(y - position.getYPos(), 2));
