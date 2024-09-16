@@ -642,23 +642,27 @@ public class Bacterium implements Runnable {
         int maxDistance = (int) Math
                 .sqrt(Math.pow(environ.getxBlocks(), 2) + Math.pow(environ.getyBlocks(), 2));
 
-        int event = mt.nextInt(6);
+        int event = mt.nextInt(6); // Mersenne Twister generates event
         System.out.println(event);
         switch (event) {
             case 0: // tumble
 
                 accepted = false;
-                while (!accepted) {
-                    int distance = (int) Math
+                while (!accepted) { // while the coorodinate is not valid try another one
+                    x = mt.nextInt(environ.xBlocks); // Generating coordinate
+                    y = mt.nextInt(environ.getyBlocks());
+
+                    int distance = (int) Math // calculating distance, used to validate coordinate
                             .sqrt(Math.pow(x - position.getXPos(), 2) + Math.pow(y - position.getYPos(), 2));
 
-                    if (distance >= (maxDistance) / 4) { // if the distance is too far for a tubmle do another tumble
+                    if (distance >= (maxDistance) / 4) { // if the distance is too large for a tumble reject the
+                                                         // coordinate and try again
                         accepted = false;
                     }
-                    int energyLevel = (int) ((double) this.energy / maxEnergy * 100); // checks if co-ordinates are
-                                                                                      // viable for the
-                    // bacterium
-                    if (energyLevel >= 80) {
+                    int energyLevel = (int) ((double) this.energy / maxEnergy * 100); // calculating energy level to be
+                                                                                      // used to validae coordinate
+
+                    if (energyLevel >= 80) { // validating coordinate
                         accepted = true;
                     } else if (energyLevel >= 60 && distance <= (maxDistance * 4) / 5) {
                         accepted = true;
@@ -723,18 +727,19 @@ public class Bacterium implements Runnable {
             // return new Object[] { action, null };
             case 3:// run
                 accepted = false;
-                while (!accepted) {
+                while (!accepted) { // while the coorodinate is not valid try another one
+                    x = mt.nextInt(environ.xBlocks); // Generating coordinate
+                    y = mt.nextInt(environ.getyBlocks());
 
-                    int distance = (int) Math
+                    int distance = (int) Math // calculating distance (needed to validate coordinate)
                             .sqrt(Math.pow(x - position.getXPos(), 2) + Math.pow(y - position.getYPos(), 2));
 
-                    int energyLevel = (int) ((double) this.energy / maxEnergy * 100);// checks if co-ordinates are
-                                                                                     // viable for the
-                    // bacterium
+                    int energyLevel = (int) ((double) this.energy / maxEnergy * 100);// calculating energy level to be
+                                                                                     // used to validae coordinate
                     System.out.println(
                             Thread.currentThread().getName() + " is waiting acceptance with energy "
                                     + energyLevel);
-                    if (energyLevel >= 80) {
+                    if (energyLevel >= 80) { // validating coordinate
                         accepted = true;
                     } else if (energyLevel >= 60 && distance <= (maxDistance * 4) / 5) {
                         accepted = true;
