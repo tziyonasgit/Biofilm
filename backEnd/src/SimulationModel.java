@@ -9,7 +9,7 @@ import java.util.concurrent.CyclicBarrier;
 // class for managing simulation and creating the simulation environment and setting up its parts
 public class SimulationModel {
         public static int iNutrients, iFBMonomers, totBMonomers, iEPSMonomers,
-                        iBacteria, xBlocks, yBlocks;
+                        iBacteria, xBlocks, yBlocks, baseBacteria;
         public static double duration;
         Environment simEnviron;
         public volatile String run = "sync";
@@ -38,6 +38,7 @@ public class SimulationModel {
                 SimulationModel.yBlocks = yBlocks;
                 SimulationModel.xBlocks = xBlocks;
                 SimulationModel.resetting = iBacteria;
+                SimulationModel.baseBacteria = iBacteria;
 
                 barrier = new CyclicBarrier(iBacteria, new Runnable() {
                         @Override
@@ -67,7 +68,7 @@ public class SimulationModel {
                 // Simulation.activities.clear();
                 // System.out.println("resetting");
                 // barrier.await();
-                // iBacteria = Environment.Bacteria.size();
+                iBacteria = Environment.Bacteria.size();
 
                 SimulationModel.barrier = new CyclicBarrier(iBacteria, new Runnable() {
                         @Override
@@ -85,10 +86,15 @@ public class SimulationModel {
                                 synchronized (runLock) {
                                         runLock.notifyAll(); // Notify all waiting threads
                                 }
+
+                                System.out.println("New barrier set with " + iBacteria + " bacteria.");
+                                synchronized (Environment.Bacteria.get(0).waiting)
+                                {
+                                        Environment.Bacteria.get(0).waiting.notifyAll();
+                                }
                         }
                 });
-                System.out.println("New barrier set with " + iBacteria + " bacteria.");
-                Environment.Bacteria.get(0).waiting.notifyAll();
+                
                 // bac.reset.notifyAll();
         }
 

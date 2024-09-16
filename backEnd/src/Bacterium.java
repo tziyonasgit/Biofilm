@@ -116,10 +116,14 @@ public class Bacterium implements Runnable {
         this.length = 7;
         this.birthTime = LocalDateTime.now();
         Bacterium childBac;
-
         System.out.println(Thread.currentThread().getName() + " adding act");
-        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + environ.BacteriumID);
-        childBac = environ.createBacterium(environ, newPosition, this);
+
+        synchronized (waiting)
+        {
+            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + environ.BacteriumID);
+            childBac = environ.createBacterium(environ, newPosition, this);
+        }
+
         // System.out.println("child position is " + newPosition.getStringFormat());
         // System.out.println("parent position is " + this.position.getStringFormat());
 
@@ -157,15 +161,26 @@ public class Bacterium implements Runnable {
 
         position.setOccupied(false); // makes block free
         this.killThread = true;
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Die");
+        try {
 
-        synchronized (waiting) {
-            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Die");
-            try {
-                SimulationModel.barrier.await();
-            } catch (InterruptedException | BrokenBarrierException e) {
-                e.printStackTrace();
+            SimulationModel.barrier.await();
+
+            synchronized (waiting) {
+                if (SimulationModel.reset == true) {
+                    SimulationModel.resetBarrier();
+                    SimulationModel.reset = false;
+                }
             }
+
+            SimulationModel.resetting = SimulationModel.resetting - 1;
+
+        } catch (InterruptedException | BrokenBarrierException e) {
+            e.printStackTrace();
         }
+        
+            
+            
     }
 
     public Block getRandomAdjacentFreeBlock() {
@@ -174,21 +189,28 @@ public class Bacterium implements Runnable {
         int randomBlock = random.nextInt(4); // Generates a number from 0 to 3
         int newYcoord = 0;
         int newXcoord = 0;
+        while (this.position.getXPos() == 0 & randomBlock == 0)
+        {
+            randomBlock = random.nextInt(4);
+        }
+        while (this.position.getYPos() == 0 & randomBlock == 2)
+        {
+            randomBlock = random.nextInt(4);
+        }
 
         switch (randomBlock) { // moves bacterium to a random adjacent block
             case 0:
                 newXcoord = this.position.getXPos() - 1;
                 newYcoord = this.position.getYPos();
-                // synchronized (destinationPosition) {
-                // while (destinationPosition.occupied()) {
-                // try {
-                // destinationPosition.wait();
-                // } catch (InterruptedException e) {
-                // e.printStackTrace();
-                // }
-                // }
-                // destinationPosition.setOccupied(true);
-                // }
+                synchronized (environ.environBlocks[newXcoord][newYcoord]) {
+                    while (environ.environBlocks[newXcoord][newYcoord].occupied()) {
+                        try {
+                            environ.environBlocks[newXcoord][newYcoord].wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
 
                 break;
             case 1:
@@ -263,22 +285,25 @@ public class Bacterium implements Runnable {
         position.incEPS();
         // not sure if we need the below
         environ.EPSMonomers.add(environ.createEPSMonomer(position));
-
-        // synchronized (waiting) {
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS");
+        
         try {
-            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS");
+
             SimulationModel.barrier.await();
-            // synchronized (waiting) {
-            // if (SimulationModel.reset == true) {
-            // SimulationModel.resetBarrier();
-            // SimulationModel.reset = false;
-            // }
-            // }
+
+            synchronized (waiting) {
+                if (SimulationModel.reset == true) {
+                    SimulationModel.resetBarrier();
+                    SimulationModel.reset = false;
+                }
+            }
+
+            SimulationModel.resetting = SimulationModel.resetting - 1;
 
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
-        // }
+        
     }
 
     // fixed onto block by EPS //
@@ -309,15 +334,24 @@ public class Bacterium implements Runnable {
         }
 
         this.energy += 1; // increases energy level
-        synchronized (waiting) {
-            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Eat");
-            try {
-                SimulationModel.barrier.await();
-            } catch (InterruptedException | BrokenBarrierException e) {
-                e.printStackTrace();
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Eat");
+
+        try {
+
+            SimulationModel.barrier.await();
+
+            synchronized (waiting) {
+                if (SimulationModel.reset == true) {
+                    SimulationModel.resetBarrier();
+                    SimulationModel.reset = false;
+                }
             }
+            SimulationModel.resetting = SimulationModel.resetting - 1;
+
+        } catch (InterruptedException | BrokenBarrierException e) {
+             e.printStackTrace();
         }
-    }
+        }
 
     public void consume(BacterialMonomer bMonomer) {
         bMonomer.position.removeBMonomer(bMonomer);
@@ -333,26 +367,31 @@ public class Bacterium implements Runnable {
     }
 
     public void idle(Block pos) {
+        
         System.out.println(Thread.currentThread().getName() + " is idling");
-        synchronized (waiting) {
-            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Idle:" + pos.getStringFormat());
-            try {
-                System.out.println(Thread.currentThread().getName() + " waiting at idle barrier");
-                SimulationModel.barrier.await();
-            } catch (InterruptedException | BrokenBarrierException e) {
-                e.printStackTrace();
+        Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Idle:" + pos.getStringFormat());
+        try {
+            System.out.println(Thread.currentThread().getName() + " waiting at idle barrier");
+            SimulationModel.barrier.await();
+            synchronized (waiting) {
+                if (SimulationModel.reset == true) {
+                    SimulationModel.resetBarrier();
+                    SimulationModel.reset = false;
+                }
             }
-        }
+            SimulationModel.resetting = SimulationModel.resetting - 1;
+
+        } catch (InterruptedException | BrokenBarrierException e) {
+            e.printStackTrace();
+        } 
         System.out.println(Thread.currentThread().getName() + " is done idling");
     }
 
     public void run() {
         this.thread = Thread.currentThread();
-
         synchronized (waiting) {
-            if (SimulationModel.iBacteria > 1) {
+            if (Environment.Bacteria.size() > SimulationModel.iBacteria) {
                 try {
-                    // waiting.notify();
                     waiting.wait();
                     waiting.notifyAll();
                     System.out.println(Thread.currentThread().getName() + "got here");
@@ -362,9 +401,6 @@ public class Bacterium implements Runnable {
             }
         }
         try {
-            // if (SimulationModel.initialBacteriaMade == true) {
-
-            // }
             environ.initialise.countDown();
             environ.initialise.await();
 
@@ -426,6 +462,9 @@ public class Bacterium implements Runnable {
                         this.die();
                     } else if (currentAction.equals("secrete")) {
                         this.secrete();
+                    }
+                    else if (currentAction.equals("eat")) {
+                        this.eat(new Nutrient(this.position, 900));
                     }
                     currentAction = "";
                     // System.out.println("action has been reset");
@@ -631,6 +670,9 @@ public class Bacterium implements Runnable {
                         accepted = true;
                     } else {
                         accepted = false;
+                        x ++;
+                        y ++;
+                        System.out.println("found it");
                     }
 
                 }
