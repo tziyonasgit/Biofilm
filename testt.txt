@@ -1,0 +1,123 @@
+Starting bacterial monomers: 20
+Starting EPS monomers: 20
+Starting nutrients: 20
+Starting bacteria: 3
+Simulation width: 100
+Simulation height: 100
+Simulation duration: 30
+
+Bacterium:0:Spawn:(10,68)
+Bacterium:1:Spawn:(45,16)
+Bacterium:2:Spawn:(82,58)
+Bacterium:0:Secrete:EPS
+Bacterium:1:Tumble:(45,16):(44,16)
+Bacterium:2:Tumble:(82,58):(81,58)
+*
+Bacterium:2:Run:(81,58):(80,58)
+Bacterium:1:Idle:Block(44, 16)
+Bacterium:0:Tumble:(10,68):(9,68)
+*
+Bacterium:2:Run:(80,58):(79,58)
+Bacterium:1:Tumble:(44,16):(43,16)
+Bacterium:0:Run:(9,68):(8,68)
+*
+Bacterium:2:Tumble:(79,58):(78,58)
+Bacterium:1:Secrete:EPS
+Bacterium:0:Run:(8,68):(7,68)
+*
+Bacterium:0:Run:(7,68):(6,68)
+Bacterium:2:Run:(78,58):(77,58)
+Bacterium:1:Run:(43,16):(42,16)
+*
+Bacterium:2:Run:(77,58):(76,58)
+Bacterium:1:Tumble:(42,16):(41,16)
+Bacterium:0:Run:(6,68):(5,68)
+*
+Bacterium:0:Tumble:(5,68):(4,68)
+Bacterium:2:Run:(76,58):(75,58)
+Bacterium:1:Idle:Block(41, 16)
+*
+Bacterium:1:Run:(41,16):(40,16)
+Bacterium:0:Run:(4,68):(3,68)
+Bacterium:2:Run:(75,58):(74,58)
+*
+Bacterium:0:Run:(3,68):(2,68)
+Bacterium:2:Secrete:EPS
+Bacterium:1:Idle:Block(40, 16)
+*
+Bacterium:0:Run:(2,68):(1,68)
+Bacterium:1:Tumble:(40,16):(39,16)
+Bacterium:2:Run:(74,58):(73,58)
+*
+Bacterium:1:Secrete:EPS
+Bacterium:0:Tumble:(1,68):(0,68)
+Bacterium:2:Run:(73,58):(72,58)
+*
+Bacterium:1:Secrete:EPS
+Bacterium:0:Run:(0,68):(0,67)
+Bacterium:2:Tumble:(72,58):(71,58)
+*
+Bacterium:0:Idle:Block(0, 67)
+Bacterium:2:Idle:Block(71, 58)
+Bacterium:1:Run:(39,16):(38,16)
+*
+Bacterium:1:Idle:Block(38, 16)
+Bacterium:2:Run:(71,58):(70,58)
+Bacterium:0:Secrete:EPS
+*
+Bacterium:0:Tumble:(0,67):(0,66)
+Bacterium:1:Tumble:(38,16):(37,16)
+Bacterium:2:Secrete:EPS
+*
+Bacterium:1:Tumble:(37,16):(36,16)
+Bacterium:2:Idle:Block(70, 58)
+Bacterium:0:Tumble:(0,66):(0,65)
+*
+Bacterium:2:Run:(70,58):(69,58)
+Bacterium:1:Run:(36,16):(35,16)
+Bacterium:0:Run:(0,65):(0,64)
+*
+Bacterium:0:Secrete:EPS
+Bacterium:1:Secrete:EPS
+Bacterium:2:Idle:Block(69, 58)
+*
+Bacterium:2:Run:(69,58):(68,58)
+Bacterium:0:Run:(0,64):(0,63)
+Bacterium:1:Run:(35,16):(34,16)
+*
+Bacterium:0:Idle:Block(0, 63)
+Bacterium:1:Run:(34,16):(33,16)
+Bacterium:2:Tumble:(68,58):(67,58)
+*
+Bacterium:2:Run:(67,58):(66,58)
+Bacterium:0:Idle:Block(0, 63)
+Bacterium:1:Run:(33,16):(32,16)
+*
+Bacterium:1:Secrete:EPS
+Bacterium:0:Run:(0,63):(0,62)
+Bacterium:2:Tumble:(66,58):(65,58)
+*
+Bacterium:2:Tumble:(65,58):(64,58)
+Bacterium:0:Secrete:EPS
+Bacterium:1:Run:(32,16):(31,16)
+*
+Bacterium:0:Run:(0,62):(0,61)
+Bacterium:1:Run:(31,16):(30,16)
+Bacterium:2:Idle:Block(64, 58)
+*
+Bacterium:0:Tumble:(0,61):(0,60)
+Bacterium:1:Run:(30,16):(29,16)
+Bacterium:2:Run:(64,58):(63,58)
+*
+Bacterium:2:Run:(63,58):(62,58)
+Bacterium:0:Run:(0,60):(0,59)
+Bacterium:1:Tumble:(29,16):(28,16)
+*
+Bacterium:1:Idle:Block(28, 16)
+Bacterium:0:Secrete:EPS
+Bacterium:2:Run:(62,58):(61,58)
+*
+Bacterium:2:Run:(61,58):(60,58)
+Bacterium:1:Secrete:EPS
+Bacterium:0:Tumble:(0,59):(0,58)
+*

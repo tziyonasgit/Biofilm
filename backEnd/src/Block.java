@@ -38,7 +38,7 @@ public class Block {
     }
 
     // method for returning EPS level of block
-    private int getEPSLevel() {
+    public int getEPSLevel() {
         return EPSLevel;
     }
 

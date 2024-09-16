@@ -118,8 +118,7 @@ public class Bacterium implements Runnable {
         Bacterium childBac;
         System.out.println(Thread.currentThread().getName() + " adding act");
 
-        synchronized (waiting)
-        {
+        synchronized (waiting) {
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Reproduce:Bacterium:" + environ.BacteriumID);
             childBac = environ.createBacterium(environ, newPosition, this);
         }
@@ -178,9 +177,7 @@ public class Bacterium implements Runnable {
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
-        
-            
-            
+
     }
 
     public Block getRandomAdjacentFreeBlock() {
@@ -189,12 +186,10 @@ public class Bacterium implements Runnable {
         int randomBlock = random.nextInt(4); // Generates a number from 0 to 3
         int newYcoord = 0;
         int newXcoord = 0;
-        while (this.position.getXPos() == 0 & randomBlock == 0)
-        {
+        while (this.position.getXPos() == 0 & randomBlock == 0) {
             randomBlock = random.nextInt(4);
         }
-        while (this.position.getYPos() == 0 & randomBlock == 2)
-        {
+        while (this.position.getYPos() == 0 & randomBlock == 2) {
             randomBlock = random.nextInt(4);
         }
 
@@ -286,7 +281,7 @@ public class Bacterium implements Runnable {
         // not sure if we need the below
         environ.EPSMonomers.add(environ.createEPSMonomer(position));
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Secrete:EPS");
-        
+
         try {
 
             SimulationModel.barrier.await();
@@ -303,7 +298,7 @@ public class Bacterium implements Runnable {
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
-        
+
     }
 
     // fixed onto block by EPS //
@@ -349,9 +344,9 @@ public class Bacterium implements Runnable {
             SimulationModel.resetting = SimulationModel.resetting - 1;
 
         } catch (InterruptedException | BrokenBarrierException e) {
-             e.printStackTrace();
+            e.printStackTrace();
         }
-        }
+    }
 
     public void consume(BacterialMonomer bMonomer) {
         bMonomer.position.removeBMonomer(bMonomer);
@@ -367,7 +362,7 @@ public class Bacterium implements Runnable {
     }
 
     public void idle(Block pos) {
-        
+
         System.out.println(Thread.currentThread().getName() + " is idling");
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Idle:" + pos.getStringFormat());
         try {
@@ -383,7 +378,7 @@ public class Bacterium implements Runnable {
 
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
-        } 
+        }
         System.out.println(Thread.currentThread().getName() + " is done idling");
     }
 
@@ -435,8 +430,8 @@ public class Bacterium implements Runnable {
                         // If no current action, choose one
                         if (newGoal == true) {
                             while (Environment.environBlocks[x][y].occupied() == true) {
-                                x = random.nextInt(Environment.environBlocks.length);
-                                y = random.nextInt(Environment.environBlocks[0].length);
+                                x = mt.nextInt(environ.xBlocks);
+                                y = mt.nextInt(environ.yBlocks);
                             }
                         }
                         // this.setAction("runMove", Environment.environBlocks[x][y]);
@@ -462,8 +457,7 @@ public class Bacterium implements Runnable {
                         this.die();
                     } else if (currentAction.equals("secrete")) {
                         this.secrete();
-                    }
-                    else if (currentAction.equals("eat")) {
+                    } else if (currentAction.equals("eat")) {
                         this.eat(new Nutrient(this.position, 900));
                     }
                     currentAction = "";
@@ -636,8 +630,6 @@ public class Bacterium implements Runnable {
     public Object[] doSomething(Block[][] environBlocks) throws InterruptedException,
             BrokenBarrierException {
         String action = "";
-        int x = 0;
-        int y = 0;
         boolean accepted = false;
         int maxDistance = (int) Math
                 .sqrt(Math.pow(environ.getxBlocks(), 2) + Math.pow(environ.getyBlocks(), 2));
@@ -648,9 +640,22 @@ public class Bacterium implements Runnable {
             case 0: // tumble
 
                 accepted = false;
-                while (!accepted) { // while the coorodinate is not valid try another one
+
+                while (!accepted && (newGoal == true)) { // while the coorodinate is not valid try another one
                     x = mt.nextInt(environ.xBlocks); // Generating coordinate
                     y = mt.nextInt(environ.getyBlocks());
+
+                    if ((Environment.environBlocks[x][y].getEPSLevel() >= 20)
+                            || (Environment.environBlocks[x - 1][y].getEPSLevel() >= 20)
+                            || (Environment.environBlocks[x][y - 1].getEPSLevel() >= 20)
+                            || (Environment.environBlocks[x - 1][y - 1].getEPSLevel() >= 20)
+                            || (Environment.environBlocks[x - 1][y + 1].getEPSLevel() >= 20)
+                            || (Environment.environBlocks[x][y + 1].getEPSLevel() >= 20)
+                            || (Environment.environBlocks[x + 1][y].getEPSLevel() >= 20)
+                            || (Environment.environBlocks[x + 1][y + 1].getEPSLevel() >= 20)
+                            || (Environment.environBlocks[x + 1][y - 1].getEPSLevel() >= 20)) {
+                        accepted = true;
+                    }
 
                     int distance = (int) Math // calculating distance, used to validate coordinate
                             .sqrt(Math.pow(x - position.getXPos(), 2) + Math.pow(y - position.getYPos(), 2));
@@ -674,8 +679,7 @@ public class Bacterium implements Runnable {
                         accepted = true;
                     } else {
                         accepted = false;
-                        x ++;
-                        y ++;
+
                         System.out.println("found it");
                     }
 
@@ -727,9 +731,9 @@ public class Bacterium implements Runnable {
             // return new Object[] { action, null };
             case 3:// run
                 accepted = false;
-                while (!accepted) { // while the coorodinate is not valid try another one
-                    x = mt.nextInt(environ.xBlocks); // Generating coordinate
-                    y = mt.nextInt(environ.getyBlocks());
+                while (!accepted && (newGoal == true)) { // while the coorodinate is not valid try another one
+                    // x = mt.nextInt(environ.xBlocks); // Generating coordinate
+                    // y = mt.nextInt(environ.getyBlocks());
 
                     int distance = (int) Math // calculating distance (needed to validate coordinate)
                             .sqrt(Math.pow(x - position.getXPos(), 2) + Math.pow(y - position.getYPos(), 2));
