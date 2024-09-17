@@ -1,0 +1,83 @@
+Starting bacterial monomers: 20
+Starting EPS monomers: 25
+Starting nutrients: 30
+Starting bacteria: 3
+Simulation width: 100
+Simulation height: 100
+Simulation duration: 20
+
+Bacterium:0:Spawn:(3,41)
+Bacterium:1:Spawn:(13,63)
+Bacterium:2:Spawn:(19,65)
+Bacterium:0:Secrete:EPS
+Bacterium:2:Tumble:(19,65):(20,65)
+Bacterium:1:Tumble:(13,63):(14,63)
+*
+Bacterium:1:Secrete:EPS
+Bacterium:2:Tumble:(20,65):(21,65)
+Bacterium:0:Tumble:(3,41):(4,41)
+*
+Bacterium:2:Run:(21,65):(22,65)
+Bacterium:1:Run:(14,63):(15,63)
+Bacterium:0:Run:(4,41):(5,41)
+*
+Bacterium:1:Tumble:(15,63):(16,63)
+Bacterium:2:Run:(22,65):(23,65)
+Bacterium:0:Run:(5,41):(6,41)
+*
+Bacterium:0:Tumble:(6,41):(7,41)
+Bacterium:2:Run:(23,65):(24,65)
+Bacterium:1:Idle:Block(16, 63)
+*
+Bacterium:1:Run:(16,63):(17,63)
+Bacterium:2:Run:(24,65):(25,65)
+Bacterium:0:Run:(7,41):(8,41)
+*
+Bacterium:2:Secrete:EPS
+Bacterium:1:Idle:Block(17, 63)
+Bacterium:0:Run:(8,41):(9,41)
+*
+Bacterium:1:Tumble:(17,63):(18,63)
+Bacterium:0:Run:(9,41):(10,41)
+Bacterium:2:Run:(25,65):(26,65)
+*
+Bacterium:1:Secrete:EPS
+Bacterium:2:Run:(26,65):(27,65)
+Bacterium:0:Tumble:(10,41):(11,41)
+*
+Bacterium:1:Secrete:EPS
+Bacterium:2:Tumble:(27,65):(28,65)
+Bacterium:0:Run:(11,41):(12,41)
+*
+Bacterium:2:Idle:Block(28, 65)
+Bacterium:0:Idle:Block(12, 41)
+Bacterium:1:Attach:(18,63)
+*
+Bacterium:2:Run:(28,65):(29,65)
+Bacterium:1:Attach:(18,63)
+Bacterium:0:Secrete:EPS
+*
+Bacterium:1:Attach:(18,63)
+Bacterium:2:Secrete:EPS
+Bacterium:0:Tumble:(12,41):(13,41)
+*
+Bacterium:0:Tumble:(13,41):(14,41)
+Bacterium:1:Attach:(18,63)
+Bacterium:2:Idle:Block(29, 65)
+*
+Bacterium:1:Attach:(18,63)
+Bacterium:2:Run:(29,65):(30,65)
+Bacterium:0:Run:(14,41):(15,41)
+*
+Bacterium:1:Attach:(18,63)
+Bacterium:2:Idle:Block(30, 65)
+Bacterium:0:Secrete:EPS
+*
+Bacterium:1:Attach:(18,63)
+Bacterium:0:Run:(15,41):(16,41)
+Bacterium:2:Run:(30,65):(31,65)
+*
+Bacterium:1:Attach:(18,63)
+Bacterium:0:Idle:Block(16, 41)
+Bacterium:2:Tumble:(31,65):(32,65)
+*

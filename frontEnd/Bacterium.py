@@ -113,7 +113,7 @@ class Bacterium:
     def dropPSL(self):
         # drops a dot at the current position of the bacterium
         PSLdot = patches.Circle(self.position.copy(),
-                                radius=0.5, color='red', zorder=5)
+                                radius=0.1, color='red', zorder=5)
         self.PSL.append(PSLdot)  # Store the dot in the list
         self.ax.add_patch(PSLdot)
 
@@ -140,7 +140,7 @@ class Bacterium:
 
         # Drop a dot at the current position before moving
         if self.mode == "PSL":
-            self.dropDot()
+            self.dropPSL()
 
         # Calculate the angle to the new position
         delta_x = coordinateFinal[0] - self.position[0]
@@ -155,7 +155,7 @@ class Bacterium:
     def tumble(self, coordinateGoal):
         # Drop a dot at the current position before moving
         if self.mode == "PSL":
-            self.dropDot()
+            self.dropPSL()
 
         # Calculate the angle towards the goal position
         delta_x = coordinateGoal[0] - self.position[0]

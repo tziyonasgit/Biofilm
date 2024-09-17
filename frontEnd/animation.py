@@ -47,7 +47,7 @@ class Animation:
         height = int(numbers[5])
         duration = numbers[6]
 
-        parameter_text = (
+        parameterText = (
             f"Starting bacterial monomers: {iBacteriaMonomers}\n"
             f"Starting EPS monomers: {iEPSMonomers}\n"
             f"Starting nutrients: {iNutrients}\n"
@@ -65,15 +65,26 @@ class Animation:
         self.ax.set_xticklabels([])
         self.ax.set_yticklabels([])
 
-        # Create custom patches for the legend
-        green_patch = patches.Patch(color='green', label='Parent Bacteria')
-        orange_patch = patches.Patch(color='orange', label='Child Bacteria')
-
-        self.ax.annotate(parameter_text, xy=(-0.55, 0.87), xycoords='axes fraction', fontsize=10,
+        self.ax.annotate(parameterText, xy=(-0.55, 0.87), xycoords='axes fraction', fontsize=10,
                          verticalalignment='center', bbox=dict(boxstyle="round,pad=0.3", edgecolor="black", facecolor="white"))
 
-        self.ax.legend(handles=[green_patch, orange_patch],
-                       loc='upper right', bbox_to_anchor=(-0.044, 0.73), frameon=True, framealpha=1, edgecolor='black')
+        # Create your existing patches
+        # Assuming you have green_patch defined
+        green_patch = patches.Patch(color='green', label='Parent Bacterium')
+        # Assuming you have orange_patch defined
+        orange_patch = patches.Patch(color='orange', label='Child Bacterium')
+
+        # Create new patches for PSL and EPS
+        psl_patch = patches.Patch(color='red', label='PSL')
+        eps_patch = patches.Patch(color='blue', label='EPS')
+
+        # Combine all patches into a single list
+        all_patches = [green_patch, orange_patch, psl_patch, eps_patch]
+
+        # Add the combined patches to the legend
+        self.ax.legend(handles=all_patches,
+                       loc='upper right', bbox_to_anchor=(-0.03, 0.69),
+                       frameon=True, framealpha=1, edgecolor='black')
 
     def spawn(self, cellID, father=None):
         initialPosition = np.array([0.0, 0.0]) if father is None else np.array(
