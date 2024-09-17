@@ -9,14 +9,11 @@ import java.util.Scanner;
 // class for taking in conditions and parameters, creating and writing to an activity file 
 // and running the simulation
 public class Simulation {
-    static File actFile;
-    static String fileName;
-    // ArrayList for storing simulation activities so can be written to file in one
-    // go
-    static ArrayList<String> activities = new ArrayList<String>();
-    static int totBacterialMonomers;
-    // creates Checks object so can access its methods
-    static Checks checks = new Checks();
+    private static File actFile;
+    private static String fileName;
+    private static ArrayList<String> activities = new ArrayList<String>();
+    private static int totBacterialMonomers;
+    private static Checks checks = new Checks();
 
     // method for taking in initial and boundary conditions
     public static int[] setConditions(String[] args) {
@@ -34,6 +31,7 @@ public class Simulation {
         int[] blocks = checks.checkBlocks(conds[4], conds[5]);
         conds[4] = blocks[0];
         conds[5] = blocks[1];
+        // Checks that the number of initial bacteria is valid
         conds[3] = checks.checkIBacteria(conds[3], conds[4], conds[5]);
 
         // Calculate total bacterial monomers from free bacterial monomers and bacteria
@@ -117,11 +115,16 @@ public class Simulation {
         }
     }
 
+    // Method for returning the arraylist of activities
+    public static ArrayList<String> getActivities()
+    {
+        return activities;
+    }
+
     // method for adding an simulation acitivity to ArrayList of activities
     public static void recActivities(String activity) {
         // synchronizes on ArrayList of activities so that no action is lost if the
-        // contents of the
-        // ArrayList is busy being written to the activity file and reset in each
+        // contents of the ArrayList is busy being written to the activity file and reset in each
         // timestep in SimulationModel.java
         synchronized (activities) {
             activities.add(activity);

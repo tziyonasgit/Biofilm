@@ -4,13 +4,13 @@ import java.util.LinkedList;
 
 // class for managing blocks
 public class Block {
-    int positionX, positionY;
-    int EPSLevel = 0;
-    boolean occupied = false;
-    LinkedList<Monomer> nutrients;
-    LinkedList<Monomer> bacMonomers;
-    LinkedList<Monomer> eps;
-    Bacterium occupier;
+    private int positionX, positionY;
+    private int EPSLevel = 0;
+    private boolean occupied = false;
+    private LinkedList<Nutrient> nutrients;
+    private  LinkedList<BacterialMonomer> bacMonomers;
+    private LinkedList<EPS> eps;
+    private Bacterium occupier;
 
     // paramaterised constructor for block
     public Block(int positionX, int positionY, int levelEPS, boolean occupied) {
@@ -18,14 +18,9 @@ public class Block {
         this.positionY = positionY;
         this.EPSLevel = levelEPS;
         this.occupied = occupied;
-        this.nutrients = new LinkedList<Monomer>();
-        this.bacMonomers = new LinkedList<Monomer>();
-        this.eps = new LinkedList<Monomer>();
-    }
-
-    // method for setting EPS level of block
-    private void setEPS(int level) {
-        this.EPSLevel = level;
+        this.nutrients = new LinkedList<Nutrient>();
+        this.bacMonomers = new LinkedList<BacterialMonomer>();
+        this.eps = new LinkedList<EPS>();
     }
 
     // increase EPS count when secreted by bacterium
@@ -48,17 +43,19 @@ public class Block {
         return positionX;
     }
 
-    public void setXPos(int x) {
-        positionX = x;
+    // method for returning bacterium occupying block
+    public Bacterium getOccupier() {
+        return occupier;
+    }
+
+    // method for setting bacterium occupying block
+    public void setOccupier(Bacterium bac) {
+        this.occupier = bac;
     }
 
     // method for returning y coordinate of block
     public int getYPos() {
         return positionY;
-    }
-
-    public void setYPos(int y) {
-        positionY = y;
     }
 
     // method for returning whether or not a block is occupied by a bacteria or not
@@ -67,51 +64,51 @@ public class Block {
     }
 
     // method for retunring LinkedList of nutrients for block
-    public LinkedList<Monomer> getNutrients() {
+    public LinkedList<Nutrient> getNutrients() {
         return this.nutrients;
     }
 
     // method for retunring LinkedList of bacterial monomers for block
-    public LinkedList<Monomer> getBMonomers() {
+    public LinkedList<BacterialMonomer> getBMonomers() {
         return this.bacMonomers;
     }
 
     // method for retunring LinkedList of EPS for block
-    public LinkedList<Monomer> getEPS() {
+    public LinkedList<EPS> getEPS() {
         return this.eps;
     }
 
     // method for adding nutrient to LinkedList of nutrients for block
-    public void addNutrient(Monomer n) {
+    public void addNutrient(Nutrient n) {
         this.nutrients.add(n);
     }
 
     // method for adding bacterial monomer to LinkedList of nutrients for block
-    public void addBMonomer(Monomer m) {
+    public void addBMonomer(BacterialMonomer m) {
         this.bacMonomers.add(m);
     }
 
     // method for adding EPS to LinkedList of EPS for block
-    public void addEPSMonomer(Monomer e) {
+    public void addEPSMonomer(EPS e) {
         this.eps.add(e);
     }
 
     // method for removing nutrient from LinkedList of nutrients for block
-    public void removeNutrient(Monomer n) {
+    public void removeNutrient(Nutrient n) {
         this.nutrients.remove(n);
     }
 
     // method for removing nutrient from LinkedList of nutrients for block
-    public void removeBMonomer(Monomer m) {
+    public void removeBMonomer(BacterialMonomer m) {
         this.bacMonomers.remove(m);
     }
 
     // method for removing nutrient from LinkedList of nutrients for block
-    public void removeEPSMonomer(Monomer e) {
+    public void removeEPSMonomer(EPS e) {
         this.eps.remove(e);
     }
 
-    // compare to method
+    // method for comparing two blocks
     public boolean compareTo(Block other) {
         if (this.getXPos() == other.getXPos() & this.getYPos() == other.getYPos()) {
             return true;
@@ -120,6 +117,7 @@ public class Block {
         }
     }
 
+    // method for printing out a block in the form (x,y)
     public String getStringFormat() {
         return "Block(" + this.getXPos() + ", " + this.getYPos() + ")";
     }

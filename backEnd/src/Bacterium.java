@@ -159,7 +159,7 @@ public class Bacterium implements Runnable {
         synchronized (Environment.Bacteria) {
             Environment.Bacteria.remove(this);
         }
-        position.occupier = null;
+        position.setOccupier(null);
         position.setOccupied(false); // makes block free
         this.killThread = true;
         Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Die");
@@ -803,8 +803,8 @@ public class Bacterium implements Runnable {
     public void eat(Nutrient nutrient) {
         System.out.println(Thread.currentThread().getName() + " is calling eating");
         // synchronizes on LinkedList of nutrients for block
-        synchronized (nutrient.position.nutrients) {
-            nutrient.position.removeNutrient(nutrient);
+        synchronized (nutrient.getPos().getNutrients()) {
+            nutrient.getPos().removeNutrient(nutrient);
         }
 
         synchronized (environ.nutrients) {
@@ -829,19 +829,6 @@ public class Bacterium implements Runnable {
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
-    }
-
-    public void consume(BacterialMonomer bMonomer) {
-        bMonomer.position.removeBMonomer(bMonomer);
-        synchronized (waiting) {
-            Simulation.recActivities("Bacterium:" + this.bacteriumID + ":Consume:BacterialMonomer:" + bMonomer.getID());
-            try {
-                SimulationModel.barrier.await();
-            } catch (InterruptedException | BrokenBarrierException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
     public void idle(Block pos) {
@@ -905,7 +892,7 @@ public class Bacterium implements Runnable {
                     // Check if the bacterium should reproduce
                     if (this.length >= 14) {
                         this.setAction("reproduce", null);
-                    } else if (this.position.EPSLevel >= 100) {
+                    } else if (this.position.getEPSLevel() >= 100) {
                         this.setAction("attach", this.position);
                     } else if (this.energy == 0 || this.stuck) {
                         this.setAction("idle", null);
@@ -1076,12 +1063,12 @@ public class Bacterium implements Runnable {
                 }
                 this.energy -= 1; // decreases energy each movement
                 position.setOccupied(true);
-                position.occupier = this;
+                position.setOccupier(this);
             }
 
             synchronized (start) {
                 start.setOccupied(false);
-                start.occupier = null;
+                start.setOccupier(null);
                 start.notifyAll();
             }
             Simulation.recActivities("Bacterium:" + this.bacteriumID + ":" + moveType + ":("

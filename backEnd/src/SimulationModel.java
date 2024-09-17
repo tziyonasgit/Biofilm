@@ -49,7 +49,7 @@ public class SimulationModel {
                                 // }
                                 System.out.println(Thread.currentThread().getName() + " is writing to file");
                                 Simulation.writeToFile();
-                                Simulation.activities.clear();
+                                Simulation.getActivities().clear();
                                 // Notify all bacteria threads after writing to file
                                 synchronized (runLock) {
                                         runLock.notifyAll(); // Notify all waiting threads
@@ -80,7 +80,7 @@ public class SimulationModel {
                                 // synchronized (Simulation.activities) {
                                 System.out.println(Thread.currentThread().getName() + " is writing to file2");
                                 Simulation.writeToFile();
-                                Simulation.activities.clear();
+                                Simulation.getActivities().clear();
                                 // }
                                 // Notify all bacteria threads after writing to file
                                 synchronized (runLock) {
