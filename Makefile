@@ -10,7 +10,7 @@ ARGS=""
 SOURCES = $(shell find $(SRC_DIR) -name "*.java")
 
 # Main class with package name
-MAIN = backEnd.src.Simulation
+MAIN = backEnd/src/Simulation
 
 # Compile all .java files to .class files in the bin directory
 all: $(SOURCES)

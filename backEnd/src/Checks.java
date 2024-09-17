@@ -63,20 +63,4 @@ public class Checks {
         }
         return Integer.parseInt(value);
     }
-
-    public float checkFloat(String value) {
-        Scanner input = new Scanner(System.in);
-        boolean checking = true;
-        while (checking) {
-            try {
-                Float.parseFloat(value);
-                checking = false;
-            } catch (Exception e) {
-                System.out.println("Value must be a float.");
-                System.out.println("Please enter your new value:");
-                value = input.nextLine();
-            }
-        }
-        return Float.parseFloat(value);
-    }
 }

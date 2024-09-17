@@ -8,29 +8,26 @@ import java.util.concurrent.CyclicBarrier;
 
 // class for managing simulation and creating the simulation environment and setting up its parts
 public class SimulationModel {
-        public static int iNutrients, iFBMonomers, totBMonomers, iEPSMonomers,
-                        iBacteria, xBlocks, yBlocks, baseBacteria;
-        public static double duration;
-        Environment simEnviron;
+        private static int iNutrients, totBMonomers, iEPSMonomers,
+                        iBacteria, xBlocks, yBlocks;
+        private static double duration;
+        private Environment simEnviron;
         public volatile String run = "sync";
         public static CyclicBarrier barrier;
-        public static CyclicBarrier barrier2;
+        //public static CyclicBarrier barrier2;
         public static Object runLock = new Object();
         public long startTime;
         public Timer timer;
         public static boolean reset = false;
         public static volatile int resetting;
         public static boolean initialBacteriaMade;
-        // Simulation paramaters still to be added here //
 
         // paramaterised constructor for simulation model
-        public SimulationModel(int iFBMonomers, int iEPSMonomers, int iNutrients, int iBacteria, int totBMonomers,
+        public SimulationModel(int iEPSMonomers, int iNutrients, int iBacteria, int totBMonomers,
                         int xBlocks, int yBlocks, double duration)
-        // Simulation paramaters still to be added here //
         {
                 SimulationModel.initialBacteriaMade = false;
                 SimulationModel.iNutrients = iNutrients;
-                SimulationModel.iFBMonomers = iFBMonomers;
                 SimulationModel.totBMonomers = totBMonomers;
                 SimulationModel.iEPSMonomers = iEPSMonomers;
                 SimulationModel.iBacteria = iBacteria;
@@ -38,15 +35,12 @@ public class SimulationModel {
                 SimulationModel.yBlocks = yBlocks;
                 SimulationModel.xBlocks = xBlocks;
                 SimulationModel.resetting = iBacteria;
-                SimulationModel.baseBacteria = iBacteria;
 
+                // Sets barrier with task to run in a thread at setting of barrier
                 barrier = new CyclicBarrier(iBacteria, new Runnable() {
                         @Override
                         public void run() {
-                                // System.out.println("Writing to file with " + iBacteria + " bacteria");
-                                // for (int i = 0; i < Simulation.activities.size(); i++) {
-                                // System.out.println(Simulation.activities.get(i));
-                                // }
+                                // Writes current activities to file
                                 System.out.println(Thread.currentThread().getName() + " is writing to file");
                                 Simulation.writeToFile();
                                 Simulation.getActivities().clear();
@@ -56,45 +50,41 @@ public class SimulationModel {
                                 }
                         }
                 });
-                this.simEnviron = createEnvironment(iNutrients, iFBMonomers, totBMonomers, iEPSMonomers, iBacteria,
+                this.simEnviron = createEnvironment(iNutrients, totBMonomers, iEPSMonomers, iBacteria,
                                 xBlocks, yBlocks);
 
                 startSimulation();
         }
 
+        public static int getBacteria()
+        {
+                return iBacteria;
+        }
+
+        // Method for resetting barrier that ensures each Bacterium does one action per timestep
         public synchronized static void resetBarrier()
                         throws InterruptedException, BrokenBarrierException {
-                // Simulation.writeToFile();
-                // Simulation.activities.clear();
-                // System.out.println("resetting");
-                // barrier.await();
                 iBacteria = Environment.Bacteria.size();
 
+                // Resets barrier with task to run in a thread at each reset
                 SimulationModel.barrier = new CyclicBarrier(iBacteria, new Runnable() {
                         @Override
                         public void run() {
-                                // System.out.println("Writing to file with " + iBacteria + " bacteria");
-                                // for (int i = 0; i < Simulation.activities.size(); i++) {
-                                // System.out.println(Simulation.activities.get(i));
-                                // }
-                                // synchronized (Simulation.activities) {
                                 System.out.println(Thread.currentThread().getName() + " is writing to file2");
                                 Simulation.writeToFile();
                                 Simulation.getActivities().clear();
-                                // }
                                 // Notify all bacteria threads after writing to file
                                 synchronized (runLock) {
                                         runLock.notifyAll(); // Notify all waiting threads
                                 }
 
                                 System.out.println("New barrier set with " + iBacteria + " bacteria.");
+                                // Synchronises and notifies bacteria that were produced in last timestep
                                 synchronized (Environment.Bacteria.get(0).waiting) {
                                         Environment.Bacteria.get(0).waiting.notifyAll();
                                 }
                         }
                 });
-
-                // bac.reset.notifyAll();
         }
 
         // Method to start the simulation
@@ -104,7 +94,6 @@ public class SimulationModel {
                 // Run the simulation
                 biofilmSimulation(simEnviron);
         }
-        // Simulation paramaters still to be added here //
 
         // class for creating and running a task to be completed on each run of a timer
         class DurationCheckTask extends TimerTask {
@@ -128,21 +117,16 @@ public class SimulationModel {
 
         }
 
-        // method for creating environment and its parts (blocks, monomers, nutrients,
-        // bacteria)
-        // for now also used for hardcoded demoing of methods and functionality //
-        public Environment createEnvironment(int nutrients, int FBMonomers, int totBMonomers, int EPSMonomers,
+        // method for creating environment and its parts (blocks, nutrients, bacteria)
+        private Environment createEnvironment(int nutrients, int totBMonomers, int EPSMonomers,
                         int bacteria, int xBlocks, int yBlocks) {
-                Environment environ = new Environment(nutrients, totBMonomers, FBMonomers, EPSMonomers,
+                Environment environ = new Environment(nutrients, totBMonomers, EPSMonomers,
                                 bacteria, xBlocks, yBlocks);
 
                 environ.createBlocks(xBlocks, yBlocks);
 
                 System.out.println("Creating bacteria...");
                 environ.createBacteria(bacteria, xBlocks, yBlocks, environ);
-
-                System.out.println("Creating bacterial monomers...");
-                environ.createMonomers(FBMonomers, "bacterial", xBlocks, yBlocks);
 
                 System.out.println("Creating EPS monomers...");
                 environ.createMonomers(EPSMonomers, "EPS", xBlocks, yBlocks);
@@ -158,7 +142,8 @@ public class SimulationModel {
                 return environ;
         }
 
-        public void biofilmSimulation(Environment environ) {
+        // Method for running the simulation
+        private void biofilmSimulation(Environment environ) {
 
                 // creates new timer and a task to give to it
                 Timer timer = new Timer();

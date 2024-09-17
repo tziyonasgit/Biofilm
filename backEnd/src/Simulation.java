@@ -10,56 +10,44 @@ import java.util.Scanner;
 // and running the simulation
 public class Simulation {
     private static File actFile;
-    private static String fileName;
+    private static String fileName; 
     private static ArrayList<String> activities = new ArrayList<String>();
     private static int totBacterialMonomers;
     private static Checks checks = new Checks();
 
     // method for taking in initial and boundary conditions
-    public static int[] setConditions(String[] args) {
-        int[] conds = new int[7];
+    private static int[] setConditions(String[] args) {
+        int[] conds = new int[6];
 
         // Use command-line arguments instead of Scanner input
-        conds[0] = checks.checkInt(args[0]); // Free bacterial monomers
-        conds[1] = checks.checkInt(args[1]); // Free EPS monomers
-        conds[2] = checks.checkInt(args[2]); // Nutrients
-        conds[3] = checks.checkInt(args[3]); // Starting bacteria
-        conds[4] = checks.checkInt(args[4]); // Simulation width
-        conds[5] = checks.checkInt(args[5]); // Simulation height
+        conds[0] = checks.checkInt(args[0]); // Free EPS monomers
+        conds[1] = checks.checkInt(args[1]); // Nutrients
+        conds[2] = checks.checkInt(args[2]); // Starting bacteria
+        conds[3] = checks.checkInt(args[3]); // Simulation width
+        conds[4] = checks.checkInt(args[4]); // Simulation height
 
         // Check block size and adjust
-        int[] blocks = checks.checkBlocks(conds[4], conds[5]);
-        conds[4] = blocks[0];
-        conds[5] = blocks[1];
+        int[] blocks = checks.checkBlocks(conds[3], conds[4]);
+        conds[3] = blocks[0];
+        conds[4] = blocks[1];
         // Checks that the number of initial bacteria is valid
-        conds[3] = checks.checkIBacteria(conds[3], conds[4], conds[5]);
+        conds[2] = checks.checkIBacteria(conds[2], conds[3], conds[4]);
 
-        // Calculate total bacterial monomers from free bacterial monomers and bacteria
-        totBacterialMonomers = conds[0] + conds[3] * 7;
+        // Calculate total bacterial monomers from bacteria
+        totBacterialMonomers = conds[2] * 7;
 
         // Simulation duration
-        conds[6] = checks.checkInt(args[6]); // Simulation duration
+        conds[5] = checks.checkInt(args[5]); // Simulation duration
 
         return conds;
     }
 
-    // // method for taking in other parameters
-    // public static float[] setParams() {
-    // Scanner input = new Scanner(System.in);
-    // float[] params = new float[10];
-    // // will display recommended parameters, allow to change if want to //
-    // // repeat below lines for each parameter (need decide on them still) //
-    // System.out.println("Parameter0 : Recommended Value : Enter desired value:");
-    // params[0] = checks.checkFloat(input.nextLine());
-    // return params;
-    // }
-
     // method for creating activity file
-    public static void createFile(int[] conds, String[] args) {
+    private static void createFile(int[] conds, String[] args) {
         Scanner input = new Scanner(System.in);
         // System.out.println("Enter desired name for activity file:");
         // fileName = input.nextLine() + ".txt";
-        fileName = args[7] + ".txt";
+        fileName = args[6] + ".txt";
 
         // attempts to create and save file
         try {
@@ -84,13 +72,12 @@ public class Simulation {
 
         try {
             FileWriter actWFile = new FileWriter(fileName);
-            actWFile.write("Starting bacterial monomers: " + conds[0] + "\n");
-            actWFile.write("Starting EPS monomers: " + conds[1] + "\n");
-            actWFile.write("Starting nutrients: " + conds[2] + "\n");
-            actWFile.write("Starting bacteria: " + conds[3] + "\n");
-            actWFile.write("Simulation width: " + conds[4] + "\n");
-            actWFile.write("Simulation height: " + conds[5] + "\n");
-            actWFile.write("Simulation duration: " + conds[6] + "\n\n");
+            actWFile.write("Starting EPS monomers: " + conds[0] + "\n");
+            actWFile.write("Starting nutrients: " + conds[1] + "\n");
+            actWFile.write("Starting bacteria: " + conds[2] + "\n");
+            actWFile.write("Simulation width: " + conds[3] + "\n");
+            actWFile.write("Simulation height: " + conds[4] + "\n");
+            actWFile.write("Simulation duration: " + conds[5] + "\n\n");
             actWFile.close();
         } catch (IOException e) {
             System.out.println("Something went wrong.");
@@ -143,8 +130,8 @@ public class Simulation {
 
         System.out.println();
         // creates simulation model
-        SimulationModel sim = new SimulationModel(conds[0], conds[1], conds[2], conds[3], totBacterialMonomers,
-                conds[4], conds[5], conds[6]);
+        SimulationModel sim = new SimulationModel(conds[0], conds[1], conds[2], totBacterialMonomers,
+                conds[3], conds[4], conds[5]);
         // simulation runs to completion //
 
     }
