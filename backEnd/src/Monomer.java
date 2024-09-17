@@ -2,39 +2,24 @@ package backEnd.src;
 
 // class for managing monomers
 public class Monomer {
-    Block position;
-    int MonomerID;
-    String type;
-    // linked list of monomers it is bonded to //
+    private Block position;
+    private int monomerID;
+    private String type;
 
     // paramaterised constructor for monomer
-    public Monomer(Block position, int MonomerID, String type) {
+    public Monomer(Block position, int monomerID, String type) {
         this.position = position;
-        this.MonomerID = MonomerID;
+        this.monomerID = monomerID;
         this.type = type;
     }
 
-    // method for setting position in the environment of the monomer
-    private void setPositon(Block pos) {
-        this.position = pos;
-    }
-
-    // method for setting the type (bacterial, EPS) of monomer
-    private void setType(String type) {
-        this.type = type;
-    }
-
-    // method for returning the position of the monomer in the environment
-    private Block getPosition() {
+    // method for returning position of monomer
+    public Block getPos() {
         return this.position;
     }
-
-    // method for returning the type of monomer
-    private String getType() {
-        return this.type;
-    }
-
+    
+    // method for returning ID of monomer
     public int getID() {
-        return this.MonomerID;
+        return this.monomerID;
     }
 }

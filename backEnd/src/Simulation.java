@@ -9,22 +9,20 @@ import java.util.Scanner;
 // class for taking in conditions and parameters, creating and writing to an activity file 
 // and running the simulation
 public class Simulation {
-    static File actFile;
-    static String fileName;
-    // ArrayList for storing simulation activities so can be written to file in one
-    // go
-    static ArrayList<String> activities = new ArrayList<String>();
-    static int totBacterialMonomers;
-    // creates Checks object so can access its methods
-    static Checks checks = new Checks();
+    private static File actFile;
+    private static String fileName;
+    private static ArrayList<String> activities = new ArrayList<String>();
+    private static int totBacterialMonomers;
+    private static Checks checks = new Checks();
 
     // method for taking in initial and boundary conditions
-    public static int[] setConditions() {
+    private static int[] setConditions() {
         // initial and boundary conditions array for passing to main method
         int[] conds = new int[7];
         Scanner input = new Scanner(System.in);
 
         System.out.println("Enter starting free bacterial monomers:");
+        // Checks that value is an integer
         conds[0] = checks.checkInt(input.nextLine());
 
         System.out.println("Enter starting free EPS monomers:");
@@ -42,9 +40,11 @@ public class Simulation {
         System.out.println("Enter simulation height (number of blocks):");
         conds[5] = checks.checkInt(input.nextLine());
 
+        // Checks that number of blocks for environment is valid
         int[] blocks = checks.checkBlocks(conds[4], conds[5]);
         conds[4] = blocks[0];
         conds[5] = blocks[1];
+        // Checks that the number of initial bacteria is valid
         conds[3] = checks.checkIBacteria(conds[3], conds[4], conds[5]);
         // calculates total bacterial monomers from free bacterial monomers and bacteria
         // (7 bacterial monomers = 1 bacterium)
@@ -56,19 +56,8 @@ public class Simulation {
         return conds;
     }
 
-    // method for taking in other parameters
-    public static float[] setParams() {
-        Scanner input = new Scanner(System.in);
-        float[] params = new float[10];
-        // will display recommended parameters, allow to change if want to //
-        // repeat below lines for each parameter (need decide on them still) //
-        System.out.println("Parameter0 : Recommended Value : Enter desired value:");
-        params[0] = checks.checkFloat(input.nextLine());
-        return params;
-    }
-
     // method for creating activity file
-    public static void createFile(int[] conds) {
+    private static void createFile(int[] conds) {
         Scanner input = new Scanner(System.in);
         System.out.println("Enter desired name for activity file:");
         fileName = input.nextLine() + ".txt";
@@ -127,11 +116,16 @@ public class Simulation {
         }
     }
 
+    // Method for returning the arraylist of activities
+    public static ArrayList<String> getActivities()
+    {
+        return activities;
+    }
+
     // method for adding an simulation acitivity to ArrayList of activities
     public static void recActivities(String activity) {
         // synchronizes on ArrayList of activities so that no action is lost if the
-        // contents of the
-        // ArrayList is busy being written to the activity file and reset in each
+        // contents of the ArrayList is busy being written to the activity file and reset in each
         // timestep in SimulationModel.java
         synchronized (activities) {
             activities.add(activity);
@@ -141,8 +135,6 @@ public class Simulation {
     // method for running simulation
     public static void main(String[] args) {
         int[] conds = setConditions();
-        // below doesn't do anything yet //
-        float[] params = setParams();
 
         // creates file if new and resets if already exists and writes simulation
         // conditions to the file

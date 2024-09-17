@@ -85,13 +85,13 @@ public class Environment {
                         environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.bMonomerID);
                 this.BMonomers.add(BMonomer);
                 // adds monomer to its block's LinkedList of monomers and nutrients
-                BMonomer.position.addBMonomer(BMonomer);
+                BMonomer.getPos().addBMonomer(BMonomer);
                 this.bMonomerID++;
             } else {
                 // creates EPS monomer and adds to linked list of EPS monomers
                 EPS eps = new EPS(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], this.EPSMonomerID);
                 this.EPSMonomers.add(eps);
-                eps.position.addEPSMonomer(eps);
+                eps.getPos().addEPSMonomer(eps);
                 this.EPSMonomerID++;
             }
         }
@@ -107,7 +107,7 @@ public class Environment {
             // hardcoded type for now //
             Nutrient nutrient = new Nutrient(environBlocks[rX.nextInt(xBlocks)][rY.nextInt(yBlocks)], nutrientID);
             this.nutrients.add(nutrient);
-            nutrient.position.addNutrient(nutrient);
+            nutrient.getPos().addNutrient(nutrient);
         }
     }
 
@@ -182,7 +182,7 @@ public class Environment {
         }
 
         // synchronizes on LinkedList of nutrients for block
-        synchronized (position.nutrients) {
+        synchronized (position.getNutrients()) {
             position.addNutrient(nut);
         }
 
