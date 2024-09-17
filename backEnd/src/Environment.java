@@ -11,7 +11,7 @@ import java.util.Random;
 
 // class for managing the environment with methods for adding new parts to the environment
 public class Environment {
-    int totNutrients, totBMonomers, FBMonomers, totEPSMonomers, totBacteria, freeBlocks;
+    int totNutrients, totBMonomers, totEPSMonomers, totBacteria, freeBlocks;
     public static Block environBlocks[][];
     ArrayList<BacterialMonomer> BMonomers;
     public static List<Bacterium> Bacteria = Collections.synchronizedList(new ArrayList<>());
@@ -29,11 +29,10 @@ public class Environment {
     // public int number = 0;
 
     // paramaterised constructor for environment
-    public Environment(int nutrients, int totBMonomers, int FBMonomers, int EPSMonomers, int bacteria, int xBlocks,
+    public Environment(int nutrients, int totBMonomers, int EPSMonomers, int bacteria, int xBlocks,
             int yBlocks) {
         this.totNutrients = nutrients;
         this.totBMonomers = totBMonomers;
-        this.totBMonomers = FBMonomers;
         this.totEPSMonomers = EPSMonomers;
         this.totBacteria = bacteria;
         this.freeBlocks = yBlocks * xBlocks;

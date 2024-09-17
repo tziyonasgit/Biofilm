@@ -315,53 +315,50 @@ public class Bacterium implements Runnable {
             if ((position.getXPos() == 0) & (position.getYPos() == 0)) {
                 if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos() + 1].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                            + 1].occupier.stuck) {
+                            + 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                + 1].occupier.inB == true) {
+                                + 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    + 1].occupier.biofilm.addBac(this);
+                                    + 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos()][this.position.getYPos() + 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    + 1].occupier.biofilm = this.biofilm;
+                                    + 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() + 1][this.position
-                            .getYPos()].occupier.stuck) {
+                            .getYPos()].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() + 1][this.position
-                                .getYPos()].occupier.inB == true) {
+                                .getYPos()].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() + 1][this.position
-                                    .getYPos()].occupier.biofilm.addBac(this);
+                                    .getYPos()].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() + 1][this.position
-                                    .getYPos()].occupier.biofilm = this.biofilm;
+                                    .getYPos()].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos() + 1]
                         .occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                            + 1].occupier.stuck) {
+                            + 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                + 1].occupier.inB == true) {
+                                + 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                    + 1].occupier.biofilm.addBac(this);
+                                    + 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos() + 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                    + 1].occupier.biofilm = this.biofilm;
+                                    + 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
@@ -369,53 +366,50 @@ public class Bacterium implements Runnable {
             } else if ((position.getXPos() == environ.getxBlocks()) & (position.getYPos() == environ.getyBlocks())) {
                 if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() - 1][this.position
-                            .getYPos()].occupier.stuck) {
+                            .getYPos()].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() - 1][this.position
-                                .getYPos()].occupier.inB == true) {
+                                .getYPos()].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() - 1][this.position
-                                    .getYPos()].occupier.biofilm.addBac(this);
+                                    .getYPos()].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() - 1][this.position
-                                    .getYPos()].occupier.biofilm = this.biofilm;
+                                    .getYPos()].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos() - 1]
                         .occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                            - 1].occupier.stuck) {
+                            - 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                - 1].occupier.inB == true) {
+                                - 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                    - 1].occupier.biofilm.addBac(this);
+                                    - 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos() - 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                    - 1].occupier.biofilm = this.biofilm;
+                                    - 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos() - 1].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                            - 1].occupier.stuck) {
+                            - 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                - 1].occupier.inB == true) {
+                                - 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    - 1].occupier.biofilm.addBac(this);
+                                    - 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos()][this.position.getYPos() - 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    - 1].occupier.biofilm = this.biofilm;
+                                    - 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
@@ -423,88 +417,83 @@ public class Bacterium implements Runnable {
             } else if ((position.getYPos() == 0)) {
                 if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() - 1][this.position
-                            .getYPos()].occupier.stuck) {
+                            .getYPos()].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() - 1][this.position
-                                .getYPos()].occupier.inB == true) {
+                                .getYPos()].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() - 1][this.position
-                                    .getYPos()].occupier.biofilm.addBac(this);
+                                    .getYPos()].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() - 1][this.position
-                                    .getYPos()].occupier.biofilm = this.biofilm;
+                                    .getYPos()].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos() + 1]
                         .occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                            + 1].occupier.stuck) {
+                            + 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                + 1].occupier.inB == true) {
+                                + 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                    + 1].occupier.biofilm.addBac(this);
+                                    + 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos() + 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                    + 1].occupier.biofilm = this.biofilm;
+                                    + 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos() + 1].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                            + 1].occupier.stuck) {
+                            + 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                + 1].occupier.inB == true) {
+                                + 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    + 1].occupier.biofilm.addBac(this);
+                                    + 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos()][this.position.getYPos() + 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    + 1].occupier.biofilm = this.biofilm;
+                                    + 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() + 1][this.position
-                            .getYPos()].occupier.stuck) {
+                            .getYPos()].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() + 1][this.position
-                                .getYPos()].occupier.inB == true) {
+                                .getYPos()].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() + 1][this.position
-                                    .getYPos()].occupier.biofilm.addBac(this);
+                                    .getYPos()].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() + 1][this.position
-                                    .getYPos()].occupier.biofilm = this.biofilm;
+                                    .getYPos()].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos() + 1]
                         .occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                            + 1].occupier.stuck) {
+                            + 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                + 1].occupier.inB == true) {
+                                + 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                    + 1].occupier.biofilm.addBac(this);
+                                    + 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos() + 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                    + 1].occupier.biofilm = this.biofilm;
+                                    + 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
@@ -512,88 +501,83 @@ public class Bacterium implements Runnable {
             } else if ((position.getXPos() == 0)) {
                 if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos() - 1].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                            - 1].occupier.stuck) {
+                            - 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                - 1].occupier.inB == true) {
+                                - 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    - 1].occupier.biofilm.addBac(this);
+                                    - 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos()][this.position.getYPos() - 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    - 1].occupier.biofilm = this.biofilm;
+                                    - 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos() + 1].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                            + 1].occupier.stuck) {
+                            + 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                + 1].occupier.inB == true) {
+                                + 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    + 1].occupier.biofilm.addBac(this);
+                                    + 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos()][this.position.getYPos() + 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    + 1].occupier.biofilm = this.biofilm;
+                                    + 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() + 1][this.position
-                            .getYPos()].occupier.stuck) {
+                            .getYPos()].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() + 1][this.position
-                                .getYPos()].occupier.inB == true) {
+                                .getYPos()].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() + 1][this.position
-                                    .getYPos()].occupier.biofilm.addBac(this);
+                                    .getYPos()].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() + 1][this.position
-                                    .getYPos()].occupier.biofilm = this.biofilm;
+                                    .getYPos()].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos() - 1]
                         .occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                            - 1].occupier.stuck) {
+                            - 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                - 1].occupier.inB == true) {
+                                - 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                    - 1].occupier.biofilm.addBac(this);
+                                    - 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos() - 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                    - 1].occupier.biofilm = this.biofilm;
+                                    - 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos() + 1]
                         .occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                            + 1].occupier.stuck) {
+                            + 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                + 1].occupier.inB == true) {
+                                + 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                    + 1].occupier.biofilm.addBac(this);
+                                    + 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos() + 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                    + 1].occupier.biofilm = this.biofilm;
+                                    + 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
@@ -601,89 +585,84 @@ public class Bacterium implements Runnable {
             } else if ((position.getXPos() == environ.getxBlocks())) {
                 if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() - 1][this.position
-                            .getYPos()].occupier.stuck) {
+                            .getYPos()].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() - 1][this.position
-                                .getYPos()].occupier.inB == true) {
+                                .getYPos()].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() - 1][this.position
-                                    .getYPos()].occupier.biofilm.addBac(this);
+                                    .getYPos()].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() - 1][this.position
-                                    .getYPos()].occupier.biofilm = this.biofilm;
+                                    .getYPos()].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos() - 1]
                         .occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                            - 1].occupier.stuck) {
+                            - 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                - 1].occupier.inB == true) {
+                                - 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                    - 1].occupier.biofilm.addBac(this);
+                                    - 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos() - 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                    - 1].occupier.biofilm = this.biofilm;
+                                    - 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos() + 1]
                         .occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                            + 1].occupier.stuck) {
+                            + 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                + 1].occupier.inB == true) {
+                                + 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                    + 1].occupier.biofilm.addBac(this);
+                                    + 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos() + 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                    + 1].occupier.biofilm = this.biofilm;
+                                    + 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos() - 1].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                            - 1].occupier.stuck) {
+                            - 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                - 1].occupier.inB == true) {
+                                - 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    - 1].occupier.biofilm.addBac(this);
+                                    - 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos()][this.position.getYPos() - 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    - 1].occupier.biofilm = this.biofilm;
+                                    - 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 }
                 if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos() + 1].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                            + 1].occupier.stuck) {
+                            + 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                + 1].occupier.inB == true) {
+                                + 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    + 1].occupier.biofilm.addBac(this);
+                                    + 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos()][this.position.getYPos() + 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    + 1].occupier.biofilm = this.biofilm;
+                                    + 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
@@ -691,89 +670,84 @@ public class Bacterium implements Runnable {
             } else if ((position.getYPos() == environ.getyBlocks())) {
                 if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() - 1][this.position
-                            .getYPos()].occupier.stuck) {
+                            .getYPos()].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() - 1][this.position
-                                .getYPos()].occupier.inB == true) {
+                                .getYPos()].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() - 1][this.position
-                                    .getYPos()].occupier.biofilm.addBac(this);
+                                    .getYPos()].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() - 1][this.position
-                                    .getYPos()].occupier.biofilm = this.biofilm;
+                                    .getYPos()].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos() - 1]
                         .occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                            - 1].occupier.stuck) {
+                            - 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                - 1].occupier.inB == true) {
+                                - 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                    - 1].occupier.biofilm.addBac(this);
+                                    - 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos() - 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() - 1][this.position.getYPos()
-                                    - 1].occupier.biofilm = this.biofilm;
+                                    - 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos() - 1].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                            - 1].occupier.stuck) {
+                            - 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                - 1].occupier.inB == true) {
+                                - 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    - 1].occupier.biofilm.addBac(this);
+                                    - 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos()][this.position.getYPos() - 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos()][this.position.getYPos()
-                                    - 1].occupier.biofilm = this.biofilm;
+                                    - 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 }
                 if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()].occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() + 1][this.position
-                            .getYPos()].occupier.stuck) {
+                            .getYPos()].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() + 1][this.position
-                                .getYPos()].occupier.inB == true) {
+                                .getYPos()].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() + 1][this.position
-                                    .getYPos()].occupier.biofilm.addBac(this);
+                                    .getYPos()].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() + 1][this.position
-                                    .getYPos()].occupier.biofilm = this.biofilm;
+                                    .getYPos()].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
                 } else if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos() - 1]
                         .occupied()) {
                     if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                            - 1].occupier.stuck) {
+                            - 1].getOccupier().stuck) {
                         if (Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                - 1].occupier.inB == true) {
+                                - 1].getOccupier().inB == true) {
                             Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                    - 1].occupier.biofilm.addBac(this);
+                                    - 1].getOccupier().biofilm.addBac(this);
                         } else {
                             this.biofilm = new Biofilm(2, this.position.getEPSLevel() +
                                     Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos() - 1]
-                                            .getEPSLevel(),
-                                    0);
+                                            .getEPSLevel());
                             Environment.environBlocks[this.position.getXPos() + 1][this.position.getYPos()
-                                    - 1].occupier.biofilm = this.biofilm;
+                                    - 1].getOccupier().biofilm = this.biofilm;
                             System.out.println("biofilm formed");
                         }
                     }
@@ -855,7 +829,7 @@ public class Bacterium implements Runnable {
     public void run() {
         this.thread = Thread.currentThread();
         synchronized (waiting) {
-            if (Environment.Bacteria.size() > SimulationModel.iBacteria) {
+            if (Environment.Bacteria.size() > SimulationModel.getBacteria()) {
                 try {
                     waiting.wait();
                     waiting.notifyAll();
@@ -883,7 +857,7 @@ public class Bacterium implements Runnable {
                 synchronized (waiting) {
                     if (SimulationModel.resetting == 0) {
                         SimulationModel.reset = true;
-                        SimulationModel.resetting = SimulationModel.iBacteria;
+                        SimulationModel.resetting = SimulationModel.getBacteria();
                         System.out.println(SimulationModel.resetting);
                     }
                 }
