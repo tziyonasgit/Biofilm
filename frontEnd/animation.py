@@ -24,17 +24,42 @@ class Animation:
         self.filename = filename
         self.TotalLines = []  # initialize list of file lines
         self.TimeStepLines = []
+        self.parameters = []
         self.frames = []  # initialize list of frames
         self.currentLine = 0
         self.direction = None
         self.mode = mode
-        self.setup()
 
     def setup(self):
+        numbers = []
+        for line in self.parameters:
+
+            parts = line.split(':')
+            if len(parts) > 1:
+                number = parts[-1].strip()  # Extract the number part
+                numbers.append(number)
+
+        iBacteriaMonomers = numbers[0]
+        iEPSMonomers = numbers[1]
+        iNutrients = numbers[2]
+        iBacteria = numbers[3]
+        width = int(numbers[4])
+        height = int(numbers[5])
+        duration = numbers[6]
+
+        parameter_text = (
+            f"Starting bacterial monomers: {iBacteriaMonomers}\n"
+            f"Starting EPS monomers: {iEPSMonomers}\n"
+            f"Starting nutrients: {iNutrients}\n"
+            f"Starting bacteria: {iBacteria}\n"
+            f"Simulation width: {width}\n"
+            f"Simulation height: {height}\n"
+            f"Simulation duration: {duration}"
+        )
         # ensures axis has equal aspect ratio and no lines and ticks
         self.ax.set_aspect('equal')
-        self.ax.set_xlim(0, 100)
-        self.ax.set_ylim(0, 100)
+        self.ax.set_xlim(-1, width + 1)
+        self.ax.set_ylim(-1, height + 1)
         self.ax.set_xticks([])
         self.ax.set_yticks([])
         self.ax.set_xticklabels([])
@@ -42,41 +67,23 @@ class Animation:
 
         # Create custom patches for the legend
         green_patch = patches.Patch(color='green', label='Parent Bacteria')
-        blue_patch = patches.Patch(color='blue', label='Child Bacteria')
+        orange_patch = patches.Patch(color='orange', label='Child Bacteria')
 
-        # Add the legend to the plot
-        self.ax.legend(handles=[green_patch, blue_patch], loc='upper right')
+        self.ax.annotate(parameter_text, xy=(-0.55, 0.87), xycoords='axes fraction', fontsize=10,
+                         verticalalignment='center', bbox=dict(boxstyle="round,pad=0.3", edgecolor="black", facecolor="white"))
+
+        self.ax.legend(handles=[green_patch, orange_patch],
+                       loc='upper right', bbox_to_anchor=(-0.044, 0.73), frameon=True, framealpha=1, edgecolor='black')
 
     def spawn(self, cellID, father=None):
-        # if father is None:
-        #     initialPosition = np.array([0.0, 0.0])  # starts at the center
-        #     bacterium = Bacterium(self.ax, self.mode, id=cellID, age=0, strain="E.coli",
-        #                           position=initialPosition, length=2.0, width=1.0, colour='green')
-        # else:
-        #     initialPosition = np.array(
-        #         [father.getPositionX()+1, father.getPositionY()+1])
-        #     bacterium = Bacterium(self.ax, self.mode, id=cellID, age=0, strain="E.coli",
-        #                           position=initialPosition, length=2.0, width=1.0, colour='blue', father=father)
-        # self.bacteria.append(bacterium)  # adds bacterium to list bacteria
-
-        # bacterium.draw()  # draws bacterium on the plot
         initialPosition = np.array([0.0, 0.0]) if father is None else np.array(
             [father.getPositionX() + 1, father.getPositionY() + 1])
         bacterium = Bacterium(self.ax, self.mode, id=cellID, age=0, strain="E.coli", position=initialPosition,
-                              length=2.0, width=1.0, colour='green' if father is None else 'blue', father=father)
+                              length=2.0, width=1.0, colour='green' if father is None else 'orange', father=father)
         self.bacteria.append(bacterium)
         bacterium.draw()
-        # self.canvas.draw_idle()  # updates the canvas
 
     def reproduce(self, cellID, childID):
-        # # prepares the bacterium for splitting
-        # father = None
-        # for bacterium in self.bacteria:
-        #     if bacterium.id == cellID:
-        #         break
-        # # stores the parent bacterium as the father in the daughter (new) bacterium
-        # father = bacterium
-        # self.spawn(childID, father)
         father = next((b for b in self.bacteria if b.id == cellID), None)
         if father:
             self.spawn(childID, father)
@@ -126,8 +133,6 @@ class Animation:
                     if len(parts) > 4:
                         initialPoint = parts[3]  # extracts the initial point
                         finalPoint = parts[4]  # extracts the final point
-                        # coordinateInitial = tuple(
-                        #     map(float, initialPoint.strip("()").split(",")))
                         coordinateFinal = tuple(
                             map(float, parts[4].strip("()").split(",")))
                         print(f"Bacterium {cellID} {action} from {
@@ -168,13 +173,18 @@ class Animation:
                     otherBacID = parts[4]
                     print(f"Bacterium {
                           cellID} collides with bacterium {otherBacID}.")
+                elif action == "Idle":
+                    # block = tuple(
+                    #     map(float, parts[3].strip("()").split(",")))
+                    block = parts[3]
+                    print(f"Bacterium {
+                          cellID} is idle on {block}.")
                 else:
                     print(f"Unknown action for Cell {cellID}: {action}")
             else:
                 print(f"Malformed line: {line}")
             # updates the animation frame in the plot
             self.updateFrame(self.currentLine)
-            # print(f"Current bacteria: {[b.id for b in self.bacteria]}")
 
     def nextStep(self):
         if self.currentLine < len(self.TotalLines):
@@ -195,8 +205,11 @@ def startAnimation(root, filename, canvas, ax, mode):
     # starts the animation by creating an object
     ani = Animation(root, canvas, ax, filename, mode)
     with open(ani.filename, 'r') as file:
-        # reads all the lines in the uploaded file
-        ani.TotalLines = file.readlines()
+        lines = file.readlines()
+    ani.parameters = lines[:7]   # Get first 7 lines for parameters
+    ani.TotalLines = lines[8:]
+
+    ani.setup()
 
     ani.currentLine = 0
     ani.nextStep()
