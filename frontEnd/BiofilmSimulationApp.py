@@ -1,3 +1,5 @@
+from datetime import datetime
+import threading
 import tkinter as tk  # imports tkinter library for GUI
 from tkinter import *
 from tkinter import filedialog
@@ -11,6 +13,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import subprocess
 import os
+from PIL import Image, ImageTk
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -58,7 +61,10 @@ class BiofilmSimulationApp(tk.Tk):
         if hasattr(self, 'textID'):
             self.UICanvas.delete(self.textID)  # Remove the previous text
 
-        self.filename = filedialog.askopenfilename()  # stores filename
+        self.filename = filedialog.askopenfilename(
+            filetypes=[("Text files", "*.txt")],  # Only show .txt files
+            title="Select a .txt file"  # Optional: Set the title of the dialog
+        )
         self.textID = self.UICanvas.create_text(
             155.0,
             130.0,
@@ -80,10 +86,14 @@ class BiofilmSimulationApp(tk.Tk):
         # Move the text to the center horizontally
         self.UICanvas.coords(self.textID, xText, 130.0)
 
+    def relativeToAssets(self, path: str) -> Path:
+        return ASSETS_PATH / Path(path)
+
     def collectData(self, inputWindow):
+        self.clearWarnings()
         if not self.validateInputs():
             return
-
+        self.clearWarnings()
         # Collect the user inputs from Entry fields and store them
         self.inputs["free_bacterial_monomers"] = self.bMonomers.get()
         self.inputs["free_eps_monomers"] = self.EPSMonomers.get()
@@ -94,10 +104,49 @@ class BiofilmSimulationApp(tk.Tk):
         self.inputs["simulation_duration"] = self.duration.get()
 
         self.clearWarnings()
-
-        # Close the input window after data is collected
         inputWindow.destroy()
-        self.runMakefile()
+        self.loadingScreen()
+
+    def loadingScreen(self):
+        loadingWindow = tk.Toplevel()
+        loadingWindow.geometry('700x450')
+        loadingWindow.configure(bg="#FFFFFF")
+        self.centerWindow(loadingWindow)
+        loadingWindow.title("Please be patient")
+
+        label = tk.Label(
+            loadingWindow, text="Generating file...", font=("Arial", 24), bg="white")
+        label.pack(pady=20)
+
+        # Replace with your GIF path
+        self.loading_gif = Image.open(self.relativeToAssets("loading.gif"))
+        self.frames = []
+        try:
+            for i in range(self.loading_gif.n_frames):
+                self.loading_gif.seek(i)
+                # Ensure each frame is in the correct mode
+                frame = self.loading_gif.copy().convert("RGBA")
+                self.frames.append(ImageTk.PhotoImage(frame))
+        except EOFError:
+            pass  # End of sequence
+
+        gif_label = tk.Label(loadingWindow)
+        gif_label.pack(pady=20)
+
+        # Function to animate the GIF
+        def update_gif(frame_idx):
+            gif_label.config(image=self.frames[frame_idx])
+            frame_idx = (frame_idx + 1) % len(self.frames)
+            # Adjust speed of GIF if necessary
+            loadingWindow.after(100, update_gif, frame_idx)
+
+        update_gif(0)  # Start GIF animation
+
+        # Disable resizing of the loading window
+        loadingWindow.resizable(False, False)
+        thread = threading.Thread(
+            target=self.runMakefile, args=(loadingWindow,))
+        thread.start()
 
     def clearWarnings(self):
         for entry in self.warningLabels.keys():
@@ -303,7 +352,7 @@ class BiofilmSimulationApp(tk.Tk):
         self.warningLabels[self.duration].grid(
             row=13, column=1, sticky="n",  padx=0, pady=(0, 10))
 
-    def runMakefile(self):
+    def runMakefile(self, loadingWindow):
         bacterial_monomers = self.inputs["free_bacterial_monomers"]
         eps_monomers = self.inputs["free_eps_monomers"]
         nutrients = self.inputs["nutrients"]
@@ -311,6 +360,7 @@ class BiofilmSimulationApp(tk.Tk):
         width = self.inputs["simulation_width"]
         height = self.inputs["simulation_height"]
         duration = self.inputs["simulation_duration"]
+        fileName = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
         makefilePath = Path(*list(Path(__file__).parent.parents)[-4::-1][:3])
         print(makefilePath)
@@ -322,7 +372,7 @@ class BiofilmSimulationApp(tk.Tk):
 
             # Prepare the ARGS string
             args = f"{bacterial_monomers} {eps_monomers} {
-                nutrients} {bacteria} {width} {height} {duration} {"test"}"
+                nutrients} {bacteria} {width} {height} {duration} {fileName}"
 
             # Run the Java program using Makefile and pass the arguments
             runCommand = f"make -C {makefilePath} run ARGS='{args}'"
@@ -332,7 +382,15 @@ class BiofilmSimulationApp(tk.Tk):
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"Error occurred: {e}")
 
+        loadingWindow.after(0, loadingWindow.destroy)
+
     def startSimulation(self):
+
+        if not self.filename:
+            # Display a warning message if no file is selected
+            messagebox.showwarning(
+                "No File Selected", "Please upload a file before starting the simulation.")
+            return
         # Create a new window for the simulation
         simulationWindow = tk.Toplevel(self)
 
@@ -348,7 +406,7 @@ class BiofilmSimulationApp(tk.Tk):
         canvas = FigureCanvasTkAgg(fig, master=simulationWindow)
         canvas.draw()
         canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
-        self.mode = "Motile"
+        self.mode = "PSL"
         ax.clear()  # clears any existing plot
         Animation.startAnimation(
             self, self.filename, canvas, ax, self.mode)
@@ -376,15 +434,12 @@ class BiofilmSimulationApp(tk.Tk):
         textWidth = bbox[2] - bbox[0]
         textHeight = bbox[3] - bbox[1]
         x = (canvasWidth - textWidth) / 2
-        y = (canvasHeight - textHeight) / 2 - 120
+        y = (canvasHeight - textHeight) / 2 - 140
 
         self.UICanvas.coords(textID, x, y)
 
-        def relativeToAssets(path: str) -> Path:
-            return ASSETS_PATH / Path(path)
-
         self.uploadBtnImage = PhotoImage(
-            file=relativeToAssets("upload.png"))
+            file=self.relativeToAssets("upload.png"))
 
         uploadBtn = Button(
             image=self.uploadBtnImage,
@@ -401,7 +456,7 @@ class BiofilmSimulationApp(tk.Tk):
         )
 
         self.playBtnImage = PhotoImage(
-            file=relativeToAssets("play.png"))
+            file=self.relativeToAssets("play.png"))
 
         playBtn = Button(
             image=self.playBtnImage,
@@ -419,7 +474,7 @@ class BiofilmSimulationApp(tk.Tk):
 
         self.generateBtnImage = PhotoImage(
             # Add image for Java compile button
-            file=relativeToAssets("generate.png"))
+            file=self.relativeToAssets("generate.png"))
 
         generateBtn = Button(
             image=self.generateBtnImage,
